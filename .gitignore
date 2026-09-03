@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editor
+.vscode/
+.idea/
+
+# Cartella sorgente delle card giocatore: le immagini pubblicate
+# finiscono in assets/locandine/ tramite tools/sync_locandine.py.
+# Se vuoi versionare anche gli originali, togli la riga qui sotto.
+foto_presentazione/
