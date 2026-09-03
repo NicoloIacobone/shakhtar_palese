@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" role="img" aria-label="Foto giocatore non ancora disponibile">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1b1f"/><stop offset="1" stop-color="#0d0d0f"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="600" fill="url(#g)"/>
+  <!-- Silhouette busto -->
+  <g fill="#2c2c32">
+    <circle cx="200" cy="235" r="62"/>
+    <path d="M200 315c-72 0-118 46-128 116h256c-10-70-56-116-128-116z"/>
+  </g>
+  <!-- Macchie da ghepardo, motivo discreto -->
+  <g fill="#ff7a1a" opacity="0.16">
+    <circle cx="78"  cy="90"  r="13"/><circle cx="330" cy="140" r="9"/>
+    <circle cx="120" cy="470" r="11"/><circle cx="300" cy="520" r="14"/>
+    <circle cx="55"  cy="300" r="8"/> <circle cx="352" cy="380" r="7"/>
+  </g>
+  <text x="200" y="545" text-anchor="middle" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif"
+        font-size="34" font-weight="700" fill="#6a6a74" letter-spacing="2">FOTO IN ARRIVO</text>
+</svg>

@@ -1,0 +1,68 @@
+/* Stili del solo pannello locale. Il resto arriva da assets/css/style.css. */
+
+.banner-locale {
+  background: var(--giallo); color: #1a1400; text-align: center;
+  padding: .6rem 1rem; font-size: .88rem; line-height: 1.4;
+}
+.banner-locale code { background: rgba(0,0,0,.14); padding: .05rem .3rem; border-radius: 4px; }
+
+.admin-testa { position: sticky; top: 0; z-index: 50; background: var(--nero); border-bottom: 1px solid var(--bordo); }
+.admin-testa-in {
+  display: flex; align-items: center; gap: 1rem;
+  max-width: var(--max); margin-inline: auto; padding: .6rem 1rem;
+}
+.admin-testa .azioni-header { margin-left: auto; }
+.stato { font-size: .82rem; font-weight: 700; }
+.stato[data-ok="true"] { color: var(--verde); }
+.stato[data-ok="false"] { color: var(--rosso); }
+
+.admin-tab { display: flex; gap: .25rem; overflow-x: auto; max-width: var(--max); margin-inline: auto; padding: 0 1rem .5rem; }
+.admin-tab button {
+  white-space: nowrap; background: transparent; border: 1px solid transparent;
+  border-bottom: 2px solid transparent; color: var(--testo-tenue);
+  padding: .5rem .8rem; font-weight: 700; font-size: .9rem; cursor: pointer;
+}
+.admin-tab button:hover { color: var(--testo); }
+.admin-tab button[aria-selected="true"] { color: var(--arancio); border-bottom-color: var(--arancio); }
+
+.admin-corpo { padding-block: 1.5rem 3rem; }
+.admin-piede { border-top: 1px solid var(--bordo); padding-block: 1.2rem; color: var(--testo-debole); font-size: .82rem; }
+
+.barra-sezione {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--bordo);
+}
+.barra-sezione h2 { margin: 0; font-size: 1.2rem; }
+.barra-sezione .spazio { margin-left: auto; }
+
+.editor { overflow-x: auto; border: 1px solid var(--bordo); border-radius: var(--raggio); }
+table.editor-tab { width: 100%; border-collapse: collapse; font-size: .86rem; }
+table.editor-tab th {
+  background: var(--superficie-2); text-align: left; padding: .5rem .5rem;
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--testo-tenue); white-space: nowrap; border-bottom: 1px solid var(--bordo);
+  position: sticky; top: 0;
+}
+table.editor-tab td { padding: .2rem .25rem; border-bottom: 1px solid var(--bordo); vertical-align: middle; }
+table.editor-tab tr:last-child td { border-bottom: 0; }
+
+.editor input, .editor select, .editor textarea {
+  width: 100%; min-width: 5.5rem; background: var(--superficie); color: var(--testo);
+  border: 1px solid transparent; border-radius: 6px; padding: .4rem .5rem; font-size: .86rem;
+}
+.editor input:hover, .editor select:hover { border-color: var(--bordo); }
+.editor input:focus, .editor select:focus, .editor textarea:focus { border-color: var(--arancio); outline: none; }
+.editor input[type="number"] { min-width: 4.2rem; font-family: var(--font-num); }
+.editor .lungo input { min-width: 14rem; }
+.editor .invalido { border-color: var(--rosso) !important; background: color-mix(in srgb, var(--rosso) 14%, var(--superficie)); }
+
+.riga-prossima td { background: color-mix(in srgb, var(--arancio) 12%, transparent); }
+.btn-riga {
+  background: transparent; border: 1px solid var(--bordo); color: var(--testo-tenue);
+  border-radius: 6px; width: 30px; height: 30px; cursor: pointer; line-height: 1;
+}
+.btn-riga:hover { border-color: var(--rosso); color: var(--rosso); }
+
+.errori-campo { margin-top: 1rem; }
+.errori-campo ul { margin: .4rem 0 0; padding-left: 1.2rem; }
+.aiuto { color: var(--testo-debole); font-size: .82rem; margin: .4rem 0 1rem; }

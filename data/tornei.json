@@ -1,0 +1,49 @@
+{
+  "_placeholder": true,
+  "corrente": "birra-peroni-2026",
+  "_nota": "La prossima partita e il countdown in home vengono calcolati da qui: e' la prima partita con stato 'da_giocare' del torneo corrente, in ordine di data e ora.",
+  "tornei": [
+    {
+      "id": "birra-peroni-2026",
+      "nome": "Torneo Birra Peroni",
+      "stagione": "2026",
+      "instagram": "",
+      "stato": "in_corso",
+      "nostra_squadra": "Shakhtar Palese",
+      "_placeholder": true,
+      "classifica": [
+        { "pos": 1, "squadra": "Atletico Bitonto",       "punti": 13, "g": 5, "v": 4, "n": 1, "p": 0, "gf": 18, "gs": 7,  "dr": 11 },
+        { "pos": 2, "squadra": "Shakhtar Palese",        "punti": 10, "g": 5, "v": 3, "n": 1, "p": 1, "gf": 22, "gs": 11, "dr": 11 },
+        { "pos": 3, "squadra": "Real Santo Spirito",     "punti": 9,  "g": 5, "v": 2, "n": 3, "p": 0, "gf": 14, "gs": 10, "dr": 4 },
+        { "pos": 4, "squadra": "FC Modugno",             "punti": 8,  "g": 5, "v": 2, "n": 2, "p": 1, "gf": 11, "gs": 9,  "dr": 2 },
+        { "pos": 5, "squadra": "Real Poggiofranco",      "punti": 7,  "g": 5, "v": 2, "n": 1, "p": 2, "gf": 12, "gs": 12, "dr": 0 },
+        { "pos": 6, "squadra": "Sporting San Girolamo",  "punti": 4,  "g": 5, "v": 1, "n": 1, "p": 3, "gf": 8,  "gs": 16, "dr": -8 },
+        { "pos": 7, "squadra": "AS Torre a Mare",        "punti": 3,  "g": 5, "v": 1, "n": 0, "p": 4, "gf": 7,  "gs": 15, "dr": -8 },
+        { "pos": 8, "squadra": "Virtus Carbonara",       "punti": 1,  "g": 5, "v": 0, "n": 1, "p": 4, "gf": 6,  "gs": 18, "dr": -12 }
+      ],
+      "calendario": [
+        { "id": "bp26-g1", "giornata": 1, "data": "2026-07-30", "ora": "20:30", "casa": "Shakhtar Palese",    "ospite": "Virtus Carbonara",      "gol_casa": 5, "gol_ospite": 2, "stato": "giocata",    "campo": "De Palo Sporting Center", "note": "Esordio assoluto. Doppietta del 9." },
+        { "id": "bp26-g2", "giornata": 2, "data": "2026-08-06", "ora": "21:30", "casa": "Real Santo Spirito", "ospite": "Shakhtar Palese",       "gol_casa": 3, "gol_ospite": 3, "stato": "giocata",    "campo": "De Palo Sporting Center", "note": "Pareggio recuperato all'ultimo minuto." },
+        { "id": "bp26-g3", "giornata": 3, "data": "2026-08-13", "ora": "20:30", "casa": "Shakhtar Palese",    "ospite": "AS Torre a Mare",       "gol_casa": 6, "gol_ospite": 1, "stato": "giocata",    "campo": "De Palo Sporting Center", "note": "" },
+        { "id": "bp26-g4", "giornata": 4, "data": "2026-08-20", "ora": "21:30", "casa": "Atletico Bitonto",   "ospite": "Shakhtar Palese",       "gol_casa": 4, "gol_ospite": 2, "stato": "giocata",    "campo": "De Palo Sporting Center", "note": "Prima sconfitta. Espulsione del capitano." },
+        { "id": "bp26-g5", "giornata": 5, "data": "2026-08-27", "ora": "20:30", "casa": "Shakhtar Palese",    "ospite": "Sporting San Girolamo", "gol_casa": 6, "gol_ospite": 1, "stato": "giocata",    "campo": "De Palo Sporting Center", "note": "" },
+        { "id": "bp26-g6", "giornata": 6, "data": "2026-09-10", "ora": "20:30", "casa": "FC Modugno",         "ospite": "Shakhtar Palese",       "gol_casa": null, "gol_ospite": null, "stato": "da_giocare", "campo": "De Palo Sporting Center", "note": "" },
+        { "id": "bp26-g7", "giornata": 7, "data": "2026-09-17", "ora": "21:30", "casa": "Shakhtar Palese",    "ospite": "Real Poggiofranco",     "gol_casa": null, "gol_ospite": null, "stato": "da_giocare", "campo": "De Palo Sporting Center", "note": "" }
+      ]
+    },
+    {
+      "id": "amichevoli-2025",
+      "nome": "Amichevoli d'esordio",
+      "stagione": "2025",
+      "instagram": "",
+      "stato": "concluso",
+      "nostra_squadra": "Shakhtar Palese",
+      "_placeholder": true,
+      "classifica": [],
+      "calendario": [
+        { "id": "am25-1", "giornata": 1, "data": "2025-11-14", "ora": "20:00", "casa": "Shakhtar Palese", "ospite": "Vecchie Glorie Palese", "gol_casa": 2, "gol_ospite": 2, "stato": "giocata", "campo": "De Palo Sporting Center", "note": "La primissima partita della storia del club." },
+        { "id": "am25-2", "giornata": 2, "data": "2025-12-05", "ora": "20:00", "casa": "Shakhtar Palese", "ospite": "Amatori Santo Spirito",  "gol_casa": 1, "gol_ospite": 4, "stato": "giocata", "campo": "De Palo Sporting Center", "note": "Non ne parliamo." }
+      ]
+    }
+  ]
+}

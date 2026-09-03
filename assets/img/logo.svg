@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Stemma Shakhtar Palese">
+  <title>Shakhtar Palese</title>
+  <!-- Scudetto: fondo nero, bordo arancione -->
+  <path d="M64 6 L116 22 L116 66 C116 96 94 114 64 122 C34 114 12 96 12 66 L12 22 Z"
+        fill="#0f0f10" stroke="#ff7a1a" stroke-width="6" stroke-linejoin="round"/>
+  <!-- La S: due archi geometrici sovrapposti (stile Bauhaus) -->
+  <g fill="none" stroke="#ff7a1a" stroke-width="13" stroke-linecap="round">
+    <path d="M64 69 A21 21 0 1 1 78.85 33.15"/>
+    <path d="M64 51 A21 21 0 1 1 49.15 86.85"/>
+  </g>
+  <!-- Accenno di ghepardo: tre macchie -->
+  <g fill="#ff7a1a" opacity="0.75">
+    <circle cx="98" cy="86" r="4"/>
+    <circle cx="88" cy="99" r="3"/>
+    <circle cx="101" cy="72" r="2.6"/>
+  </g>
+</svg>

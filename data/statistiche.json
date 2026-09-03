@@ -1,0 +1,20 @@
+{
+  "_placeholder": true,
+  "stagione": "2025/26",
+  "_nota": "Una riga per giocatore, collegata alla rosa tramite il campo numero (numero di maglia).",
+  "giocatori": [
+    { "numero": 1,  "presenze": 4, "minuti": 360, "gol": 0, "assist": 0, "ammonizioni": 0, "espulsioni": 0, "mvp": 1, "papere": 3, "gol_sbagliati": 0, "ritardi": 1, "multe_euro": 5 },
+    { "numero": 12, "presenze": 2, "minuti": 90,  "gol": 0, "assist": 0, "ammonizioni": 1, "espulsioni": 0, "mvp": 0, "papere": 1, "gol_sbagliati": 0, "ritardi": 4, "multe_euro": 20 },
+    { "numero": 2,  "presenze": 5, "minuti": 420, "gol": 0, "assist": 1, "ammonizioni": 2, "espulsioni": 0, "mvp": 0, "papere": 1, "gol_sbagliati": 2, "ritardi": 0, "multe_euro": 0 },
+    { "numero": 3,  "presenze": 5, "minuti": 405, "gol": 1, "assist": 0, "ammonizioni": 1, "espulsioni": 0, "mvp": 0, "papere": 0, "gol_sbagliati": 1, "ritardi": 2, "multe_euro": 10 },
+    { "numero": 4,  "presenze": 5, "minuti": 450, "gol": 1, "assist": 1, "ammonizioni": 3, "espulsioni": 1, "mvp": 1, "papere": 0, "gol_sbagliati": 1, "ritardi": 0, "multe_euro": 15 },
+    { "numero": 5,  "presenze": 4, "minuti": 340, "gol": 0, "assist": 0, "ammonizioni": 1, "espulsioni": 0, "mvp": 0, "papere": 2, "gol_sbagliati": 0, "ritardi": 0, "multe_euro": 0 },
+    { "numero": 6,  "presenze": 5, "minuti": 380, "gol": 1, "assist": 2, "ammonizioni": 2, "espulsioni": 0, "mvp": 0, "papere": 1, "gol_sbagliati": 3, "ritardi": 3, "multe_euro": 15 },
+    { "numero": 8,  "presenze": 5, "minuti": 430, "gol": 2, "assist": 5, "ammonizioni": 0, "espulsioni": 0, "mvp": 2, "papere": 0, "gol_sbagliati": 2, "ritardi": 1, "multe_euro": 5 },
+    { "numero": 10, "presenze": 4, "minuti": 310, "gol": 3, "assist": 4, "ammonizioni": 1, "espulsioni": 0, "mvp": 1, "papere": 0, "gol_sbagliati": 6, "ritardi": 5, "multe_euro": 25 },
+    { "numero": 7,  "presenze": 5, "minuti": 400, "gol": 4, "assist": 2, "ammonizioni": 1, "espulsioni": 0, "mvp": 1, "papere": 0, "gol_sbagliati": 5, "ritardi": 2, "multe_euro": 10 },
+    { "numero": 9,  "presenze": 5, "minuti": 415, "gol": 6, "assist": 1, "ammonizioni": 2, "espulsioni": 0, "mvp": 2, "papere": 1, "gol_sbagliati": 7, "ritardi": 1, "multe_euro": 5 },
+    { "numero": 11, "presenze": 4, "minuti": 275, "gol": 2, "assist": 3, "ammonizioni": 0, "espulsioni": 0, "mvp": 0, "papere": 0, "gol_sbagliati": 4, "ritardi": 0, "multe_euro": 0 },
+    { "numero": 29, "presenze": 3, "minuti": 190, "gol": 2, "assist": 1, "ammonizioni": 1, "espulsioni": 0, "mvp": 1, "papere": 0, "gol_sbagliati": 3, "ritardi": 2, "multe_euro": 10 }
+  ]
+}

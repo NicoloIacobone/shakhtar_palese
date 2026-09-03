@@ -1,0 +1,14 @@
+{
+  "_nota": "Configurazione di tools/sync_locandine.py. Tutti i percorsi sono relativi alla radice del progetto.",
+  "sorgente": "foto_presentazione",
+  "destinazione": "assets/locandine",
+  "miniature": "assets/locandine/thumbs",
+  "versione_web": "assets/locandine/web",
+  "estensioni": [".jpg", ".jpeg", ".png", ".webp"],
+  "thumb_lato_max": 600,
+  "thumb_qualita": 80,
+  "web_lato_max": 1400,
+  "web_qualita": 82,
+  "json_locandine": "data/locandine.json",
+  "json_rosa": "data/rosa.json"
+}

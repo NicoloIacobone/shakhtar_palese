@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it" data-tema="scuro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fuorigioco — Shakhtar Palese</title>
+<meta name="description" content="Pagina non trovata sul sito dello Shakhtar Palese.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0b0d">
+<!-- Pagina autonoma: stili in linea, cosi' funziona anche se GitHub Pages
+     la serve da un percorso profondo dove i path relativi non tornerebbero. -->
+<style>
+  :root { --arancio:#ff7a1a; --nero:#0b0b0d; --testo:#f2f2f4; --tenue:#a3a3ad; --bordo:#2b2b33; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100dvh; display:grid; place-items:center; text-align:center;
+         background:var(--nero); color:var(--testo); padding:2rem 1rem;
+         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; }
+  .codice { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-weight:900; line-height:1;
+            font-size:clamp(4rem,22vw,9rem); color:var(--arancio); }
+  h1 { font-size:clamp(1.5rem,6vw,2.4rem); margin:.4rem 0; letter-spacing:-.02em; }
+  p { color:var(--tenue); max-width:44ch; margin:0 auto 1.4rem; line-height:1.6; }
+  .gruppo { display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center; }
+  a.btn { display:inline-block; padding:.72rem 1.1rem; border-radius:999px; font-weight:700;
+          text-decoration:none; border:1px solid transparent; }
+  .pri { background:var(--arancio); color:#14100b; }
+  .sec { border-color:var(--bordo); color:var(--testo); }
+  a.btn:hover { filter:brightness(1.1); }
+  svg { width:78px; height:78px; margin:0 auto 1rem; display:block; }
+</style>
+</head>
+<body>
+  <main>
+    <svg viewBox="0 0 128 128" role="img" aria-label="Stemma Shakhtar Palese">
+      <path d="M64 6 L116 22 L116 66 C116 96 94 114 64 122 C34 114 12 96 12 66 L12 22 Z"
+            fill="#0f0f10" stroke="#ff7a1a" stroke-width="6" stroke-linejoin="round"/>
+      <g fill="none" stroke="#ff7a1a" stroke-width="13" stroke-linecap="round">
+        <path d="M64 69 A21 21 0 1 1 78.85 33.15"/><path d="M64 51 A21 21 0 1 1 49.15 86.85"/>
+      </g>
+    </svg>
+    <div class="codice">404</div>
+    <h1>Fuorigioco.</h1>
+    <p>Questa pagina è partita in anticipo e l'arbitro ha alzato la bandierina.
+       Capita anche ai migliori, ma soprattutto al nostro numero 7.</p>
+    <div class="gruppo">
+      <a class="btn pri" href="index.html" data-home="index.html">Torna in campo &rarr;</a>
+      <a class="btn sec" href="rosa.html" data-home="rosa.html">Vai alla rosa</a>
+    </div>
+  </main>
+<script>
+  // Su GitHub Pages il 404 può essere servito da un percorso profondo:
+  // ricostruisco i link partendo dalla prima cartella (/shakhtar_palese/).
+  (function () {
+    var seg = location.pathname.split('/').filter(Boolean);
+    var base = (location.hostname.indexOf('github.io') !== -1 && seg.length) ? '/' + seg[0] + '/' : './';
+    document.querySelectorAll('[data-home]').forEach(function (a) { a.href = base + a.dataset.home; });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+Sitemap: https://nicoloiacobone.github.io/shakhtar_palese/sitemap.xml
