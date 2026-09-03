@@ -33,7 +33,7 @@ cambia ovunque nel sito.
 | campo | cosa contiene |
 |---|---|
 | `sito.nome` | il nome che compare in alto e nel footer |
-| `sito.tagline` | la frase sotto il nome nella home |
+| `sito.tagline` | la frase sotto il nome nella home e nel footer. Per andare a capo scrivi `\n` dentro le virgolette: `"Prima frase.\nSeconda frase."` |
 | `sito.base_url` | l'indirizzo del sito online. Serve per le anteprime dei link. **Non cambiarlo** a meno che tu non rinomini il repo |
 | `social.instagram` / `social.tiktok` | l'handle **senza la @** (es. `shakhtar_palese`) |
 | `social.email` | l'indirizzo email della squadra |
@@ -193,7 +193,28 @@ script: se la modifichi, viene ricalcolata.
 
 ## `storia.json` — la pagina "La nostra storia"
 
-`titolo`, `sottotitolo` e `paragrafi` (una lista: ogni voce è un capoverso).
+`titolo`, `sottotitolo`, `foto_squadra` e `paragrafi` (una lista: ogni voce è un
+capoverso).
+
+### La foto di squadra
+
+In cima alla pagina c'è la foto di gruppo. Finché non ce l'hai, al suo posto il
+sito mostra un **segnaposto tratteggiato** con le stesse proporzioni (16:9), così
+la pagina è già impaginata come sarà.
+
+Per metterci la foto vera:
+
+1. salva l'immagine in `assets/img/` (es. `assets/img/squadra-2026.jpg`);
+2. scrivi il suo percorso nel campo `file`.
+
+| campo | note |
+|---|---|
+| `file` | il percorso dell'immagine, **relativo alla radice del sito**: `assets/img/squadra-2026.jpg`. Vuoto = si vede il segnaposto |
+| `alt` | la descrizione per chi non vede l'immagine (screen reader, immagine rotta) |
+| `didascalia` | facoltativa, la riga di testo sotto la foto. Vuota = non compare |
+
+Il segnaposto sparisce da solo nel momento in cui `file` non è più vuoto: non
+c'è niente da toccare né nell'HTML né nel CSS.
 
 Il campo **`"_da_rivedere": true` fa comparire sul sito l'avviso "bozza da
 rivedere"**. Il testo che c'è adesso l'ha scritto Claude come traccia e contiene

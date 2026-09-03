@@ -202,9 +202,12 @@ button, input, select { font: inherit; color: inherit; }
   opacity: .10;
 }
 .hero-in { position: relative; z-index: 1; text-align: center; }
-.hero-logo { width: 90px; height: 90px; margin: 0 auto 1rem; }
+.hero-logo { width: clamp(110px, 26vw, 140px); height: auto; margin: 0 auto 1rem; }
 .hero h1 { margin-bottom: .25em; }
 .hero .sottotitolo { max-width: 46ch; margin-inline: auto; }
+/* La tagline arriva da data/config.json con un \n fra le due frasi: pre-line
+   lo trasforma in un a capo vero, senza dover passare per dell'HTML. */
+[data-config="sito-tagline"] { white-space: pre-line; }
 .hero .gruppo-btn { justify-content: center; margin-top: 1.4rem; }
 
 /* --- Prossima partita + countdown --- */
@@ -409,6 +412,27 @@ th.ordinabile[aria-sort="descending"]::after { content: "↓"; opacity: 1; color
    ma restando centrata lo spazio ai lati e' simmetrico e sembra una scelta,
    non un testo troncato. */
 .contenitore-testo { max-width: 832px; }
+
+/* Foto di gruppo in cima alla Storia. Il segnaposto ha le stesse proporzioni
+   della foto vera, cosi' quando arriva l'immagine la pagina non si sposta. */
+.foto-squadra { margin: 0 0 1.8rem; }
+.foto-squadra img {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--bordo); border-radius: var(--raggio);
+}
+.foto-squadra figcaption {
+  margin-top: .6rem; font-size: .88rem; color: var(--testo-debole); text-align: center;
+}
+.foto-squadra-vuota {
+  aspect-ratio: 16 / 9;
+  display: grid; place-content: center; justify-items: center; gap: .35rem;
+  text-align: center; padding: 1rem;
+  border: 2px dashed var(--bordo); border-radius: var(--raggio);
+  background: var(--superficie); color: var(--testo-debole);
+}
+.foto-squadra-vuota svg { width: 40px; height: 40px; color: var(--arancio); opacity: .7; }
+.foto-squadra-vuota b { color: var(--testo-tenue); font-size: .95rem; }
+.foto-squadra-vuota span { font-size: .85rem; }
 
 /* Una sola misura di carattere per tutti i paragrafi, primo compreso. */
 .prosa { max-width: none; }

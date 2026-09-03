@@ -3,6 +3,12 @@
   "_nota": "Testo della pagina 'La nostra storia'. Ogni voce di 'paragrafi' e' un capoverso. Se rimetti \"_da_rivedere\": true, sul sito ricompare l'avviso giallo di bozza.",
   "titolo": "La nostra storia",
   "sottotitolo": "Come una squadra di Palese ha deciso di chiamarsi come una squadra ucraina di minatori.",
+  "foto_squadra": {
+    "_nota": "La foto di gruppo in cima alla pagina Storia. Finche' 'file' e' vuoto il sito mostra un segnaposto. Metti l'immagine in assets/img/ e scrivi qui il suo percorso, es. \"assets/img/squadra-2026.jpg\".",
+    "file": "",
+    "alt": "La rosa dello Shakhtar Palese al completo",
+    "didascalia": ""
+  },
   "paragrafi": [
     "Shakhtar Palese nasce nell'autunno del 2026, in un bar di Palese, nel modo in cui nascono quasi tutte le squadre amatoriali: qualcuno dice «facciamo una squadra» e per una volta nessuno cambia discorso.",
     "Il gruppo di partenza è quello di sempre: amici cresciuti insieme, pineta, Santo Spirito e le partite 7vs7 messe insieme all'ultimo momento sul Gruppo Calcio. Mancava solo la parte formale: un nome, dei colori, e qualcuno disposto a tenere i conti delle multe.",

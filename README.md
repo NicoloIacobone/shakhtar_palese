@@ -25,6 +25,10 @@ Il sito mostra **solo chi è già stato presentato**. Gli altri sono già scritt
      Il numero è quello di **maglia**, non un progressivo.
    - **`COGNOME_SIGLA.jpg`** per lo staff — es. `DIFRANCO_ALL.jpg`
      (`ALL` allenatore, `PRS` presidente, `SMM` social media manager).
+
+   Vanno bene `.jpg`, `.jpeg`, `.png` e `.webp` (la lista sta in
+   `tools/config.json`). L'estensione può anche essere sbagliata: lo script
+   legge il formato vero dal contenuto del file e te lo dice.
 2. **Doppio click su `sync.command`** dal Finder.
 3. Lo script copia l'immagine, genera le versioni ridotte, aggiorna
    `data/locandine.json` e ti chiede se fare commit e push. Rispondi `s`.
@@ -86,7 +90,8 @@ shakhtar_palese/
 ├── assets/
 │   ├── css/style.css         ← TUTTA la grafica, palette compresa
 │   ├── js/                   ← uno script per pagina + main.js condiviso
-│   ├── img/                  ← stemma, icone, copertina social, placeholder
+│   ├── img/                  ← stemma, icone, copertina social, placeholder,
+│   │                            e qui va anche la foto di squadra
 │   └── locandine/            ← originali + web/ + thumbs/ (le genera lo script)
 ├── data/                     ← i contenuti del sito. Vedi data/README.md
 ├── admin/                    ← pannello locale, non pubblicato
@@ -148,28 +153,21 @@ Statistiche, risultati e classifica sono **a zero**: non c'è più niente di
 inventato lì dentro. I nomi, i numeri e i ruoli delle 16 persone sono veri, e le
 5 avversarie sono segnate `TBA` finché non le ufficializzano.
 
-Restano **due cose scritte da Claude che parlano di persone vere**, ed entrambe
-si vedono sul sito:
+Restano un paio di cose da sistemare, tutte visibili sul sito:
 
-- [ ] **I campi personali in `data/rosa.json`** — `classe`,
-      `posizione_preferita`, `frase_preferita`, `superstizione`,
+- [ ] **I campi personali in `data/rosa.json`** — sono l'unica cosa scritta da
+      Claude che parla di persone vere: `classe`, `posizione_preferita`,
+      `frase_preferita`, `superstizione`,
       `rito_post_allenamento`, `skill_fuori_campo` sono **inventati**, per tutte
       e 16 le persone. Sul sito adesso se ne vedono due (Spadaro ed Esposito),
       ma ogni nuova locandina ne pubblica altri. Falli confermare dai diretti
       interessati, oppure svuotali: **un campo vuoto semplicemente non compare**,
       la scheda si accorcia e basta. Poi togli `"_placeholder": true`.
-- [ ] **`data/storia.json`** — la storia del club è una **bozza inventata**
-      (chi ha fondato la squadra, il bar, le date). Il sito lo dichiara con un
-      avviso giallo in cima alla pagina, ma resta roba da riscrivere.
-      Quando è tua, metti `"_da_rivedere": false` e l'avviso sparisce.
 
-Più due dettagli:
-
-- [ ] **Lo stemma** — salva il logo ufficiale come
-      `assets/img/logo-originale.png` e lancia `tools/make_icons.py`.
-      Finché non lo fai, il sito usa uno stemma provvisorio disegnato a mano.
-- [ ] **L'anno di fondazione** — lo stemma dice **2026**, la bozza della storia
-      dice 2025. Decidi qual è quello giusto.
+- [ ] **La foto di squadra in cima alla pagina Storia** — al suo posto adesso
+      c'è un segnaposto. Quando avete la foto di gruppo: mettila in
+      `assets/img/` e scrivi il suo percorso in `data/storia.json`, campo
+      `foto_squadra.file`. Il segnaposto sparisce da solo.
 
 E quando escono le informazioni ufficiali:
 

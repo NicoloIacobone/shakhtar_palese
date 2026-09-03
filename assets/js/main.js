@@ -2,8 +2,10 @@
    main.js — roba condivisa da tutte le pagine:
    tema chiaro/scuro, menu mobile, dati di config nel footer, bottone condividi
    e un paio di funzioni di utilita' usate dagli altri script.
-   Tutti i path sono RELATIVI perche' il sito sta in una sottocartella
-   (https://nicoloiacobone.github.io/shakhtar_palese/).
+   Tutti i path sono RELATIVI: il sito adesso sta su dominio custom
+   (https://www.shakhtarpalese.it/), ma il vecchio indirizzo in sottocartella
+   (nicoloiacobone.github.io/shakhtar_palese/) continua a funzionare e i path
+   relativi sono l'unica cosa che va bene in tutti e due i casi.
    ========================================================================= */
 
 const SP = (() => {
@@ -12,7 +14,7 @@ const SP = (() => {
   /* Radice del sito, ricavata da dove sta questo script (.../assets/js/main.js).
      Serve perche' main.js viene caricato anche da admin/, che sta una cartella
      piu' in basso: cosi' data/ si risolve correttamente da qualsiasi profondita',
-     senza mai ricorrere a path assoluti (il sito vive in una sottocartella). */
+     senza mai ricorrere a path assoluti. */
   const RADICE = new URL('../../', document.currentScript.src).href;
 
   /* Carica un JSON da data/ una sola volta per pagina. */
