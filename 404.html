@@ -42,11 +42,12 @@
     </div>
   </main>
 <script>
-  // Su GitHub Pages il 404 può essere servito da un percorso profondo:
-  // ricostruisco i link partendo dalla prima cartella (/shakhtar_palese/).
+  // Questa pagina viene servita per QUALSIASI indirizzo inesistente, anche
+  // profondo (/a/b/c): con i link relativi finirebbero su /a/b/index.html.
+  // Il sito sta alla radice del dominio, quindi li riscrivo assoluti da "/".
+  // Se un domani tornasse in una sottocartella, basta cambiare questa riga.
   (function () {
-    var seg = location.pathname.split('/').filter(Boolean);
-    var base = (location.hostname.indexOf('github.io') !== -1 && seg.length) ? '/' + seg[0] + '/' : './';
+    var base = '/';
     document.querySelectorAll('[data-home]').forEach(function (el) {
       if (el.tagName === 'IMG') el.src = base + el.dataset.home;
       else el.href = base + el.dataset.home;

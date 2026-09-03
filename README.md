@@ -1,7 +1,8 @@
 # Shakhtar Palese — sito ufficiale
 
 Sito della squadra di calcio amatoriale **Shakhtar Palese** (Palese, Bari).
-Online su **<https://nicoloiacobone.github.io/shakhtar_palese/>**.
+Online su **<https://www.shakhtarpalese.it/>** (dominio custom; il vecchio
+indirizzo `nicoloiacobone.github.io/shakhtar_palese` reindirizza qui).
 
 HTML, CSS e JavaScript scritti a mano. Nessun framework, nessun `npm install`,
 nessun passaggio di build: i file che stanno nel repo sono esattamente quelli
