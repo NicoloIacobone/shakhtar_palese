@@ -99,18 +99,26 @@ def controlla_config():
 
 
 # ------------------------------------------------------------------ rosa ---
+# Campi personali facoltativi: se vuoti la scheda semplicemente non li mostra.
+CAMPI_PERSONALI = ["soprannome", "provenienza", "classe", "posizione_preferita",
+                   "frase_preferita", "superstizione", "rito_post_allenamento",
+                   "skill_fuori_campo"]
+SIGLE_STAFF = {"ALL", "PRS", "SMM", "DS", "PREP", "MAG"}
+
+
 def controlla_rosa():
+    """Ritorna (numeri di maglia, cognomi dello staff)."""
     d = carica("rosa.json")
     if d is None:
-        return {}
+        return {}, set()
     if d.get("_placeholder"):
-        segnaposto.append("data/rosa.json — la rosa contiene ancora dati inventati")
+        segnaposto.append("data/rosa.json — i campi personali dei giocatori sono ancora inventati")
     giocatori = d.get("giocatori")
     if not isinstance(giocatori, list) or not giocatori:
         errore("rosa.json", "manca la lista 'giocatori' oppure e' vuota")
-        return {}
+        return {}, set()
 
-    visti = {}
+    visti, vuoti = {}, 0
     for i, g in enumerate(giocatori, 1):
         et = f"giocatore #{i} ({g.get('cognome', '?')}) → "
         obbligatori("rosa.json", g, ["numero", "nome", "cognome", "ruolo"], et)
@@ -125,8 +133,36 @@ def controlla_rosa():
                 visti[n] = g.get("cognome", "?")
         if g.get("piede") not in (None, "", "destro", "sinistro", "ambidestro"):
             avviso("rosa.json", f"{et}piede '{g['piede']}': mi aspettavo destro/sinistro/ambidestro")
-    print(f"{GRIGIO}  ·{FINE} rosa: {len(giocatori)} giocatori, numeri {sorted(visti)}")
-    return visti
+        if g.get("classe") not in (None, "") and not (1940 <= int(g.get("classe", 0) or 0) <= 2020):
+            errore("rosa.json", f"{et}classe '{g.get('classe')}': mi aspettavo un anno di nascita")
+        vuoti += sum(1 for c in CAMPI_PERSONALI if not g.get(c))
+
+    # --- staff (allenatore, presidente, social media manager…) ---
+    staff = d.get("staff") or []
+    if not isinstance(staff, list):
+        errore("rosa.json", "'staff' deve essere una lista")
+        staff = []
+    cognomi_staff = set()
+    for i, p in enumerate(staff, 1):
+        et = f"staff #{i} ({p.get('cognome', '?')}) → "
+        obbligatori("rosa.json", p, ["codice", "nome", "cognome", "ruolo"], et)
+        if p.get("codice") and p["codice"] not in SIGLE_STAFF:
+            errore("rosa.json", f"{et}sigla '{p['codice']}' non riconosciuta "
+                                f"(ammesse: {', '.join(sorted(SIGLE_STAFF))})")
+        if p.get("cognome"):
+            chiave = p["cognome"].strip().lower()
+            if chiave in cognomi_staff:
+                errore("rosa.json", f"{et}cognome ripetuto nello staff: la locandina "
+                                    f"si collega col cognome, quindi devono essere distinti")
+            cognomi_staff.add(chiave)
+        # lo staff non ha una 'posizione preferita': non la conto come mancante
+        vuoti += sum(1 for c in CAMPI_PERSONALI if c != 'posizione_preferita' and not p.get(c))
+
+    print(f"{GRIGIO}  ·{FINE} rosa: {len(giocatori)} giocatori + {len(staff)} staff, "
+          f"numeri {sorted(visti)}")
+    if vuoti:
+        print(f"{GRIGIO}  ·{FINE} campi personali ancora da compilare: {vuoti}")
+    return visti, cognomi_staff
 
 
 # ----------------------------------------------------------- statistiche ---
@@ -269,7 +305,7 @@ def controlla_tornei():
 
 
 # ------------------------------------------------------------- locandine ---
-def controlla_locandine(numeri_rosa):
+def controlla_locandine(numeri_rosa, cognomi_staff=frozenset()):
     d = carica("locandine.json")
     if d is None:
         avviso("locandine.json", "non c'e': lancia sync.command per generarlo")
@@ -292,25 +328,40 @@ def controlla_locandine(numeri_rosa):
         immagine_esiste("locandine.json", v.get("file"), et)   # originale
         immagine_esiste("locandine.json", v.get("web"), et)    # versione a schermo intero
         immagine_esiste("locandine.json", v.get("thumb"), et)  # miniatura della griglia
+        if v.get("valida") is not False and v.get("numero") is None and not v.get("sigla"):
+            errore("locandine.json", f"{et}non ha ne' numero di maglia ne' sigla staff: "
+                                     f"rilancia sync.command")
         if not re.match(r"^\d{4}-\d{2}-\d{2}$", str(v.get("data", ""))):
             errore("locandine.json", f"{et}data '{v.get('data')}' non in formato AAAA-MM-GG")
         ordini.append(v.get("ordine"))
-        n = v.get("numero")
+        n, sigla = v.get("numero"), v.get("sigla")
         if v.get("valida") is False:
-            avviso("locandine.json", f"{et}file fuori convenzione COGNOME_NUMERO.ext: "
+            avviso("locandine.json", f"{et}file fuori convenzione COGNOME_NUMERO.ext "
+                                     f"(o COGNOME_SIGLA.ext per lo staff): "
                                      f"rinominalo e rilancia sync.command")
+        elif sigla:
+            # locandina di staff: si collega col cognome, non col numero
+            if cognomi_staff and str(v.get("cognome", "")).strip().lower() not in cognomi_staff:
+                errore("locandine.json", f"{et}'{v.get('cognome')}' non e' nello staff di rosa.json")
         elif numeri_rosa and n not in numeri_rosa:
             errore("locandine.json", f"{et}numero di maglia {n} non presente in rosa.json")
     if ordini and sorted(ordini) != list(range(1, len(ordini) + 1)):
         avviso("locandine.json", "il campo 'ordine' non e' una sequenza 1..N: rilancia sync.command")
 
-    coperti = {v.get("numero") for v in voci}
+    coperti = {v.get("numero") for v in voci if v.get("numero") is not None}
+    coperti_staff = {str(v.get("cognome", "")).strip().lower() for v in voci if v.get("sigla")}
     mancanti = sorted(n for n in numeri_rosa if n not in coperti)
-    print(f"{GRIGIO}  ·{FINE} locandine: {len(voci)} pubblicate, "
-          f"{len(numeri_rosa) - len(mancanti)}/{len(numeri_rosa)} giocatori con foto")
+    mancanti_staff = sorted(c for c in cognomi_staff if c not in coperti_staff)
+    totale = len(numeri_rosa) + len(cognomi_staff)
+    presentati = totale - len(mancanti) - len(mancanti_staff)
+    print(f"{GRIGIO}  ·{FINE} locandine: {len(voci)} pubblicate — "
+          f"presentati {presentati} su {totale}")
     if mancanti:
-        print(f"{GRIGIO}  ·{FINE} senza foto (useranno il placeholder): "
+        print(f"{GRIGIO}  ·{FINE} giocatori non ancora presentati: "
               + ", ".join(f"#{n}" for n in mancanti))
+    if mancanti_staff:
+        print(f"{GRIGIO}  ·{FINE} staff non ancora presentato: "
+              + ", ".join(c.title() for c in mancanti_staff))
 
 
 # ---------------------------------------------------------------- storia ---
@@ -334,11 +385,12 @@ def controlla_storia():
 def controlla_file_sito():
     """Le pagine e le immagini fisse che il sito da' per scontate."""
     attesi = [
-        "index.html", "rosa.html", "convocati.html", "statistiche.html",
+        "index.html", "rosa.html", "statistiche.html",
         "tornei.html", "storia.html", "contatti.html", "404.html",
         ".nojekyll", "manifest.json", "robots.txt", "sitemap.xml",
         "assets/css/style.css", "assets/js/main.js",
-        "assets/img/logo.svg", "assets/img/favicon.svg", "assets/img/favicon-32.png",
+        # marchio e icone: le genera tools/make_icons.py dallo stemma ufficiale
+        "assets/img/logo.png", "assets/img/logo-grande.png", "assets/img/favicon-32.png",
         "assets/img/apple-touch-icon.png", "assets/img/icon-192.png",
         "assets/img/icon-512.png", "assets/img/og-cover.png",
         "assets/img/placeholder-giocatore.svg",
@@ -346,6 +398,11 @@ def controlla_file_sito():
     for f in attesi:
         if not (ROOT / f).exists():
             errore("file del sito", f"manca '{f}'")
+
+    if not (ROOT / "assets" / "img" / "logo-originale.png").exists():
+        segnaposto.append("assets/img/logo-originale.png — manca lo stemma ufficiale: "
+                          "salvalo li' e lancia tools/make_icons.py per rigenerare "
+                          "logo e icone (adesso sono quelle disegnate a mano)")
 
     # Le icone dichiarate nel manifest devono esistere davvero.
     try:
@@ -360,10 +417,10 @@ def controlla_file_sito():
 def main():
     print(f"\n{'=' * 62}\n  CHECK DATA — Shakhtar Palese\n{'=' * 62}\n")
     controlla_config()
-    numeri = controlla_rosa()
+    numeri, cognomi_staff = controlla_rosa()
     controlla_statistiche(numeri)
     controlla_tornei()
-    controlla_locandine(numeri)
+    controlla_locandine(numeri, cognomi_staff)
     controlla_storia()
     controlla_file_sito()
 

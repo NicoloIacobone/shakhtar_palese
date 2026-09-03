@@ -47,7 +47,17 @@ ROOT = Path(__file__).resolve().parent.parent
 CONFIG = Path(__file__).resolve().parent / "config.json"
 
 # COGNOME_NUMERO.ext, con eventuale data davanti: 2026-09-03_ESPOSITO_29.jpg
-RE_NOME = re.compile(r"^(?:(\d{4}-\d{2}-\d{2})[_-])?(?P<cognome>[A-Za-zÀ-ÿ'’\- ]+)[_-](?P<numero>\d{1,2})$")
+# Per lo staff, che non ha un numero di maglia, il numero e' sostituito dalla
+# sigla del ruolo: DIFRANCO_ALL.jpg, BUONAMICO_PRS.jpg, IACOBONE_SMM.jpg.
+RE_NOME = re.compile(
+    r"^(?:(\d{4}-\d{2}-\d{2})[_-])?"
+    r"(?P<cognome>[A-Za-zÀ-ÿ'’\- ]+)[_-]"
+    r"(?P<codice>\d{1,2}|[A-Za-z]{2,4})$"
+)
+
+# Sigle ammesse per lo staff. Se ne aggiungi una qui, il file COGNOME_SIGLA.ext
+# viene riconosciuto e collegato allo staff in data/rosa.json.
+SIGLE_STAFF = {"ALL", "PRS", "SMM", "DS", "PREP", "MAG"}
 
 # Estensione da usare in uscita, in base al formato VERO letto da Pillow.
 EST_PER_FORMATO = {"JPEG": ".jpg", "PNG": ".png", "WEBP": ".webp", "MPO": ".jpg", "GIF": ".gif"}
@@ -91,13 +101,23 @@ def leggi_json(percorso: Path, default):
 
 
 def analizza_nome(stem: str):
-    """Ritorna (cognome, numero, data_dal_nome) oppure (None, None, None) se fuori convenzione."""
+    """
+    Ritorna (cognome, numero, sigla_staff, data_dal_nome).
+    Per un giocatore: numero valorizzato e sigla None. Per lo staff: il contrario.
+    Fuori convenzione: tutto None.
+    """
     m = RE_NOME.match(stem.strip())
     if not m:
-        return None, None, None
+        return None, None, None, None
     data_nome = m.group(1)
     cognome = " ".join(m.group("cognome").split()).title()
-    return cognome, int(m.group("numero")), data_nome
+    codice = m.group("codice")
+    if codice.isdigit():
+        return cognome, int(codice), None, data_nome
+    sigla = codice.upper()
+    if sigla not in SIGLE_STAFF:
+        return None, None, None, None      # lettere sì, ma non una sigla che conosco
+    return cognome, None, sigla, data_nome
 
 
 def formato_reale(percorso: Path):
@@ -197,16 +217,17 @@ def main(argv):
         if f.suffix.lower() not in (EST_PER_FORMATO.get(fmt, ""), ".jpeg" if fmt == "JPEG" else None):
             info(f"{f.name}: e' in realta' un {fmt}. Uso il formato vero, non l'estensione.")
 
-        cognome, numero, data_nome = analizza_nome(f.stem)
+        cognome, numero, sigla, data_nome = analizza_nome(f.stem)
         valida = cognome is not None
         if not valida:
-            warn(f"{f.name}: nome fuori convenzione COGNOME_NUMERO.ext. "
-                 f"Lo pubblico lo stesso, ma finisce in fondo alla griglia e "
-                 f"non e' collegato a nessun giocatore.")
+            warn(f"{f.name}: nome fuori convenzione COGNOME_NUMERO.ext "
+                 f"(o COGNOME_SIGLA.ext per lo staff: {', '.join(sorted(SIGLE_STAFF))}). "
+                 f"Lo pubblico lo stesso, ma finisce in fondo e non e' collegato a nessuno.")
             problemi += 1
 
         # id stabile: e' la chiave con cui ritrovo i campi scritti a mano
-        ident = f"{slug(cognome)}-{numero}" if valida else slug(f.stem)
+        ident = f"{slug(cognome)}-{numero if numero is not None else sigla.lower()}" \
+            if valida else slug(f.stem)
         if ident in id_visti:
             warn(f"{f.name}: un altro file genera lo stesso identificativo '{ident}'. "
                  f"Rinominane uno, altrimenti si sovrascrivono.")
@@ -273,7 +294,8 @@ def main(argv):
             "web_w": web_size[0], "web_h": web_size[1],
             "thumb_w": thumb_size[0], "thumb_h": thumb_size[1],
             "cognome": cognome,
-            "numero": numero,
+            "numero": numero,          # giocatori: numero di maglia
+            "sigla": sigla,            # staff: ALL / PRS / SMM ...
             "data": data,
             "data_fonte": fonte,
             "valida": valida,
@@ -329,20 +351,37 @@ def main(argv):
         ok(f"scritto {json_loc.relative_to(ROOT)} ({len(voci)} locandine)")
 
     # --- 7. incrocio con la rosa: chi ha la foto e chi no --------------------
-    rosa = leggi_json(ROOT / cfg["json_rosa"], {"giocatori": []}).get("giocatori", [])
-    numeri_con_foto = {v["numero"] for v in voci if v["numero"] is not None}
+    # Chi e' gia' stato presentato e chi manca ancora all'appello.
+    # I giocatori si agganciano col numero di maglia, lo staff col cognome.
+    rosa_doc = leggi_json(ROOT / cfg["json_rosa"], {})
+    rosa = rosa_doc.get("giocatori", [])
+    staff = rosa_doc.get("staff", [])
+    numeri_con_foto = {v["numero"] for v in voci if v.get("numero") is not None}
+    cognomi_con_foto = {slug(v["cognome"]) for v in voci if v.get("sigla") and v.get("cognome")}
+
     senza = [g for g in rosa if g.get("numero") not in numeri_con_foto]
+    senza_staff = [s for s in staff if slug(s.get("cognome", "")) not in cognomi_con_foto]
     orfani = sorted(numeri_con_foto - {g.get("numero") for g in rosa})
+    orfani_staff = sorted(cognomi_con_foto - {slug(s.get("cognome", "")) for s in staff})
+    totale = len(rosa) + len(staff)
+    presentati = totale - len(senza) - len(senza_staff)
 
     print(f"\n{'-' * 62}")
     print(f"  Nuove: {nuovi}   aggiornate: {aggiornati}   invariate: {invariati}   "
           f"da sistemare: {problemi}")
+    print(f"  Presentati sul sito: {presentati} su {totale}.")
     if senza:
-        info(f"Ancora senza locandina ({len(senza)} su {len(rosa)}): "
+        info("Giocatori ancora da presentare: "
              + ", ".join(f"#{g['numero']} {g['cognome']}" for g in senza))
+    if senza_staff:
+        info("Staff ancora da presentare: "
+             + ", ".join(f"{s['cognome']} ({s.get('codice', '?')})" for s in senza_staff))
     if orfani:
         warn("Numeri di maglia presenti nelle locandine ma non nella rosa: "
              + ", ".join(f"#{n}" for n in orfani) + ". Controlla data/rosa.json.")
+    if orfani_staff:
+        warn("Locandine staff senza corrispondenza in data/rosa.json: "
+             + ", ".join(orfani_staff) + ".")
     print(f"{'-' * 62}")
 
     # --- 8. git: proposta, non automatismo ----------------------------------

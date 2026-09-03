@@ -25,25 +25,53 @@
     {
       id: 'rosa', titolo: 'Rosa', file: 'rosa.json',
       aiuto: 'Un giocatore per riga. Il numero di maglia è la chiave che collega tutto il resto ' +
-             '(statistiche e locandine): se lo cambi qui, cambialo anche nelle statistiche.',
+             '(statistiche e locandine): se lo cambi qui, cambialo anche nelle statistiche. ' +
+             'I campi lasciati vuoti semplicemente non compaiono nella scheda sul sito.',
       lista: (d) => d.giocatori,
       nuova: () => ({ numero: 0, nome: '', cognome: '', ruolo: 'Centrocampista', ruolo_sigla: 'CEN',
-                      piede: 'destro', provenienza: '', soprannome: '', tormentone: '',
-                      superstizione: '', difetto_tattico: '', obiettivo: '' }),
+                      piede: 'destro', provenienza: '', classe: '', soprannome: '',
+                      posizione_preferita: '', frase_preferita: '', superstizione: '',
+                      rito_post_allenamento: '', skill_fuori_campo: '' }),
       campi: [
         { k: 'numero', et: '#', tipo: 'int', obbl: true },
         { k: 'nome', et: 'Nome', obbl: true },
         { k: 'cognome', et: 'Cognome', obbl: true },
         { k: 'ruolo', et: 'Ruolo', tipo: 'select', obbl: true,
           opzioni: ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante'] },
-        { k: 'ruolo_sigla', et: 'Sigla', tipo: 'select', opzioni: ['POR', 'DIF', 'CEN', 'ATT'] },
-        { k: 'piede', et: 'Piede', tipo: 'select', opzioni: ['destro', 'sinistro', 'ambidestro'] },
-        { k: 'provenienza', et: 'Provenienza' },
+        { k: 'ruolo_sigla', et: 'Sigla', tipo: 'select', opzioni: ['POR', 'DEF', 'CEN', 'ATT'] },
         { k: 'soprannome', et: 'Soprannome', lungo: true },
-        { k: 'tormentone', et: 'Tormentone', lungo: true },
-        { k: 'superstizione', et: 'Superstizione', lungo: true },
-        { k: 'difetto_tattico', et: 'Difetto tattico', lungo: true },
-        { k: 'obiettivo', et: 'Obiettivo', lungo: true },
+        { k: 'piede', et: 'Piede', tipo: 'select', opzioni: ['', 'destro', 'sinistro', 'ambidestro'] },
+        { k: 'provenienza', et: 'Provenienza' },
+        { k: 'classe', et: 'Classe', tipo: 'int' },
+        { k: 'posizione_preferita', et: 'Posizione preferita', lungo: true },
+        { k: 'frase_preferita', et: 'Frase preferita', lungo: true },
+        { k: 'superstizione', et: 'Superstizione pre-partita', lungo: true },
+        { k: 'rito_post_allenamento', et: 'Rito post-allenamento', lungo: true },
+        { k: 'skill_fuori_campo', et: 'Skill fuori dal campo', lungo: true },
+      ],
+    },
+    {
+      id: 'staff', titolo: 'Staff', file: 'rosa.json',
+      aiuto: 'Chi non scende in campo. Non ha numero di maglia: la locandina si collega col ' +
+             'cognome, quindi il file va chiamato COGNOME_SIGLA (es. DIFRANCO_ALL.jpg).',
+      lista: (d) => (d.staff || (d.staff = [])),
+      nuova: () => ({ codice: 'ALL', nome: '', cognome: '', ruolo: 'Allenatore',
+                      ruolo_sigla: 'ALL', provenienza: '', classe: '', soprannome: '',
+                      frase_preferita: '', superstizione: '', rito_post_allenamento: '',
+                      skill_fuori_campo: '' }),
+      campi: [
+        { k: 'codice', et: 'Sigla', tipo: 'select', obbl: true,
+          opzioni: ['ALL', 'PRS', 'SMM', 'DS', 'PREP', 'MAG'] },
+        { k: 'nome', et: 'Nome', obbl: true },
+        { k: 'cognome', et: 'Cognome', obbl: true },
+        { k: 'ruolo', et: 'Ruolo per esteso', obbl: true, lungo: true },
+        { k: 'soprannome', et: 'Soprannome', lungo: true },
+        { k: 'provenienza', et: 'Provenienza' },
+        { k: 'classe', et: 'Classe', tipo: 'int' },
+        { k: 'frase_preferita', et: 'Frase preferita', lungo: true },
+        { k: 'superstizione', et: 'Superstizione pre-partita', lungo: true },
+        { k: 'rito_post_allenamento', et: 'Rito post-allenamento', lungo: true },
+        { k: 'skill_fuori_campo', et: 'Skill fuori dal campo', lungo: true },
       ],
     },
     {
@@ -273,6 +301,7 @@
       riga[k] = el.value;
     }
 
+    if (sezioneAttiva.id === 'staff' && k === 'codice') riga.ruolo_sigla = riga.codice;
     if (sezioneAttiva.extra) sezioneAttiva.extra(riga, el);
     if (sezioneAttiva.etichettaRiga || sezioneAttiva.id === 'calendario') {
       // il nome del giocatore e l'evidenza "prossima partita" dipendono dai valori: ridisegno

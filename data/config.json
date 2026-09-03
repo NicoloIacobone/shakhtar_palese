@@ -3,7 +3,7 @@
     "nome": "Shakhtar Palese",
     "tagline": "Calcio amatoriale a Palese, Bari. Ghepardi in campo, umani fuori.",
     "base_url": "https://nicoloiacobone.github.io/shakhtar_palese/",
-    "anno_fondazione": 2025
+    "anno_fondazione": 2026
   },
   "social": {
     "instagram": "shakhtar_palese",
@@ -15,5 +15,9 @@
     "indirizzo": "Via Napoli 424, 70132 Bari BA",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=De+Palo+Sporting+Center%2C+Via+Napoli+424%2C+70132+Bari+BA",
     "instagram": "depalosportingcenter"
+  },
+  "rosa": {
+    "mostra_solo_presentati": true,
+    "_nota": "true = sul sito compaiono solo le persone che hanno gia' la loro locandina pubblicata (le altre restano qui nei dati, pronte, e appaiono da sole al prossimo sync). false = si vedono tutti, con il placeholder per chi non ha ancora la foto."
   }
 }

@@ -25,18 +25,13 @@
   .pri { background:var(--arancio); color:#14100b; }
   .sec { border-color:var(--bordo); color:var(--testo); }
   a.btn:hover { filter:brightness(1.1); }
-  svg { width:78px; height:78px; margin:0 auto 1rem; display:block; }
+  img.stemma { width:96px; height:96px; margin:0 auto 1rem; display:block; }
 </style>
 </head>
 <body>
   <main>
-    <svg viewBox="0 0 128 128" role="img" aria-label="Stemma Shakhtar Palese">
-      <path d="M64 6 L116 22 L116 66 C116 96 94 114 64 122 C34 114 12 96 12 66 L12 22 Z"
-            fill="#0f0f10" stroke="#ff7a1a" stroke-width="6" stroke-linejoin="round"/>
-      <g fill="none" stroke="#ff7a1a" stroke-width="13" stroke-linecap="round">
-        <path d="M64 69 A21 21 0 1 1 78.85 33.15"/><path d="M64 51 A21 21 0 1 1 49.15 86.85"/>
-      </g>
-    </svg>
+    <img class="stemma" src="assets/img/logo-grande.png" alt="Stemma Shakhtar Palese"
+         width="96" height="96" data-home="assets/img/logo-grande.png">
     <div class="codice">404</div>
     <h1>Fuorigioco.</h1>
     <p>Questa pagina è partita in anticipo e l'arbitro ha alzato la bandierina.
@@ -52,7 +47,10 @@
   (function () {
     var seg = location.pathname.split('/').filter(Boolean);
     var base = (location.hostname.indexOf('github.io') !== -1 && seg.length) ? '/' + seg[0] + '/' : './';
-    document.querySelectorAll('[data-home]').forEach(function (a) { a.href = base + a.dataset.home; });
+    document.querySelectorAll('[data-home]').forEach(function (el) {
+      if (el.tagName === 'IMG') el.src = base + el.dataset.home;
+      else el.href = base + el.dataset.home;
+    });
   })();
 </script>
 </body>

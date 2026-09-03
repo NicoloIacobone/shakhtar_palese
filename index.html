@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shakhtar Palese — calcio amatoriale a Palese, Bari</title>
-<meta name="description" content="Sito ufficiale dello Shakhtar Palese: rosa, convocati del giorno, statistiche, classifica del Torneo Birra Peroni e prossima partita al De Palo Sporting Center.">
+<meta name="description" content="Sito ufficiale dello Shakhtar Palese: la rosa presentata giorno per giorno, statistiche, classifica del Torneo Birra Peroni e prossima partita al De Palo Sporting Center.">
 <link rel="canonical" href="https://nicoloiacobone.github.io/shakhtar_palese/">
 
 <!-- Open Graph / Twitter: qui le URL DEVONO essere assolute, altrove sempre relative -->
@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="Shakhtar Palese">
 <meta property="og:locale" content="it_IT">
 <meta property="og:title" content="Shakhtar Palese — calcio amatoriale a Palese, Bari">
-<meta property="og:description" content="Sito ufficiale dello Shakhtar Palese: rosa, convocati del giorno, statistiche, classifica del Torneo Birra Peroni e prossima partita al De Palo Sporting Center.">
+<meta property="og:description" content="Sito ufficiale dello Shakhtar Palese: la rosa presentata giorno per giorno, statistiche, classifica del Torneo Birra Peroni e prossima partita al De Palo Sporting Center.">
 <meta property="og:url" content="https://nicoloiacobone.github.io/shakhtar_palese/">
 <meta property="og:image" content="https://nicoloiacobone.github.io/shakhtar_palese/assets/img/og-cover.png">
 <meta property="og:image:width" content="1200">
@@ -20,12 +20,12 @@
 <meta property="og:image:alt" content="Stemma dello Shakhtar Palese">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Shakhtar Palese — calcio amatoriale a Palese, Bari">
-<meta name="twitter:description" content="Sito ufficiale dello Shakhtar Palese: rosa, convocati del giorno, statistiche, classifica del Torneo Birra Peroni e prossima partita al De Palo Sporting Center.">
+<meta name="twitter:description" content="Sito ufficiale dello Shakhtar Palese: la rosa presentata giorno per giorno, statistiche, classifica del Torneo Birra Peroni e prossima partita al De Palo Sporting Center.">
 <meta name="twitter:image" content="https://nicoloiacobone.github.io/shakhtar_palese/assets/img/og-cover.png">
 
 <meta name="theme-color" content="#0b0b0d">
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="assets/css/style.css">
@@ -35,14 +35,13 @@
 <header class="header">
   <div class="header-in">
     <a class="marchio" href="index.html">
-      <img src="assets/img/logo.svg" alt="Stemma Shakhtar Palese" width="32" height="32">
+      <img src="assets/img/logo.png" alt="Stemma Shakhtar Palese" width="32" height="32">
       <span data-config="sito-nome">Shakhtar Palese</span>
     </a>
     <nav class="nav" id="nav" aria-label="Navigazione principale">
       <ul class="nav-lista">
       <li><a href="index.html">Home</a></li>
       <li><a href="rosa.html">Rosa</a></li>
-      <li><a href="convocati.html">Convocati</a></li>
       <li><a href="statistiche.html">Statistiche</a></li>
       <li><a href="tornei.html">Tornei</a></li>
       <li><a href="storia.html">Storia</a></li>
@@ -58,8 +57,8 @@
 </header>
 <section class="hero">
   <div class="contenitore hero-in">
-    <img class="hero-logo" src="assets/img/logo.svg" alt="Stemma Shakhtar Palese" width="90" height="90">
-    <p class="occhiello">Palese &middot; Bari &middot; dal 2025</p>
+    <img class="hero-logo" src="assets/img/logo-grande.png" alt="Stemma Shakhtar Palese" width="110" height="110">
+    <p class="occhiello">Palese &middot; Bari</p>
     <h1 data-config="sito-nome">Shakhtar Palese</h1>
     <p class="sottotitolo" data-config="sito-tagline">Calcio amatoriale a Palese, Bari.</p>
     <div class="gruppo-btn">
@@ -85,10 +84,10 @@
 
   <section class="sezione contenitore">
     <div class="sezione-titolo">
-      <div><h2>Ultime locandine</h2><p class="sottotitolo">Un convocato al giorno, come da tradizione recente.</p></div>
-      <a href="convocati.html">Vedi tutte &rarr;</a>
+      <div><h2>Ultimi presentati</h2><p class="sottotitolo" id="sottotitolo-presentati">Uno al giorno, finché non ci siamo tutti.</p></div>
+      <a href="rosa.html">Tutta la rosa &rarr;</a>
     </div>
-    <div id="ultime-locandine" class="griglia-locandine"><p class="caricamento">Carico le locandine&hellip;</p></div>
+    <div id="ultimi-presentati" class="griglia-rosa"><p class="caricamento">Carico&hellip;</p></div>
   </section>
 
   <section class="sezione contenitore">
@@ -106,7 +105,7 @@
   <div class="contenitore footer-in">
     <div>
       <a class="marchio" href="index.html">
-        <img src="assets/img/logo.svg" alt="" width="32" height="32">
+        <img src="assets/img/logo.png" alt="" width="32" height="32">
         <span data-config="sito-nome">Shakhtar Palese</span>
       </a>
       <p class="sottotitolo" style="margin-top:.6rem" data-config="sito-tagline"></p>
@@ -121,7 +120,6 @@
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="rosa.html">Rosa</a></li>
-        <li><a href="convocati.html">Convocati</a></li>
         <li><a href="statistiche.html">Statistiche</a></li>
         <li><a href="tornei.html">Tornei</a></li>
         <li><a href="storia.html">Storia</a></li>

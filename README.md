@@ -14,22 +14,27 @@ Tutte le istruzioni qui sotto sono per **macOS**.
 
 ## Le tre cose che farai davvero
 
-### 1. Pubblicare la locandina del giorno
+### 1. Presentare una persona
 
-1. Metti l'immagine in `foto_presentazione/`, chiamandola **`COGNOME_NUMERO.jpg`**
-   (es. `ESPOSITO_29.jpg`). Il numero è quello di **maglia**, non un progressivo.
+Il sito mostra **solo chi è già stato presentato**. Gli altri sono già scritti in
+`data/rosa.json`, pronti, ma restano invisibili finché non esce la loro card.
+
+1. Metti l'immagine in `foto_presentazione/`, chiamandola:
+   - **`COGNOME_NUMERO.jpg`** per un giocatore — es. `ESPOSITO_29.jpg`.
+     Il numero è quello di **maglia**, non un progressivo.
+   - **`COGNOME_SIGLA.jpg`** per lo staff — es. `DIFRANCO_ALL.jpg`
+     (`ALL` allenatore, `PRS` presidente, `SMM` social media manager).
 2. **Doppio click su `sync.command`** dal Finder.
-3. Lo script copia l'immagine nel sito, genera la miniatura, aggiorna
+3. Lo script copia l'immagine, genera le versioni ridotte, aggiorna
    `data/locandine.json` e ti chiede se fare commit e push. Rispondi `s`.
 
-La stessa immagine viene usata in due posti: la griglia dei **Convocati** e la
-foto della **player card** nella pagina Rosa. Non serve caricarla due volte.
+Da quel momento la persona compare nella Rosa, nelle Statistiche, in home fra gli
+ultimi presentati, e il contatore "N di 16" si aggiorna da solo.
 
-Lo script ne salva tre versioni: la **miniatura** (~55 KB) per le griglie, la
-versione **web** (~290 KB) per quando la locandina si apre a schermo intero, e
-l'**originale** intatto in `assets/locandine/`, che resta nel repo come archivio
-ma non viene mai servito a chi naviga. Sono nove volte meno byte da scaricare in
-4G, senza differenze visibili.
+Lo script salva tre versioni della stessa immagine: la **miniatura** (~55 KB) per
+le griglie, la versione **web** (~290 KB) per la scheda aperta, e l'**originale**
+intatto in `assets/locandine/`, che resta nel repo come archivio ma non viene mai
+servito a chi naviga.
 
 > La prima volta che apri `sync.command`, macOS potrebbe dire che è di uno
 > sviluppatore non identificato: tasto destro → **Apri** → **Apri**. Succede
@@ -73,14 +78,14 @@ Per fermarlo: `Ctrl+C` nel Terminale.
 
 ```
 shakhtar_palese/
-├── index.html  rosa.html  convocati.html  statistiche.html
+├── index.html  rosa.html  statistiche.html
 ├── tornei.html  storia.html  contatti.html  404.html
-├── sync.command              ← doppio click: sincronizza le locandine
+├── sync.command              ← doppio click: pubblica le nuove locandine
 ├── manifest.json  robots.txt  sitemap.xml  .nojekyll
 ├── assets/
 │   ├── css/style.css         ← TUTTA la grafica, palette compresa
 │   ├── js/                   ← uno script per pagina + main.js condiviso
-│   ├── img/                  ← logo, icone, copertina social, placeholder
+│   ├── img/                  ← stemma, icone, copertina social, placeholder
 │   └── locandine/            ← originali + web/ + thumbs/ (le genera lo script)
 ├── data/                     ← i contenuti del sito. Vedi data/README.md
 ├── admin/                    ← pannello locale, non pubblicato
@@ -88,7 +93,7 @@ shakhtar_palese/
 │   ├── config.json           ← dove sta la cartella sorgente, dimensioni thumb…
 │   ├── sync_locandine.py     ← copia immagini + miniature + JSON
 │   ├── check_data.py         ← valida tutti i JSON
-│   └── make_icons.py         ← rigenera favicon e copertina dal logo
+│   └── make_icons.py         ← rigenera logo e icone dallo stemma ufficiale
 └── foto_presentazione/       ← le card generate con l'IA (non versionata)
 ```
 
@@ -101,13 +106,18 @@ tutto il sito. Sotto c'è il blocco `[data-tema="chiaro"]` per il tema chiaro.
 Il tema scuro è il default; il pulsante in alto a destra fa passare al chiaro e
 la scelta resta salvata nel browser.
 
-### Cambiare il logo o le icone
+### Cambiare lo stemma
 
-Modifica `assets/img/logo.svg`, poi rigenera favicon, icone e copertina social:
+Tutto il marchio del sito nasce da **un solo file**:
+`assets/img/logo-originale.png` (PNG con sfondo trasparente, più è grande meglio
+è). Sostituiscilo e poi lancia:
 
 ```bash
 ./.venv/bin/python tools/make_icons.py
 ```
+
+Rigenera da solo il logo di header e hero, la favicon, l'icona per iPhone, le
+icone dell'app installabile e la copertina che si vede quando incolli il link.
 
 ---
 
@@ -133,29 +143,34 @@ le modifiche, è la cache del browser: ricarica con `Cmd+Shift+R`.
 
 ## Da sostituire prima di far girare il link
 
-Il sito adesso è pieno di **dati inventati**, così si vede subito com'è fatto.
-Ogni file che li contiene ha dentro `"_placeholder": true` e `check_data.py` te
-li elenca a ogni lancio. In ordine di urgenza:
+Nomi, numeri, ruoli e i nomi delle 6 squadre del torneo sono **veri**. Il resto è
+ancora segnaposto: ogni file che ne contiene ha dentro `"_placeholder": true` e
+`check_data.py` te li elenca a ogni lancio. In ordine di urgenza:
 
-- [ ] **`data/rosa.json`** — i 13 giocatori sono nomi finti. Sostituisci nomi,
-      cognomi, numeri di maglia, ruoli e i testi della carta d'identità
-      (soprannome, tormentone, superstizione, difetto tattico, obiettivo).
-      Poi togli `"_placeholder": true`.
-- [ ] **`data/statistiche.json`** — tutti i numeri sono inventati. Azzerali o
-      metti quelli veri. I `numero` devono combaciare con la rosa.
-- [ ] **`data/tornei.json`** — nomi delle 8 squadre, classifica e calendario del
-      Torneo Birra Peroni sono di fantasia. Sostituisci con quelli veri e
-      compila `instagram` del torneo quando lo saprai (adesso è vuoto).
-- [ ] **`data/storia.json`** — il testo è una **bozza scritta da Claude**, con
-      dettagli inventati (chi ha fondato la squadra, il bar, le date).
-      Riscrivilo tu e metti `"_da_rivedere": false` per far sparire l'avviso
-      giallo che il sito mostra in cima alla pagina.
-- [ ] **Le locandine** — ce ne sono 2 su 13. Gli altri 11 giocatori mostrano il
-      placeholder col numero di maglia, che è dignitoso ma non è la stessa cosa.
+- [ ] **Lo stemma** — salva il logo ufficiale come
+      `assets/img/logo-originale.png` e lancia `tools/make_icons.py`.
+      Finché non lo fai, il sito usa uno stemma provvisorio disegnato a mano.
+- [ ] **`data/rosa.json`, i campi personali** — `classe`, `posizione_preferita`,
+      `frase_preferita`, `superstizione`, `rito_post_allenamento` e
+      `skill_fuori_campo` sono **inventati da Claude** per tutte e 16 le persone.
+      Sono frasi e abitudini attribuite a gente vera: fattele confermare dai
+      diretti interessati prima che il link giri. Un campo lasciato vuoto
+      semplicemente non compare, quindi puoi anche svuotarli tutti e riempirli
+      con calma. Poi togli `"_placeholder": true`.
+- [ ] **`data/tornei.json`** — le 6 squadre sono quelle vere, ma **risultati,
+      date e orari sono inventati**. Sostituiscili appena esce il calendario
+      ufficiale, e compila `instagram` del torneo quando lo saprai.
+- [ ] **`data/statistiche.json`** — numeri inventati, coerenti con le 3 giornate
+      finte. Azzerali o metti quelli veri.
+- [ ] **`data/storia.json`** — testo di **bozza scritta da Claude**, con dettagli
+      inventati (chi ha fondato la squadra, il bar, le date). Riscrivilo e metti
+      `"_da_rivedere": false` per far sparire l'avviso giallo sul sito.
+- [ ] **L'anno di fondazione** — lo stemma dice **2026**, la bozza della storia
+      dice 2025. Decidi qual è quello giusto e allinea `data/storia.json`.
+- [ ] **Le locandine** — ce ne sono 2 su 16. Le altre 14 persone semplicemente
+      non compaiono ancora sul sito: è voluto.
 - [ ] `data/config.json` — email, handle social e indirizzo del campo sono già
       quelli veri: controlla solo il link a Google Maps.
-
----
 
 ## Comandi utili
 

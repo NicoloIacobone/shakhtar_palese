@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rosa — Shakhtar Palese</title>
-<meta name="description" content="I 13 giocatori dello Shakhtar Palese: numero di maglia, ruolo, piede, soprannome e carta d'identita' completa di ciascuno.">
+<meta name="description" content="La rosa dello Shakhtar Palese, presentata una persona al giorno: numero di maglia, ruolo, soprannome e la carta d'identita' completa di ognuno.">
 <link rel="canonical" href="https://nicoloiacobone.github.io/shakhtar_palese/rosa.html">
 
 <!-- Open Graph / Twitter: qui le URL DEVONO essere assolute, altrove sempre relative -->
@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="Shakhtar Palese">
 <meta property="og:locale" content="it_IT">
 <meta property="og:title" content="Rosa — Shakhtar Palese">
-<meta property="og:description" content="I 13 giocatori dello Shakhtar Palese: numero di maglia, ruolo, piede, soprannome e carta d'identita' completa di ciascuno.">
+<meta property="og:description" content="La rosa dello Shakhtar Palese, presentata una persona al giorno: numero di maglia, ruolo, soprannome e la carta d'identita' completa di ognuno.">
 <meta property="og:url" content="https://nicoloiacobone.github.io/shakhtar_palese/rosa.html">
 <meta property="og:image" content="https://nicoloiacobone.github.io/shakhtar_palese/assets/img/og-cover.png">
 <meta property="og:image:width" content="1200">
@@ -20,12 +20,12 @@
 <meta property="og:image:alt" content="Stemma dello Shakhtar Palese">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Rosa — Shakhtar Palese">
-<meta name="twitter:description" content="I 13 giocatori dello Shakhtar Palese: numero di maglia, ruolo, piede, soprannome e carta d'identita' completa di ciascuno.">
+<meta name="twitter:description" content="La rosa dello Shakhtar Palese, presentata una persona al giorno: numero di maglia, ruolo, soprannome e la carta d'identita' completa di ognuno.">
 <meta name="twitter:image" content="https://nicoloiacobone.github.io/shakhtar_palese/assets/img/og-cover.png">
 
 <meta name="theme-color" content="#0b0b0d">
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="assets/css/style.css">
@@ -35,14 +35,13 @@
 <header class="header">
   <div class="header-in">
     <a class="marchio" href="index.html">
-      <img src="assets/img/logo.svg" alt="Stemma Shakhtar Palese" width="32" height="32">
+      <img src="assets/img/logo.png" alt="Stemma Shakhtar Palese" width="32" height="32">
       <span data-config="sito-nome">Shakhtar Palese</span>
     </a>
     <nav class="nav" id="nav" aria-label="Navigazione principale">
       <ul class="nav-lista">
       <li><a href="index.html">Home</a></li>
       <li><a href="rosa.html">Rosa</a></li>
-      <li><a href="convocati.html">Convocati</a></li>
       <li><a href="statistiche.html">Statistiche</a></li>
       <li><a href="tornei.html">Tornei</a></li>
       <li><a href="storia.html">Storia</a></li>
@@ -60,9 +59,16 @@
   <section class="sezione contenitore">
     <p class="occhiello">Stagione in corso</p>
     <h1>La rosa</h1>
-    <p class="sottotitolo">Tredici giocatori, tredici carte d'identita'. Clicca su una card per aprire la scheda completa.</p>
+    <p class="sottotitolo" id="intro-rosa">Presentiamo una persona al giorno. Clicca su una card per aprire la scheda completa.</p>
+    <p class="avanzamento" id="avanzamento-rosa" aria-live="polite"></p>
     <div class="filtri" id="filtri-ruolo" role="group" aria-label="Filtra per ruolo"></div>
     <div class="griglia-rosa" id="griglia-rosa"><p class="caricamento">Carico la rosa&hellip;</p></div>
+
+    <div id="blocco-staff" hidden>
+      <h2 style="margin-top:2.4rem">Staff</h2>
+      <p class="sottotitolo">Chi tiene in piedi la baracca fuori dal campo.</p>
+      <div class="griglia-rosa" id="griglia-staff"></div>
+    </div>
   </section>
 </main>
 
@@ -73,7 +79,7 @@
   <div class="contenitore footer-in">
     <div>
       <a class="marchio" href="index.html">
-        <img src="assets/img/logo.svg" alt="" width="32" height="32">
+        <img src="assets/img/logo.png" alt="" width="32" height="32">
         <span data-config="sito-nome">Shakhtar Palese</span>
       </a>
       <p class="sottotitolo" style="margin-top:.6rem" data-config="sito-tagline"></p>
@@ -88,7 +94,6 @@
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="rosa.html">Rosa</a></li>
-        <li><a href="convocati.html">Convocati</a></li>
         <li><a href="statistiche.html">Statistiche</a></li>
         <li><a href="tornei.html">Tornei</a></li>
         <li><a href="storia.html">Storia</a></li>

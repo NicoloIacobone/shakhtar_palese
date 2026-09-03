@@ -78,11 +78,43 @@ const SP = (() => {
     </article>`;
   }
 
+  /* La card di una persona (giocatore o staff), usata in home e nella pagina Rosa.
+     Con `href` diventa un link, senza diventa un bottone che apre la scheda. */
+  function cardPersona(p, foto, opts = {}) {
+    const nomeCompleto = `${p.nome} ${p.cognome}`;
+    const distintivo = p.numero != null
+      ? `<span class="numero">${esc(p.numero)}</span>`
+      : `<span class="ruolo-staff">${esc(p.ruolo_sigla || p.codice || 'staff')}</span>`;
+    const img = foto
+      ? `<img src="${esc(foto.thumb)}" alt="${esc(nomeCompleto)}" width="${esc(foto.thumb_w)}"
+             height="${esc(foto.thumb_h)}" loading="lazy" decoding="async">`
+      : `<img src="assets/img/placeholder-giocatore.svg"
+             alt="Foto di ${esc(p.cognome)} non ancora disponibile"
+             width="400" height="600" loading="lazy" decoding="async">`;
+    const dentro = `
+      <div class="foto">${distintivo}${img}</div>
+      <div class="info">
+        <div class="cognome">${esc(p.cognome)}</div>
+        <div class="nome-pic">${esc(p.nome)}</div>
+        <span class="ruolo">${esc(p.ruolo_sigla || p.codice || '')}</span>
+      </div>`;
+    return opts.href
+      ? `<a class="player-card" href="${opts.href}" aria-label="${esc(nomeCompleto)}">${dentro}</a>`
+      : `<button class="player-card" type="button" data-chiave="${esc(p._chiave)}"
+           aria-label="Apri la scheda di ${esc(nomeCompleto)}">${dentro}</button>`;
+  }
+
   /* Etichette dei filtri: "Portiere" -> "Portieri". */
   const PLURALI = { Portiere: 'Portieri', Difensore: 'Difensori', Centrocampista: 'Centrocampisti', Attaccante: 'Attaccanti' };
   const plurale = (ruolo) => PLURALI[ruolo] || ruolo;
 
-  return { dati, esc, dataIt, quando, errore, slug, rigaRisultato, plurale };
+  /* Chiave con cui una persona si collega alla sua locandina:
+     i giocatori col numero di maglia, lo staff col cognome. */
+  const chiavePersona = (p) => (p.numero != null ? `n${p.numero}` : `s${slug(p.cognome)}`);
+  const chiaveLocandina = (l) => (l.numero != null ? `n${l.numero}` : `s${slug(l.cognome || '')}`);
+
+  return { dati, esc, dataIt, quando, errore, slug, rigaRisultato, plurale,
+           cardPersona, chiavePersona, chiaveLocandina };
 })();
 
 /* ---------------------------------------------------------------- tema --- */

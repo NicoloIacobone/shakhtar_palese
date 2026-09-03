@@ -31,10 +31,25 @@
   let ordinaPer = 'gol', direzione = 'desc';
 
   try {
-    const [r, s] = await Promise.all([SP.dati('rosa.json'), SP.dati('statistiche.json')]);
+    const [cfg, r, s, l] = await Promise.all([
+      SP.dati('config.json'),
+      SP.dati('rosa.json'),
+      SP.dati('statistiche.json'),
+      SP.dati('locandine.json').catch(() => ({ locandine: [] })),
+    ]);
     const stat = {};
     (s.giocatori || []).forEach((x) => { stat[x.numero] = x; });
-    righe = (r.giocatori || []).map((g) => ({
+
+    // Stessa regola della pagina Rosa: chi non e' ancora stato presentato non
+    // deve comparire nemmeno qui, altrimenti il suo nome uscirebbe in anticipo.
+    const soloPresentati = cfg.rosa?.mostra_solo_presentati !== false;
+    const conFoto = new Set((l.locandine || [])
+      .filter((x) => x.valida !== false && x.numero != null)
+      .map((x) => x.numero));
+
+    righe = (r.giocatori || [])
+      .filter((g) => !soloPresentati || conFoto.has(g.numero))
+      .map((g) => ({
       numero: g.numero,
       giocatore: `${g.cognome} ${g.nome.charAt(0)}.`,
       cognome: g.cognome,
@@ -44,6 +59,15 @@
       mvp: 0, papere: 0, gol_sbagliati: 0, ritardi: 0, multe_euro: 0,
       ...(stat[g.numero] || {}),
     }));
+
+    if (!righe.length) {
+      const vuoto = '<p class="vuoto">Le statistiche compaiono qui mano a mano che presentiamo i giocatori.</p>';
+      elLista.innerHTML = vuoto;
+      elLeader.innerHTML = '';
+      document.querySelector('.tabella-wrap')?.setAttribute('hidden', '');
+      elFiltri.hidden = true;
+      return;
+    }
   } catch (e) {
     console.error(e);
     SP.errore(elLista, e.message);

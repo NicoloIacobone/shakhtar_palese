@@ -1,9 +1,9 @@
-/* home.js — prossima partita + countdown, ultimi 3 risultati, ultime locandine. */
+/* home.js — prossima partita + countdown, ultimi 3 risultati, ultimi presentati. */
 
 (async function home() {
   const elProssima  = document.getElementById('prossima-partita');
   const elRisultati = document.getElementById('ultimi-risultati');
-  const elLocandine = document.getElementById('ultime-locandine');
+  const elPresentati = document.getElementById('ultimi-presentati');
 
   /* ---------------------------------------- torneo corrente e partite --- */
   try {
@@ -18,9 +18,11 @@
       .sort((a, b) => (a.data + a.ora).localeCompare(b.data + b.ora));
     disegnaProssima(daGiocare[0], torneo, noi);
 
-    // Ultimi 3 risultati, dal piu' recente.
+    // Ultimi 3 risultati NOSTRI, dal piu' recente. Il calendario contiene tutte
+    // le partite del girone: in home interessano solo quelle che giochiamo noi
+    // (le altre finirebbero anche colorate a caso, non avendo un nostro esito).
     const giocate = torneo.calendario
-      .filter((m) => m.stato === 'giocata')
+      .filter((m) => m.stato === 'giocata' && (m.casa === noi || m.ospite === noi))
       .sort((a, b) => (b.data + b.ora).localeCompare(a.data + a.ora))
       .slice(0, 3);
     disegnaRisultati(giocate, noi);
@@ -102,23 +104,48 @@
     elRisultati.innerHTML = partite.map((m) => SP.rigaRisultato(m, noi)).join('');
   }
 
-  /* ------------------------------------------------ ultime 4 locandine --- */
+  /* ------------------------------------------ ultimi presentati (rosa) --- */
   try {
-    const l = await SP.dati('locandine.json');
-    const ultime = (l.locandine || []).slice(0, 4);
-    if (!ultime.length) {
-      elLocandine.innerHTML = `<p class="vuoto" style="grid-column:1/-1">Nessuna locandina ancora pubblicata.
-        Lancia <code>sync.command</code> dopo aver messo le immagini in <code>foto_presentazione/</code>.</p>`;
+    const [cfg, r, l] = await Promise.all([
+      SP.dati('config.json'),
+      SP.dati('rosa.json'),
+      SP.dati('locandine.json').catch(() => ({ locandine: [] })),
+    ]);
+
+    // Le locandine sono gia' in ordine cronologico inverso: le uso per sapere
+    // chi e' stato presentato per ultimo.
+    const persone = [
+      ...(r.giocatori || []).map((p) => ({ ...p, _chiave: SP.chiavePersona(p) })),
+      ...(r.staff || []).map((p) => ({ ...p, _chiave: SP.chiavePersona(p) })),
+    ];
+    const perChiave = Object.fromEntries(persone.map((p) => [p._chiave, p]));
+
+    const ultimi = [];
+    for (const loc of l.locandine || []) {
+      if (loc.valida === false) continue;
+      const p = perChiave[SP.chiaveLocandina(loc)];
+      if (p && !ultimi.some((u) => u.p._chiave === p._chiave)) ultimi.push({ p, loc });
+      if (ultimi.length === 4) break;
+    }
+
+    const mancano = persone.length - (l.locandine || []).filter((x) => x.valida !== false).length;
+    const sotto = document.getElementById('sottotitolo-presentati');
+    if (sotto && cfg.rosa?.mostra_solo_presentati !== false) {
+      sotto.textContent = mancano > 0
+        ? `Ne mancano ancora ${mancano}. Uno al giorno, su Instagram e qui.`
+        : 'Ci siamo tutti.';
+    }
+
+    if (!ultimi.length) {
+      elPresentati.innerHTML = `<p class="vuoto" style="grid-column:1/-1">
+        Le presentazioni cominciano a breve.</p>`;
       return;
     }
-    elLocandine.innerHTML = ultime.map((x) => `
-      <a class="locandina" href="convocati.html" aria-label="Locandina di ${SP.esc(x.giocatore || x.cognome)}">
-        <img src="${SP.esc(x.thumb)}" alt="Locandina di ${SP.esc(x.giocatore || x.cognome)}"
-             width="${SP.esc(x.thumb_w)}" height="${SP.esc(x.thumb_h)}" loading="lazy" decoding="async">
-        <div class="didascalia"><b>${SP.esc(x.giocatore || x.cognome)}</b><small>#${SP.esc(x.numero ?? '?')} &middot; ${SP.dataIt(x.data, false)}</small></div>
-      </a>`).join('');
+    elPresentati.innerHTML = ultimi
+      .map(({ p, loc }) => SP.cardPersona(p, loc, { href: 'rosa.html' }))
+      .join('');
   } catch (e) {
     console.error(e);
-    SP.errore(elLocandine, e.message);
+    SP.errore(elPresentati, e.message);
   }
 })();

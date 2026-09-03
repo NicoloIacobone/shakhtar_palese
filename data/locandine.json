@@ -1,6 +1,6 @@
 {
   "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive.",
-  "generato_il": "2026-09-03T14:17:14",
+  "generato_il": "2026-09-03T18:16:31",
   "totale": 2,
   "locandine": [
     {
@@ -16,6 +16,7 @@
       "thumb_h": 600,
       "cognome": "Esposito",
       "numero": 29,
+      "sigla": null,
       "data": "2026-09-03",
       "data_fonte": "mtime",
       "valida": true,
@@ -32,7 +33,7 @@
         "web_qualita": 82
       },
       "data_pubblicazione": "",
-      "giocatore": "Antonio Esposito",
+      "giocatore": "Umberto Esposito",
       "didascalia": "Il Ghepardo. Corre tanto, spesso nella direzione giusta."
     },
     {
@@ -48,6 +49,7 @@
       "thumb_h": 600,
       "cognome": "Spadaro",
       "numero": 12,
+      "sigla": null,
       "data": "2026-09-02",
       "data_fonte": "mtime",
       "valida": true,
@@ -64,7 +66,7 @@
         "web_qualita": 82
       },
       "data_pubblicazione": "",
-      "giocatore": "Giuseppe Spadaro",
+      "giocatore": "Savio Spadaro",
       "didascalia": ""
     }
   ]

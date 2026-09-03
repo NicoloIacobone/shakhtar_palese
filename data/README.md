@@ -38,28 +38,58 @@ cambia ovunque nel sito.
 | `social.instagram` / `social.tiktok` | l'handle **senza la @** (es. `shakhtar_palese`) |
 | `social.email` | l'indirizzo email della squadra |
 | `campo.*` | nome, indirizzo, link Google Maps e Instagram della struttura |
+| `rosa.mostra_solo_presentati` | `true` = sul sito ci sono solo le persone gia' presentate con la loro locandina. `false` = ci sono tutti, con il placeholder per chi non ha ancora la foto |
 
-## `rosa.json` — i giocatori
+## `rosa.json` — le persone della squadra
 
-Una voce per giocatore, dentro la lista `giocatori`. È la "carta d'identità"
-che si apre cliccando su una player card.
+Due liste: `giocatori` e `staff`.
+
+**Regola importante:** sul sito compaiono **solo le persone gia' presentate**,
+cioe' quelle che hanno la loro locandina pubblicata. Le altre restano qui,
+pronte, e appaiono da sole appena lanci `sync.command` con la loro card. Se
+preferisci mostrarli tutti subito, in `config.json` metti
+`"mostra_solo_presentati": false`.
+
+### Un giocatore
 
 | campo | note |
 |---|---|
-| `numero` | **il numero di maglia. È la chiave che collega tutto**: statistiche e foto si agganciano a questo numero. Deve essere unico |
-| `nome`, `cognome` | obbligatori |
-| `ruolo` | `Portiere`, `Difensore`, `Centrocampista` o `Attaccante` (i filtri usano questi) |
-| `ruolo_sigla` | `POR`, `DIF`, `CEN`, `ATT`: è quello che appare sulla card |
-| `piede` | `destro`, `sinistro` o `ambidestro` |
-| `provenienza`, `soprannome`, `tormentone`, `superstizione`, `difetto_tattico`, `obiettivo` | testo libero, compaiono nella scheda |
+| `numero` | **il numero di maglia. E' la chiave che collega tutto**: statistiche e foto si agganciano a questo numero. Deve essere unico |
+| `nome`, `cognome`, `ruolo` | obbligatori. `ruolo` = `Portiere`, `Difensore`, `Centrocampista` o `Attaccante` |
+| `ruolo_sigla` | `POR`, `DEF`, `CEN`, `ATT`: e' quello che appare sulla card |
+| `soprannome` | e' quello scritto in arancione sotto il nome |
 
-**La foto non si scrive qui.** Viene agganciata da sola incrociando il numero di
-maglia con le locandine: metti l'immagine in `foto_presentazione/` chiamandola
-`COGNOME_NUMERO.jpg` e lancia `sync.command`. Chi non ha la foto mostra un
-placeholder col suo numero, e va benissimo così.
+Poi i due gruppi che si vedono nella scheda:
 
-`"_placeholder": true` significa "questi dati sono ancora inventati". Toglilo
-quando metti quelli veri.
+**Dati di base** — `numero`, `ruolo`, `piede` (destro / sinistro / ambidestro),
+`provenienza` (il quartiere), `classe` (l'anno di nascita, es. `1998`).
+
+**Segni particolari** — `posizione_preferita`, `frase_preferita`,
+`superstizione` (quella pre-partita), `rito_post_allenamento`,
+`skill_fuori_campo`.
+
+**Un campo lasciato vuoto semplicemente non compare nella scheda.** Non ci sono
+buchi ne' trattini: meglio una scheda corta che una piena di caselle vuote. Puoi
+quindi riempirli con calma, uno alla volta.
+
+### Lo staff
+
+Stessi campi, ma senza `numero` e senza `posizione_preferita`. In piu':
+
+| campo | note |
+|---|---|
+| `codice` | la sigla: `ALL` allenatore, `PRS` presidente, `SMM` social media manager (ammesse anche `DS`, `PREP`, `MAG`) |
+| `ruolo` | il ruolo per esteso, che compare nella scheda |
+
+Lo staff non ha statistiche e non compare nella pagina Statistiche. La sua
+locandina si collega **col cognome**, non col numero: vedi sotto.
+
+**La foto non si scrive qui.** Si aggancia da sola: vedi `locandine.json`.
+
+`"_placeholder": true` significa "questi dati sono ancora inventati". I nomi, i
+numeri e i ruoli sono veri; classe, frase preferita, superstizione, rito e skill
+sono segnaposto scritti da Claude: **falli confermare dai diretti interessati**,
+poi togli il flag.
 
 ## `statistiche.json` — i numeri dei giocatori
 
@@ -108,7 +138,7 @@ Per ogni partita:
 partita `da_giocare` in ordine di data e ora. Il countdown si calcola da lì.
 Per registrare un risultato: metti i gol e cambia lo `stato` in `giocata`.
 
-## `locandine.json` — le card dei convocati
+## `locandine.json` — le card di presentazione
 
 ⚠️ **Questo file lo genera `sync.command`.** Non riscriverlo a mano da capo:
 al prossimo lancio dello script le tue modifiche strutturali sparirebbero.
@@ -131,8 +161,20 @@ Ci sono però **tre campi tuoi, che lo script non tocca mai**, nemmeno rilancian
 | campo | a cosa serve |
 |---|---|
 | `data_pubblicazione` | `"2026-09-10"`. **Ha la precedenza su tutto** ed è il modo per correggere l'ordine della griglia se la data del file è sbagliata |
-| `giocatore` | il nome da mostrare sotto la locandina (se vuoto usa il cognome preso dal nome del file) |
-| `didascalia` | una riga di testo che compare quando apri la locandina a schermo intero |
+| `giocatore` | il nome da mostrare (se vuoto usa il cognome preso dal nome del file) |
+| `didascalia` | una riga di testo che compare nella scheda, sotto il soprannome |
+
+### Come si chiamano i file
+
+Metti l'immagine in `foto_presentazione/` e chiamala:
+
+- **`COGNOME_NUMERO.jpg`** per un giocatore — es. `ESPOSITO_29.jpg`. Il numero e'
+  quello di **maglia**, non un progressivo.
+- **`COGNOME_SIGLA.jpg`** per lo staff — es. `DIFRANCO_ALL.jpg`,
+  `BUONAMICO_PRS.jpg`, `IACOBONE_SMM.jpg`.
+
+Poi doppio click su `sync.command`. Da quel momento la persona compare sul sito.
+Se sbagli il nome del file, lo script te lo dice invece di ignorarlo in silenzio.
 
 Tutto il resto (`file`, `thumb`, dimensioni, `ordine`, `_sorgente`) è roba dello
 script: se la modifichi, viene ricalcolata.
