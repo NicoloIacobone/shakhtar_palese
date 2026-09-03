@@ -131,8 +131,8 @@ def controlla_rosa():
                 errore("rosa.json", f"{et}numero {n} gia' usato da {visti[n]}")
             else:
                 visti[n] = g.get("cognome", "?")
-        if g.get("piede") not in (None, "", "destro", "sinistro", "ambidestro"):
-            avviso("rosa.json", f"{et}piede '{g['piede']}': mi aspettavo destro/sinistro/ambidestro")
+        # 'piede' e' testo libero di proposito: ci va la risposta divertente,
+        # non per forza destro/sinistro. Nessun controllo sul contenuto.
         if g.get("classe") not in (None, "") and not (1940 <= int(g.get("classe", 0) or 0) <= 2020):
             errore("rosa.json", f"{et}classe '{g.get('classe')}': mi aspettavo un anno di nascita")
         vuoti += sum(1 for c in CAMPI_PERSONALI if not g.get(c))

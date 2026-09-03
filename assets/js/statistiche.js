@@ -90,13 +90,25 @@
       <span class="ds">${SP.esc(descrizione)}</span>
     </div>`;
   }
-  elLeader.innerHTML = [
-    leader('Capocannoniere', 'gol', 'gol segnati'),
-    leader('Re degli assist', 'assist', 'assist serviti'),
-    leader('Uomo dei cartellini', 'ammonizioni', 'ammonizioni rimediate'),
-    leader('Re delle papere', 'papere', 'papere, a giudizio insindacabile'),
-    leader('Cassa comune', 'multe_euro', 'euro di multe versate'),
-  ].join('');
+  // Finche' non si e' giocato niente, cinque card che dicono "nessuno" sono
+  // solo rumore: meglio una riga sola che spiega perche' e' tutto a zero.
+  const nulla = righe.every((r) => COLONNE.every((c) => c.testo || !r[c.k] || c.k === 'numero'));
+  if (nulla) {
+    elLeader.className = '';
+    elLeader.innerHTML = `<div class="card">
+      <h3 style="margin-bottom:.3rem">Si comincia da zero</h3>
+      <p class="sottotitolo" style="margin:0">La stagione non è ancora entrata nel vivo.
+      Capocannoniere, re degli assist e re delle papere si assegnano dalla prima partita.</p>
+    </div>`;
+  } else {
+    elLeader.innerHTML = [
+      leader('Capocannoniere', 'gol', 'gol segnati'),
+      leader('Re degli assist', 'assist', 'assist serviti'),
+      leader('Uomo dei cartellini', 'ammonizioni', 'ammonizioni rimediate'),
+      leader('Re delle papere', 'papere', 'papere, a giudizio insindacabile'),
+      leader('Cassa comune', 'multe_euro', 'euro di multe versate'),
+    ].join('');
+  }
 
   /* -------------------------------------------------- filtri per ruolo --- */
   const ruoli = ['tutti', ...new Set(righe.map((x) => x.ruolo))];

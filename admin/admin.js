@@ -40,7 +40,9 @@
           opzioni: ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante'] },
         { k: 'ruolo_sigla', et: 'Sigla', tipo: 'select', opzioni: ['POR', 'DEF', 'CEN', 'ATT'] },
         { k: 'soprannome', et: 'Soprannome', lungo: true },
-        { k: 'piede', et: 'Piede', tipo: 'select', opzioni: ['', 'destro', 'sinistro', 'ambidestro'] },
+        // testo libero, non una tendina: qui ci va la risposta divertente,
+        // non solo "destro" o "sinistro"
+        { k: 'piede', et: 'Piede preferito', lungo: true },
         { k: 'provenienza', et: 'Provenienza' },
         { k: 'classe', et: 'Classe', tipo: 'int' },
         { k: 'posizione_preferita', et: 'Posizione preferita', lungo: true },

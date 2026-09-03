@@ -34,9 +34,14 @@
 
   function disegnaProssima(m, torneo, noi) {
     if (!m) {
-      elProssima.innerHTML = `<div class="card"><h2>Nessuna partita in calendario</h2>
-        <p class="sottotitolo">Il ${SP.esc(torneo.nome)} per ora tace. Aggiungi la prossima in
-        <code>data/tornei.json</code>.</p></div>`;
+      elProssima.innerHTML = `<div class="card">
+        <h2>Calendario in arrivo</h2>
+        <p class="sottotitolo">Il ${SP.esc(torneo.nome)} non è ancora cominciato: appena escono
+        date e avversari li trovi qui, con il conto alla rovescia.</p>
+        <div class="gruppo-btn" style="margin-top:1rem">
+          <a class="btn btn-fantasma" href="tornei.html">Vai al torneo</a>
+        </div>
+      </div>`;
       return;
     }
     const inCasa = m.casa === noi;
@@ -98,7 +103,8 @@
 
   function disegnaRisultati(partite, noi) {
     if (!partite.length) {
-      elRisultati.innerHTML = '<p class="vuoto">Ancora nessuna partita giocata. Meglio cosi&#39;, per ora.</p>';
+      elRisultati.innerHTML = `<p class="vuoto">Non abbiamo ancora giocato niente.
+        Imbattuti, se vogliamo vedere il bicchiere mezzo pieno.</p>`;
       return;
     }
     elRisultati.innerHTML = partite.map((m) => SP.rigaRisultato(m, noi)).join('');

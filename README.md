@@ -141,36 +141,41 @@ le modifiche, è la cache del browser: ricarica con `Cmd+Shift+R`.
 
 ---
 
-## Da sostituire prima di far girare il link
+## Prima di far girare il link
 
-Nomi, numeri, ruoli e i nomi delle 6 squadre del torneo sono **veri**. Il resto è
-ancora segnaposto: ogni file che ne contiene ha dentro `"_placeholder": true` e
-`check_data.py` te li elenca a ogni lancio. In ordine di urgenza:
+Statistiche, risultati e classifica sono **a zero**: non c'è più niente di
+inventato lì dentro. I nomi, i numeri e i ruoli delle 16 persone sono veri, e le
+5 avversarie sono segnate `TBA` finché non le ufficializzano.
+
+Restano **due cose scritte da Claude che parlano di persone vere**, ed entrambe
+si vedono sul sito:
+
+- [ ] **I campi personali in `data/rosa.json`** — `classe`,
+      `posizione_preferita`, `frase_preferita`, `superstizione`,
+      `rito_post_allenamento`, `skill_fuori_campo` sono **inventati**, per tutte
+      e 16 le persone. Sul sito adesso se ne vedono due (Spadaro ed Esposito),
+      ma ogni nuova locandina ne pubblica altri. Falli confermare dai diretti
+      interessati, oppure svuotali: **un campo vuoto semplicemente non compare**,
+      la scheda si accorcia e basta. Poi togli `"_placeholder": true`.
+- [ ] **`data/storia.json`** — la storia del club è una **bozza inventata**
+      (chi ha fondato la squadra, il bar, le date). Il sito lo dichiara con un
+      avviso giallo in cima alla pagina, ma resta roba da riscrivere.
+      Quando è tua, metti `"_da_rivedere": false` e l'avviso sparisce.
+
+Più due dettagli:
 
 - [ ] **Lo stemma** — salva il logo ufficiale come
       `assets/img/logo-originale.png` e lancia `tools/make_icons.py`.
       Finché non lo fai, il sito usa uno stemma provvisorio disegnato a mano.
-- [ ] **`data/rosa.json`, i campi personali** — `classe`, `posizione_preferita`,
-      `frase_preferita`, `superstizione`, `rito_post_allenamento` e
-      `skill_fuori_campo` sono **inventati da Claude** per tutte e 16 le persone.
-      Sono frasi e abitudini attribuite a gente vera: fattele confermare dai
-      diretti interessati prima che il link giri. Un campo lasciato vuoto
-      semplicemente non compare, quindi puoi anche svuotarli tutti e riempirli
-      con calma. Poi togli `"_placeholder": true`.
-- [ ] **`data/tornei.json`** — le 6 squadre sono quelle vere, ma **risultati,
-      date e orari sono inventati**. Sostituiscili appena esce il calendario
-      ufficiale, e compila `instagram` del torneo quando lo saprai.
-- [ ] **`data/statistiche.json`** — numeri inventati, coerenti con le 3 giornate
-      finte. Azzerali o metti quelli veri.
-- [ ] **`data/storia.json`** — testo di **bozza scritta da Claude**, con dettagli
-      inventati (chi ha fondato la squadra, il bar, le date). Riscrivilo e metti
-      `"_da_rivedere": false` per far sparire l'avviso giallo sul sito.
 - [ ] **L'anno di fondazione** — lo stemma dice **2026**, la bozza della storia
-      dice 2025. Decidi qual è quello giusto e allinea `data/storia.json`.
-- [ ] **Le locandine** — ce ne sono 2 su 16. Le altre 14 persone semplicemente
-      non compaiono ancora sul sito: è voluto.
-- [ ] `data/config.json` — email, handle social e indirizzo del campo sono già
-      quelli veri: controlla solo il link a Google Maps.
+      dice 2025. Decidi qual è quello giusto.
+
+E quando escono le informazioni ufficiali:
+
+- [ ] Le 5 squadre `TBA` in `data/tornei.json`, l'handle `instagram` del torneo,
+      e il calendario (`calendario: []`, per ora vuoto). Appena aggiungi la prima
+      partita con `"stato": "da_giocare"`, in home tornano la prossima partita e
+      il conto alla rovescia, da soli.
 
 ## Comandi utili
 

@@ -403,9 +403,27 @@ th.ordinabile[aria-sort="descending"]::after { content: "↓"; opacity: 1; color
 }
 
 /* --- Testo lungo (storia) --- */
-.prosa { max-width: 68ch; }
-.prosa p { font-size: 1.03rem; }
-.prosa p:first-of-type { font-size: 1.15rem; color: var(--testo); }
+/* Una sola misura di carattere per tutti i paragrafi, primo compreso. */
+/* A colonna singola la riga si ferma qui: oltre gli ~80 caratteri l'occhio
+   fatica a ritrovare l'inizio della riga dopo. */
+.prosa { max-width: 74ch; }
+.prosa p { font-size: 1.05rem; margin: 0 0 1.15em; }
+.prosa p:last-child { margin-bottom: 0; }
+
+/* Da 860px in su il testo si impagina su due colonne: cosi' riempie la pagina
+   in orizzontale senza allungare le righe oltre il leggibile. Una colonna sola
+   larga 1120px vorrebbe dire righe da ~130 caratteri, faticose da seguire.
+   max-width va azzerato, altrimenti limiterebbe l'intero blocco a 68ch. */
+@media (min-width: 860px) {
+  .prosa {
+    max-width: none;
+    column-count: 2;
+    column-gap: 3.2rem;
+    column-rule: 1px solid var(--bordo);
+    orphans: 2;   /* mai una riga sola in fondo a una colonna */
+    widows: 2;    /* ne' una riga sola in cima a quella dopo */
+  }
+}
 
 /* --- Contatti --- */
 .contatto-riga { display: flex; align-items: center; gap: .8rem; padding: .9rem 0; border-bottom: 1px solid var(--bordo); }

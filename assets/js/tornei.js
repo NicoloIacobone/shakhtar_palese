@@ -20,7 +20,7 @@
     SP.errore(elCal, e.message);
     return;
   }
-  if (!attivo) { elClass.innerHTML = '<p class="vuoto">Nessun torneo in data/tornei.json.</p>'; return; }
+  if (!attivo) { elClass.innerHTML = '<p class="vuoto">Nessun torneo in programma.</p>'; return; }
 
   elScelta.innerHTML = tutti.map((t) =>
     `<button class="chip" type="button" data-id="${SP.esc(t.id)}" aria-pressed="${t.id === attivo.id}">
@@ -35,7 +35,7 @@
 
   function disegna() {
     const noi = attivo.nostra_squadra;
-    const STATI = { in_corso: 'in corso', concluso: 'concluso', in_programma: 'in programma' };
+    const STATI = { in_corso: 'in corso', concluso: 'concluso', in_programma: 'non ancora iniziato' };
 
     elTitolo.textContent = attivo.nome;
     const ig = attivo.instagram
@@ -44,8 +44,21 @@
     elSotto.innerHTML = `Stagione ${SP.esc(attivo.stagione)} &middot; ${SP.esc(STATI[attivo.stato] || attivo.stato)}${ig}`;
 
     /* ------------------------------------------------------ classifica --- */
+    // Se nessuno ha ancora giocato, la classifica e' una fila di zeri: meglio
+    // dirlo, invece di lasciare pensare che siamo messi malissimo.
+    const nonIniziato = (attivo.classifica || []).every((r) => !r.g);
+    const daAnnunciare = (attivo.classifica || []).filter((r) => r.squadra === 'TBA').length;
+
     if (!attivo.classifica || !attivo.classifica.length) {
-      elClass.innerHTML = '<p class="vuoto">Questo torneo non ha una classifica (erano amichevoli).</p>';
+      elClass.innerHTML = '<p class="vuoto">Questo torneo non ha una classifica.</p>';
+    } else if (nonIniziato) {
+      elClass.innerHTML = `<div class="card">
+        <h3 style="margin-bottom:.3rem">Non abbiamo ancora giocato</h3>
+        <p class="sottotitolo" style="margin:0">
+          ${attivo.classifica.length} squadre al via${daAnnunciare
+            ? `, di cui ${daAnnunciare} ancora da annunciare` : ''}.
+          La classifica comincia a riempirsi dalla prima giornata.</p>
+      </div>`;
     } else {
       const col = [['punti','Pt'],['g','G'],['v','V'],['n','N'],['p','P'],['gf','GF'],['gs','GS'],['dr','DR']];
       const righe = [...attivo.classifica].sort((a, b) => a.pos - b.pos);
@@ -75,7 +88,11 @@
     /* ------------------------------------------- calendario e risultati --- */
     const partite = [...(attivo.calendario || [])].sort((a, b) =>
       (a.data + a.ora).localeCompare(b.data + b.ora));
-    if (!partite.length) { elCal.innerHTML = '<p class="vuoto">Calendario non ancora pubblicato.</p>'; return; }
+    if (!partite.length) {
+      elCal.innerHTML = `<p class="vuoto">Il calendario non è ancora uscito.
+        Appena c'è, date e avversari compaiono qui.</p>`;
+      return;
+    }
 
     elCal.innerHTML = partite.map((m) => {
       if (m.stato === 'giocata') return SP.rigaRisultato(m, noi);

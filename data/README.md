@@ -61,8 +61,11 @@ preferisci mostrarli tutti subito, in `config.json` metti
 
 Poi i due gruppi che si vedono nella scheda:
 
-**Dati di base** — `numero`, `ruolo`, `piede` (destro / sinistro / ambidestro),
-`provenienza` (il quartiere), `classe` (l'anno di nascita, es. `1998`).
+**Dati di base** — `numero`, `ruolo`, `piede`, `provenienza` (il quartiere),
+`classe` (l'anno di nascita, es. `1998`).
+
+`piede` è **testo libero**: puoi scrivere `destro`, ma anche
+`"destro, ma solo se non guarda nessuno"`. Nessuno ti controlla.
 
 **Segni particolari** — `posizione_preferita`, `frase_preferita`,
 `superstizione` (quella pre-partita), `rito_post_allenamento`,
@@ -95,6 +98,9 @@ poi togli il flag.
 
 Una riga per giocatore, agganciata alla rosa tramite `numero`.
 
+**Adesso è tutto a zero**: la stagione non è ancora cominciata. Aggiorna dopo
+ogni partita, a mano o dal pannello.
+
 `presenze`, `minuti`, `gol`, `assist`, `ammonizioni`, `espulsioni`, `mvp` sono
 le statistiche serie. `papere`, `gol_sbagliati`, `ritardi`, `multe_euro` sono le
 nostre. Sono tutti numeri interi, mai negativi, mai fra virgolette:
@@ -107,6 +113,12 @@ tutta a zero): `check_data.py` te lo ricorda.
 
 Contiene **tutti** i tornei: quello in corso e l'archivio. Il campo `corrente`
 in cima dice quale mostrare per primo e da quale prendere la prossima partita.
+
+Adesso c'è solo il Torneo Birra Peroni, con `calendario: []` e la classifica
+tutta a zero: le 5 avversarie sono segnate **`TBA`**. Finché nessuno ha giocato,
+la pagina Tornei lo dice invece di mostrare una tabella di zeri, e la home
+scrive "Calendario in arrivo" al posto del countdown. Appena metti la prima
+partita nel calendario, tutto ricompare da solo.
 
 Ogni torneo ha:
 
