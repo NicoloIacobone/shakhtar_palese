@@ -53,18 +53,26 @@
 
     if (!attivo.classifica || !attivo.classifica.length) {
       elClass.innerHTML = '<p class="vuoto">Questo torneo non ha una classifica.</p>';
-    } else if (nonIniziato) {
-      elClass.innerHTML = `<div class="card">
-        <h3 style="margin-bottom:.3rem">Non abbiamo ancora giocato</h3>
-        <p class="sottotitolo" style="margin:0">
-          ${attivo.classifica.length} squadre al via${daAnnunciare
-            ? `, di cui ${daAnnunciare} ancora da annunciare` : ''}.
-          La classifica comincia a riempirsi dalla prima giornata.</p>
-      </div>`;
     } else {
       const col = [['punti','Pt'],['g','G'],['v','V'],['n','N'],['p','P'],['gf','GF'],['gs','GS'],['dr','DR']];
-      const righe = [...attivo.classifica].sort((a, b) => a.pos - b.pos);
+      // Finche' nessuno ha giocato la tabella si vede lo stesso — serve a sapere
+      // chi sono le avversarie — ma in ordine alfabetico e senza numeri di
+      // posizione: una fila di zeri numerata da 1 a 6 sembrerebbe una
+      // graduatoria, e diremmo che siamo ultimi senza aver giocato niente.
+      const righe = [...attivo.classifica].sort((a, b) => (nonIniziato
+        ? String(a.squadra).localeCompare(String(b.squadra))
+        : a.pos - b.pos));
+      const primaGiornata = nonIniziato ? `
+        <div class="card" style="margin-bottom:.8rem">
+          <b>Non ha ancora giocato nessuno.</b>
+          <p class="sottotitolo" style="margin:.3rem 0 0">
+            ${attivo.classifica.length} squadre al via${daAnnunciare
+              ? `, di cui ${daAnnunciare} ancora da annunciare` : ''}: eccole,
+            in ordine alfabetico. Non è una graduatoria — la classifica comincia
+            a riempirsi dalla prima giornata.</p>
+        </div>` : '';
       elClass.innerHTML = `
+        ${primaGiornata}
         <div class="tabella-wrap">
           <table class="tab">
             <caption class="sr-only">Classifica del ${SP.esc(attivo.nome)}</caption>
@@ -74,7 +82,7 @@
             </tr></thead>
             <tbody>${righe.map((r) => `
               <tr class="${r.squadra === noi ? 'noi' : ''}">
-                <td class="num">${SP.esc(r.pos)}</td>
+                <td class="num">${nonIniziato ? '&ndash;' : SP.esc(r.pos)}</td>
                 <td class="sx">${SP.esc(r.squadra)}${r.squadra === noi ? ' 🐆' : ''}</td>
                 ${col.map(([k]) => `<td class="num">${k === 'dr' && r[k] > 0 ? '+' : ''}${SP.esc(r[k])}</td>`).join('')}
               </tr>`).join('')}

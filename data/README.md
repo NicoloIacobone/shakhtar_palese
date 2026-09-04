@@ -126,9 +126,11 @@ in cima dice quale mostrare per primo e da quale prendere la prossima partita.
 Adesso c'è solo il Torneo Birra Peroni: 6 squadre (noi, Borussia Enziteto,
 FC Vision, Jalapeños, La Breda, Midal FC) e le nostre 5 partite del 1º girone
 di andata. La classifica è tutta a zero e in ordine alfabetico — **non è una
-graduatoria**: dalla prima giornata riscrivi tu `pos` seguendo i punti. Finché
-nessuno ha giocato, la pagina Tornei lo dice invece di mostrare una tabella di
-zeri.
+graduatoria**. Finché nessuno ha giocato, la pagina Tornei mostra comunque la
+tabella — serve a far vedere chi sono le avversarie — ma in ordine alfabetico e
+con un trattino al posto della posizione, così una fila di zeri numerata non
+sembra una graduatoria. Dalla prima giornata in poi comanda il campo `pos`, che
+riscrivi tu seguendo i punti.
 
 **Nel calendario ci sono solo le partite che giochiamo noi.** Le altre del
 girone non servono: la classifica arriva già fatta dagli organizzatori.
