@@ -240,9 +240,12 @@ button, input, select { font: inherit; color: inherit; }
 .risultato[data-esito="N"] { border-left-color: var(--giallo); }
 .risultato[data-esito="P"] { border-left-color: var(--rosso); }
 .risultato .sq { font-weight: 600; font-size: .92rem; min-width: 0; overflow-wrap: anywhere; }
-.risultato .sq:last-child { text-align: right; }
+.risultato .punteggio + .sq { text-align: right; }
 .risultato .sq.noi { color: var(--arancio); font-weight: 800; }
 .risultato .punteggio { font-family: var(--font-num); font-weight: 800; font-size: 1.05rem; white-space: nowrap; }
+/* Partita non ancora giocata: al posto del punteggio ci va "VS". Un orario in
+   mezzo a due squadre si legge come un risultato ("Midal FC 21:00 Palese"). */
+.risultato .vs { color: var(--testo-debole); font-weight: 800; font-size: .72rem; letter-spacing: .1em; }
 .risultato .data { grid-column: 1 / -1; font-size: .74rem; color: var(--testo-debole); }
 
 /* --- Griglia rosa --- */
@@ -347,6 +350,12 @@ th.ordinabile[aria-sort="descending"]::after { content: "↓"; opacity: 1; color
 .stat-griglia div { background: var(--superficie-2); border-radius: 6px; padding: .35rem .2rem; }
 .stat-griglia b { display: block; font-family: var(--font-num); font-size: 1rem; }
 .stat-griglia small { font-size: .63rem; text-transform: uppercase; letter-spacing: .02em; color: var(--testo-debole); }
+
+/* --- Regolamento del torneo, tre card affiancate su desktop --- */
+.regola-titolo { font-size: .95rem; margin: 0 0 .7rem; }
+.regole { margin: 0; padding-left: 1.05rem; display: grid; gap: .55rem; }
+.regole li { color: var(--testo-tenue); font-size: .9rem; line-height: 1.5; }
+.regole li::marker { color: var(--arancio); }
 
 /* Suggerimento "scorri di lato": appare solo dove la tabella non ci sta. */
 .nota-scroll { display: none; color: var(--testo-debole); font-size: .78rem; margin: .5rem 0 0; }

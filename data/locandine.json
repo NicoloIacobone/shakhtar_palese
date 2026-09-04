@@ -1,10 +1,11 @@
 {
-  "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive.",
-  "generato_il": "2026-09-04T14:15:13",
+  "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO pubblicato, data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive. \"pubblicato\": false = la card e' pronta ma non si vede sul sito; mettilo a true e rilancia sync.command per farla uscire.",
+  "generato_il": "2026-09-04T14:28:43",
   "totale": 3,
   "locandine": [
     {
       "id": "papapicco-6",
+      "pubblicato": true,
       "file": "assets/locandine/papapicco-6.png",
       "web": "assets/locandine/web/papapicco-6.jpg",
       "thumb": "assets/locandine/thumbs/papapicco-6.jpg",
@@ -18,7 +19,7 @@
       "numero": 6,
       "sigla": null,
       "data": "2026-09-04",
-      "data_fonte": "mtime",
+      "data_fonte": "manuale",
       "valida": true,
       "ordine": 1,
       "_sorgente": {
@@ -32,12 +33,13 @@
         "web_lato_max": 1400,
         "web_qualita": 82
       },
-      "data_pubblicazione": "",
+      "data_pubblicazione": "2026-09-04",
       "giocatore": "",
       "didascalia": ""
     },
     {
       "id": "esposito-29",
+      "pubblicato": true,
       "file": "assets/locandine/esposito-29.png",
       "web": "assets/locandine/web/esposito-29.jpg",
       "thumb": "assets/locandine/thumbs/esposito-29.jpg",
@@ -51,7 +53,7 @@
       "numero": 29,
       "sigla": null,
       "data": "2026-09-03",
-      "data_fonte": "mtime",
+      "data_fonte": "manuale",
       "valida": true,
       "ordine": 2,
       "_sorgente": {
@@ -65,12 +67,13 @@
         "web_lato_max": 1400,
         "web_qualita": 82
       },
-      "data_pubblicazione": "",
+      "data_pubblicazione": "2026-09-03",
       "giocatore": "Umberto Esposito",
       "didascalia": "Com è lo smash? È buono? Lo consigli?"
     },
     {
       "id": "spadaro-12",
+      "pubblicato": true,
       "file": "assets/locandine/spadaro-12.png",
       "web": "assets/locandine/web/spadaro-12.jpg",
       "thumb": "assets/locandine/thumbs/spadaro-12.jpg",
@@ -84,7 +87,7 @@
       "numero": 12,
       "sigla": null,
       "data": "2026-09-02",
-      "data_fonte": "mtime",
+      "data_fonte": "manuale",
       "valida": true,
       "ordine": 3,
       "_sorgente": {
@@ -98,7 +101,7 @@
         "web_lato_max": 1400,
         "web_qualita": 82
       },
-      "data_pubblicazione": "",
+      "data_pubblicazione": "2026-09-02",
       "giocatore": "Savio Spadaro",
       "didascalia": "Quelle fanno sempre over."
     }

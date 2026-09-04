@@ -1,7 +1,11 @@
 /* rosa.js — la rosa presentata una persona al giorno.
-   Compaiono solo le persone che hanno gia' la loro locandina pubblicata
+   Compaiono solo le persone che hanno gia' la loro locandina pubblicata, cioe'
+   con "pubblicato": true in data/locandine.json — le foto possono essere
+   caricate tutte in anticipo, e' il flag a decidere quando escono
    (regola attivabile da data/config.json -> rosa.mostra_solo_presentati).
    Le altre restano nei dati, pronte, e appaiono da sole al prossimo sync.
+   La griglia mette in cima l'ultimo presentato: reparti dagli attaccanti ai
+   portieri e, dentro il reparto, dalla locandina piu' recente.
    La foto NON e' scritta in rosa.json: i giocatori si collegano col numero di
    maglia, lo staff col cognome. */
 
@@ -32,7 +36,7 @@
     // Se una persona ha piu' locandine vince la piu' recente (le prime della lista).
     (l.locandine || []).forEach((x) => {
       const k = SP.chiaveLocandina(x);
-      if (x.valida !== false && !fotoPerChiave[k]) fotoPerChiave[k] = x;
+      if (SP.pubblicata(x) && !fotoPerChiave[k]) fotoPerChiave[k] = x;
     });
 
     const marca = (p, tipo) => ({ ...p, _tipo: tipo, _chiave: SP.chiavePersona(p) });
@@ -48,6 +52,30 @@
 
   const haFoto = (p) => Boolean(fotoPerChiave[p._chiave]);
   const visibili = () => (soloPresentati ? persone.filter(haFoto) : persone);
+
+  /* ------------------------------------------- ordine delle griglie --- */
+  /* L'ultimo presentato sta sempre in cima. Quindi: prima per reparto, in ordine
+     inverso rispetto a come esce la squadra (attaccanti, centrocampisti,
+     difensori, portieri), poi per data di uscita dalla piu' recente. Uscendo
+     POR -> DEF -> CEN -> ATT i due criteri coincidono; separarli serve solo
+     perche' il giorno che presenti qualcuno fuori sequenza il suo reparto resti
+     compatto, invece di spezzarsi in due. */
+  const ORDINE_RUOLI = ['Attaccante', 'Centrocampista', 'Difensore', 'Portiere'];
+  const pesoRuolo = (ruolo) => {
+    const i = ORDINE_RUOLI.indexOf(ruolo);
+    return i === -1 ? ORDINE_RUOLI.length : i;   // un ruolo che non conosco va in fondo
+  };
+  const uscitoIl = (p) => fotoPerChiave[p._chiave]?.data || '';
+  const perGriglia = (a, b) => {
+    const da = uscitoIl(a), db = uscitoIl(b);
+    return pesoRuolo(a.ruolo) - pesoRuolo(b.ruolo)
+      // Chi non ha ancora la locandina va in coda al suo reparto, non in cima:
+      // senza questa riga il "piu' recente per primo" lo premierebbe. Succede
+      // solo con mostra_solo_presentati a false.
+      || (db ? 1 : 0) - (da ? 1 : 0)
+      || db.localeCompare(da)                    // poi il piu' recente per primo
+      || (a.numero ?? 0) - (b.numero ?? 0);
+  };
 
   /* ------------------------------------ quante persone sono gia' uscite --- */
   const presentati = persone.filter(haFoto).length;
@@ -70,7 +98,8 @@
 
   /* ------------------------------------------------- filtri per ruolo --- */
   const giocatoriVisibili = () => visibili().filter((p) => p._tipo === 'giocatore');
-  const ruoli = ['tutti', ...new Set(giocatoriVisibili().map((g) => g.ruolo))];
+  const ruoli = ['tutti', ...[...new Set(giocatoriVisibili().map((g) => g.ruolo))]
+    .sort((a, b) => pesoRuolo(a) - pesoRuolo(b))];
   // Con uno o due giocatori i filtri non servono a niente: li mostro da 3 in su.
   if (ruoli.length > 2 && giocatoriVisibili().length > 2) {
     filtri.innerHTML = ruoli.map((r) =>
@@ -91,7 +120,7 @@
   function disegna() {
     const lista = giocatoriVisibili()
       .filter((g) => ruoloAttivo === 'tutti' || g.ruolo === ruoloAttivo)
-      .sort((a, b) => a.numero - b.numero);
+      .sort(perGriglia);
 
     griglia.innerHTML = lista.length
       ? lista.map((g) => SP.cardPersona(g, fotoPerChiave[g._chiave])).join('')
@@ -99,7 +128,8 @@
           ? 'Ancora nessuno presentato. Le card arrivano una al giorno su Instagram.'
           : 'Nessuno con questo ruolo.'}</p>`;
 
-    const staff = visibili().filter((p) => p._tipo === 'staff');
+    // Lo staff non ha reparti: resta l'ordine di uscita.
+    const staff = visibili().filter((p) => p._tipo === 'staff').sort(perGriglia);
     bloccoSt.hidden = staff.length === 0;
     grigliaSt.innerHTML = staff.map((p) => SP.cardPersona(p, fotoPerChiave[p._chiave])).join('');
   }

@@ -16,7 +16,10 @@
     const daGiocare = torneo.calendario
       .filter((m) => m.stato === 'da_giocare')
       .sort((a, b) => (a.data + a.ora).localeCompare(b.data + b.ora));
-    disegnaProssima(daGiocare[0], torneo, noi);
+    // Le partite gia' in calendario ma senza data ('da_definire') non possono
+    // avere un countdown: servono solo a dire che il calendario non e' finito.
+    const daFissare = torneo.calendario.filter((m) => m.stato === 'da_definire').length;
+    disegnaProssima(daGiocare[0], torneo, noi, daFissare);
 
     // Ultimi 3 risultati NOSTRI, dal piu' recente. Il calendario contiene tutte
     // le partite del girone: in home interessano solo quelle che giochiamo noi
@@ -32,12 +35,20 @@
     SP.errore(elRisultati, e.message);
   }
 
-  function disegnaProssima(m, torneo, noi) {
+  function disegnaProssima(m, torneo, noi, daFissare = 0) {
     if (!m) {
+      // Due situazioni diverse: non c'e' proprio niente in calendario, oppure
+      // gli avversari li sappiamo ma il giorno lo devono ancora concordare i
+      // capitani. Dire "calendario in arrivo" nel secondo caso sarebbe falso.
+      const testa = daFissare ? 'Date da fissare' : 'Calendario in arrivo';
+      const corpo = daFissare
+        ? `Le prossime ${daFissare} partite sono già in calendario, ma il giorno lo concordano
+           i capitani: appena c'è una data, qui torna il conto alla rovescia.`
+        : `Il ${SP.esc(torneo.nome)} non è ancora cominciato: appena escono
+           date e avversari li trovi qui, con il conto alla rovescia.`;
       elProssima.innerHTML = `<div class="card">
-        <h2>Calendario in arrivo</h2>
-        <p class="sottotitolo">Il ${SP.esc(torneo.nome)} non è ancora cominciato: appena escono
-        date e avversari li trovi qui, con il conto alla rovescia.</p>
+        <h2>${testa}</h2>
+        <p class="sottotitolo">${corpo}</p>
         <div class="gruppo-btn" style="margin-top:1rem">
           <a class="btn btn-fantasma" href="tornei.html">Vai al torneo</a>
         </div>
@@ -118,8 +129,10 @@
       SP.dati('locandine.json').catch(() => ({ locandine: [] })),
     ]);
 
-    // Le locandine sono gia' in ordine cronologico inverso: le uso per sapere
-    // chi e' stato presentato per ultimo.
+    // Le locandine sono gia' in ordine di uscita, dalla piu' recente: le uso
+    // per sapere chi e' stato presentato per ultimo. Quelle ancora spente
+    // ("pubblicato": false) stanno in fondo e le salto: sono gia' caricate ma
+    // non sono ancora uscite.
     const persone = [
       ...(r.giocatori || []).map((p) => ({ ...p, _chiave: SP.chiavePersona(p) })),
       ...(r.staff || []).map((p) => ({ ...p, _chiave: SP.chiavePersona(p) })),
@@ -128,13 +141,13 @@
 
     const ultimi = [];
     for (const loc of l.locandine || []) {
-      if (loc.valida === false) continue;
+      if (!SP.pubblicata(loc)) continue;
       const p = perChiave[SP.chiaveLocandina(loc)];
       if (p && !ultimi.some((u) => u.p._chiave === p._chiave)) ultimi.push({ p, loc });
       if (ultimi.length === 4) break;
     }
 
-    const mancano = persone.length - (l.locandine || []).filter((x) => x.valida !== false).length;
+    const mancano = persone.length - (l.locandine || []).filter(SP.pubblicata).length;
     const sotto = document.getElementById('sottotitolo-presentati');
     if (sotto && cfg.rosa?.mostra_solo_presentati !== false) {
       sotto.textContent = mancano > 0

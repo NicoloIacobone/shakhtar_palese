@@ -115,8 +115,24 @@ const SP = (() => {
   const chiavePersona = (p) => (p.numero != null ? `n${p.numero}` : `s${slug(p.cognome)}`);
   const chiaveLocandina = (l) => (l.numero != null ? `n${l.numero}` : `s${slug(l.cognome || '')}`);
 
+  /* Una locandina si vede sul sito solo se e' ACCESA e col nome file a posto.
+     L'interruttore e' il campo "pubblicato" di data/locandine.json: false =
+     la card e' pronta ma non deve uscire ancora. Nasconde solo, non protegge:
+     l'immagine e' comunque online al suo indirizzo, sul sito non la linka
+     nessuno. Il campo assente vale "pubblicata": cosi' una locandina vecchia,
+     salvata prima che il flag esistesse, non sparisce da sola. */
+  const NEGAZIONI = ['false', 'no', '0', ''];
+  const pubblicata = (l) => {
+    if (!l || l.valida === false) return false;
+    if (l.pubblicato === undefined || l.pubblicato === null) return true;
+    // Vale come "no" anche un false scritto fra virgolette, che e' l'errore
+    // piu' facile da fare a mano in un JSON: sbagliare da questa parte tiene
+    // nascosta una card, sbagliare dall'altra la fa uscire in anticipo.
+    return !NEGAZIONI.includes(String(l.pubblicato).trim().toLowerCase());
+  };
+
   return { dati, esc, dataIt, quando, errore, slug, rigaRisultato, plurale,
-           cardPersona, chiavePersona, chiaveLocandina };
+           cardPersona, chiavePersona, chiaveLocandina, pubblicata };
 })();
 
 /* ---------------------------------------------------------------- tema --- */

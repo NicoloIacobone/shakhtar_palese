@@ -44,7 +44,7 @@
     // deve comparire nemmeno qui, altrimenti il suo nome uscirebbe in anticipo.
     const soloPresentati = cfg.rosa?.mostra_solo_presentati !== false;
     const conFoto = new Set((l.locandine || [])
-      .filter((x) => x.valida !== false && x.numero != null)
+      .filter((x) => SP.pubblicata(x) && x.numero != null)
       .map((x) => x.numero));
 
     righe = (r.giocatori || [])

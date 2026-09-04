@@ -261,23 +261,35 @@ def controlla_tornei():
         bilancio = {"v": 0, "n": 0, "p": 0, "gf": 0, "gs": 0}
         for m in calendario:
             et = f"partita {m.get('id', '?')} → "
-            obbligatori(dove, m, ["id", "data", "ora", "casa", "ospite", "stato", "campo"], et)
+            stato = m.get("stato")
+            # 'da_definire': l'avversario e la giornata si sanno, il giorno no.
+            # E' l'unico caso in cui data e ora possono restare vuote.
+            da_definire = stato == "da_definire"
+            campi = ["id", "casa", "ospite", "stato", "campo"]
+            if not da_definire:
+                campi += ["data", "ora"]
+            obbligatori(dove, m, campi, et)
             if m.get("id") in id_partite:
                 errore(dove, f"{et}id partita ripetuto")
             id_partite.add(m.get("id"))
-            if not re.match(r"^\d{4}-\d{2}-\d{2}$", str(m.get("data", ""))):
-                errore(dove, f"{et}data '{m.get('data')}' non in formato AAAA-MM-GG")
-            if not re.match(r"^\d{2}:\d{2}$", str(m.get("ora", ""))):
-                errore(dove, f"{et}ora '{m.get('ora')}' non in formato HH:MM")
+            for campo, patt, forma in (("data", r"^\d{4}-\d{2}-\d{2}$", "AAAA-MM-GG"),
+                                       ("ora", r"^\d{2}:\d{2}$", "HH:MM")):
+                valore = str(m.get(campo) or "")
+                if not valore and da_definire:
+                    continue        # ancora da fissare: e' giusto che sia vuota
+                if not re.match(patt, valore):
+                    errore(dove, f"{et}{campo} '{m.get(campo)}' non in formato {forma}")
             if m.get("casa") == m.get("ospite"):
                 errore(dove, f"{et}la squadra gioca contro se stessa")
             if squadre:
                 for lato in ("casa", "ospite"):
                     if m.get(lato) not in squadre:
                         avviso(dove, f"{et}'{m.get(lato)}' non e' in classifica: controlla come l'hai scritto")
-            stato = m.get("stato")
-            if stato not in ("giocata", "da_giocare", "rinviata"):
-                errore(dove, f"{et}stato '{stato}': ammessi giocata/da_giocare/rinviata")
+            if stato not in ("giocata", "da_giocare", "da_definire", "rinviata"):
+                errore(dove, f"{et}stato '{stato}': ammessi giocata/da_giocare/da_definire/rinviata")
+            if da_definire and (m.get("data") or m.get("ora")):
+                avviso(dove, f"{et}e' 'da_definire' ma ha gia' data od ora: se il giorno e' "
+                             f"deciso mettila come 'da_giocare', altrimenti non entra nel countdown")
             if stato == "giocata":
                 gc, go = m.get("gol_casa"), m.get("gol_ospite")
                 if not isinstance(gc, int) or not isinstance(go, int):
@@ -333,6 +345,13 @@ def controlla_locandine(numeri_rosa, cognomi_staff=frozenset()):
                                      f"rilancia sync.command")
         if not re.match(r"^\d{4}-\d{2}-\d{2}$", str(v.get("data", ""))):
             errore("locandine.json", f"{et}data '{v.get('data')}' non in formato AAAA-MM-GG")
+        # Il flag deve essere true o false NUDI. "false" fra virgolette e' la
+        # svista tipica di chi modifica il JSON a mano, ed e' la piu' insidiosa:
+        # farebbe uscire in anticipo una card che credevi spenta.
+        pub = v.get("pubblicato")
+        if pub is not None and not isinstance(pub, bool):
+            errore("locandine.json", f"{et}'pubblicato' deve essere true o false senza "
+                                     f"virgolette, invece e' {pub!r}")
         ordini.append(v.get("ordine"))
         n, sigla = v.get("numero"), v.get("sigla")
         if v.get("valida") is False:
@@ -348,14 +367,21 @@ def controlla_locandine(numeri_rosa, cognomi_staff=frozenset()):
     if ordini and sorted(ordini) != list(range(1, len(ordini) + 1)):
         avviso("locandine.json", "il campo 'ordine' non e' una sequenza 1..N: rilancia sync.command")
 
-    coperti = {v.get("numero") for v in voci if v.get("numero") is not None}
-    coperti_staff = {str(v.get("cognome", "")).strip().lower() for v in voci if v.get("sigla")}
+    # "Presentato" = locandina ACCESA. Una card importata ma con
+    # "pubblicato": false esiste su disco e non si vede da nessuna parte.
+    online = [v for v in voci if v.get("pubblicato") is not False]
+    spente = [v for v in voci if v.get("pubblicato") is False]
+    coperti = {v.get("numero") for v in online if v.get("numero") is not None}
+    coperti_staff = {str(v.get("cognome", "")).strip().lower() for v in online if v.get("sigla")}
     mancanti = sorted(n for n in numeri_rosa if n not in coperti)
     mancanti_staff = sorted(c for c in cognomi_staff if c not in coperti_staff)
     totale = len(numeri_rosa) + len(cognomi_staff)
     presentati = totale - len(mancanti) - len(mancanti_staff)
-    print(f"{GRIGIO}  ·{FINE} locandine: {len(voci)} pubblicate — "
+    print(f"{GRIGIO}  ·{FINE} locandine: {len(online)} pubblicate, {len(spente)} pronte ma spente — "
           f"presentati {presentati} su {totale}")
+    if spente:
+        print(f"{GRIGIO}  ·{FINE} in attesa (\"pubblicato\": false): "
+              + ", ".join(str(v.get("id")) for v in spente))
     if mancanti:
         print(f"{GRIGIO}  ·{FINE} giocatori non ancora presentati: "
               + ", ".join(f"#{n}" for n in mancanti))

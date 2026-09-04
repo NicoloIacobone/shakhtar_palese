@@ -45,10 +45,19 @@ cambia ovunque nel sito.
 Due liste: `giocatori` e `staff`.
 
 **Regola importante:** sul sito compaiono **solo le persone gia' presentate**,
-cioe' quelle che hanno la loro locandina pubblicata. Le altre restano qui,
-pronte, e appaiono da sole appena lanci `sync.command` con la loro card. Se
-preferisci mostrarli tutti subito, in `config.json` metti
+cioe' quelle che hanno la loro locandina con `"pubblicato": true` in
+`locandine.json`. Le altre restano qui, pronte, e appaiono nel momento in cui
+accendi quel flag. Se preferisci mostrarli tutti subito, in `config.json` metti
 `"mostra_solo_presentati": false`.
+
+**L'ordine della griglia non si scrive qui: in cima c'è sempre l'ultimo
+presentato.** Prima il reparto — attaccanti, centrocampisti, difensori,
+portieri, cioè al contrario di come esce la squadra — poi, dentro il reparto, la
+locandina più recente. Presentando la squadra da portiere ad attaccante i due
+criteri coincidono; se esce qualcuno fuori sequenza, il suo reparto resta
+comunque unito invece di spezzarsi. Chi non ha ancora la locandina (si vede solo
+con `mostra_solo_presentati: false`) va in coda al suo reparto, per numero di
+maglia.
 
 ### Un giocatore
 
@@ -114,11 +123,15 @@ tutta a zero): `check_data.py` te lo ricorda.
 Contiene **tutti** i tornei: quello in corso e l'archivio. Il campo `corrente`
 in cima dice quale mostrare per primo e da quale prendere la prossima partita.
 
-Adesso c'è solo il Torneo Birra Peroni, con `calendario: []` e la classifica
-tutta a zero: le 5 avversarie sono segnate **`TBA`**. Finché nessuno ha giocato,
-la pagina Tornei lo dice invece di mostrare una tabella di zeri, e la home
-scrive "Calendario in arrivo" al posto del countdown. Appena metti la prima
-partita nel calendario, tutto ricompare da solo.
+Adesso c'è solo il Torneo Birra Peroni: 6 squadre (noi, Borussia Enziteto,
+FC Vision, Jalapeños, La Breda, Midal FC) e le nostre 5 partite del 1º girone
+di andata. La classifica è tutta a zero e in ordine alfabetico — **non è una
+graduatoria**: dalla prima giornata riscrivi tu `pos` seguendo i punti. Finché
+nessuno ha giocato, la pagina Tornei lo dice invece di mostrare una tabella di
+zeri.
+
+**Nel calendario ci sono solo le partite che giochiamo noi.** Le altre del
+girone non servono: la classifica arriva già fatta dagli organizzatori.
 
 Ogni torneo ha:
 
@@ -137,14 +150,36 @@ Per ogni partita:
 
 | campo | note |
 |---|---|
-| `id` | una sigla univoca, es. `bp26-g8` |
+| `id` | una sigla univoca, es. `bp26-a1g8` (andata 1, giornata 8) |
 | `giornata` | numero |
-| `data`, `ora` | `"2026-09-10"` e `"20:30"` |
+| `girone` | facoltativo, es. `"1º girone di andata"`. I gironi sono 4 e la giornata riparte da 1 in ognuno: senza questo, "Giornata 2" comparirebbe quattro volte |
+| `data`, `ora` | `"2026-09-10"` e `"20:30"`. **Vuote solo se lo `stato` è `da_definire`** |
 | `casa`, `ospite` | i nomi delle squadre, scritti come in classifica |
 | `gol_casa`, `gol_ospite` | `null` finché non si gioca, poi i numeri |
-| `stato` | `da_giocare`, `giocata` o `rinviata` |
+| `stato` | `da_giocare`, `da_definire`, `giocata` o `rinviata` |
 | `campo` | dove si gioca |
 | `note` | facoltativo, appare sotto il risultato |
+
+**`da_definire` = sappiamo con chi giochiamo, non ancora quando.** La partita
+compare in fondo al calendario con scritto "data da definire" e **non** entra
+nel countdown della home. Quando i capitani si accordano: riempi `data` e `ora`
+e cambia lo `stato` in `da_giocare`. Se tutte le partite sono `da_definire`, in
+home al posto del countdown compare "Date da fissare".
+
+### Il regolamento in fondo alla pagina Tornei
+
+Il campo facoltativo `regolamento` fa comparire la sezione **"Come funziona"**:
+
+```json
+"regolamento": {
+  "gruppi": [
+    { "titolo": "Struttura", "voci": ["prima riga", "seconda riga"] }
+  ]
+}
+```
+
+Ogni gruppo è una card, ogni voce un punto elenco. Se il torneo non ha il campo
+`regolamento` (l'archivio, per esempio), la sezione non compare proprio.
 
 **La "prossima partita" della home non si scrive da nessuna parte**: è la prima
 partita `da_giocare` in ordine di data e ora. Il countdown si calcola da lì.
@@ -168,13 +203,50 @@ le versioni ridotte, i valori stanno in `tools/config.json`
 (`web_lato_max`, `web_qualita`, `thumb_lato_max`, `thumb_qualita`): al lancio
 successivo lo script se ne accorge e le rigenera tutte da solo.
 
-Ci sono però **tre campi tuoi, che lo script non tocca mai**, nemmeno rilanciandolo:
+Ci sono però **quattro campi tuoi, che lo script non tocca mai**, nemmeno
+rilanciandolo:
 
 | campo | a cosa serve |
 |---|---|
+| `pubblicato` | `true` = la card si vede sul sito, `false` = è pronta ma non esce ancora. **È l'interruttore**: sta in cima alla voce, subito dopo l'`id` |
 | `data_pubblicazione` | `"2026-09-10"`. **Ha la precedenza su tutto** ed è il modo per correggere l'ordine della griglia se la data del file è sbagliata |
 | `giocatore` | il nome da mostrare (se vuoto usa il cognome preso dal nome del file) |
 | `didascalia` | una riga di testo che compare nella scheda, sotto il soprannome |
+
+### Carica tutto adesso, pubblica quando vuoi
+
+Le locandine nuove nascono con **`"pubblicato": false`**: l'immagine viene
+copiata e ridimensionata subito, ma la persona non compare né nella Rosa, né
+nelle Statistiche, né fra gli "ultimi presentati" in home. Puoi quindi mettere
+in `foto_presentazione/` tutte le foto che hai, lanciare `sync.command` una volta
+sola, e poi far uscire una persona al giorno cambiando **una parola**:
+
+```json
+{
+  "id": "tedesco-11",
+  "pubblicato": true,        ← era false
+  ...
+}
+```
+
+Poi doppio click su `sync.command` e rispondi `s`: entro un minuto è online.
+
+Tre cose da sapere:
+
+- **`true` e `false` vanno scritti senza virgolette.** `"pubblicato": "false"` è
+  una stringa, non un valore booleano: `check_data.py` te lo segnala come errore.
+- **La data di pubblicazione la timbra lo script**, il giorno in cui accende il
+  flag, e da lì in poi non la tocca più. Serve perché le foto le carichi tutte
+  insieme: senza timbro l'ordine della griglia seguirebbe il giorno in cui hai
+  importato i file, non quello in cui sono uscite le card. Se vuoi un'altra data,
+  scrivila a mano in `data_pubblicazione` e vince la tua.
+- **Il flag nasconde, non protegge.** L'immagine è comunque nel repo e online:
+  chi indovina l'indirizzo (`assets/locandine/web/tedesco-11.jpg`) la vede, ma
+  sul sito non c'è nessun link che ci porti. Se una card deve restare segreta
+  davvero, tieni la foto fuori da `foto_presentazione/` finché non è il momento.
+
+Le voci ancora spente lo script te le ricorda in fondo al riepilogo, e le tiene
+in fondo alla lista nel JSON: sopra ci sono le pubblicate, in ordine di uscita.
 
 ### Come si chiamano i file
 
@@ -185,7 +257,8 @@ Metti l'immagine in `foto_presentazione/` e chiamala:
 - **`COGNOME_SIGLA.jpg`** per lo staff — es. `DIFRANCO_ALL.jpg`,
   `BUONAMICO_PRS.jpg`, `IACOBONE_SMM.jpg`.
 
-Poi doppio click su `sync.command`. Da quel momento la persona compare sul sito.
+Poi doppio click su `sync.command`. La locandina entra nel sito **spenta**: per
+farla uscire metti `"pubblicato": true`, come spiegato qui sopra.
 Se sbagli il nome del file, lo script te lo dice invece di ignorarlo in silenzio.
 
 Tutto il resto (`file`, `thumb`, dimensioni, `ordine`, `_sorgente`) è roba dello

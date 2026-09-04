@@ -14,8 +14,17 @@ Cosa fa, in ordine:
      schermo intero (assets/locandine/web/), che pesa una frazione
      dell'originale. L'originale resta comunque nel repo come archivio;
   5. riscrive data/locandine.json IN MERGE, senza mai toccare i campi che
-     compili a mano (data_pubblicazione, giocatore, didascalia);
+     compili a mano (pubblicato, data_pubblicazione, giocatore, didascalia);
   6. propone il commit su git, chiedendo conferma.
+
+Le immagini nuove entrano nel sito SPENTE: nella loro voce di
+data/locandine.json trovi "pubblicato": false, e finche' resta false la card
+non compare da nessuna parte (rosa, home, statistiche). Puoi quindi caricare
+tutte le foto in una volta sola e poi, quando tocca a quella persona, aprire
+data/locandine.json, cambiare quel false in true e rilanciare lo script: al
+primo lancio con il flag acceso la data di pubblicazione viene timbrata con
+la data di oggi, cosi' la griglia resta in ordine di uscita e non di
+importazione.
 
 Si lancia con:   ./.venv/bin/python tools/sync_locandine.py
 oppure con doppio click su sync.command dal Finder.
@@ -64,6 +73,10 @@ EST_PER_FORMATO = {"JPEG": ".jpg", "PNG": ".png", "WEBP": ".webp", "MPO": ".jpg"
 
 # Campi che scrivo io a mano nel JSON e che lo script non deve MAI sovrascrivere.
 CAMPI_MANUALI = ("data_pubblicazione", "giocatore", "didascalia")
+
+# Anche questo lo decido io a mano, ma ha un default tutto suo: vedi
+# flag_pubblicato(). E' l'interruttore che fa comparire la card sul sito.
+CAMPO_FLAG = "pubblicato"
 
 VERDE, GIALLO, ROSSO, GRIGIO, FINE = "\033[32m", "\033[33m", "\033[31m", "\033[90m", "\033[0m"
 
@@ -118,6 +131,28 @@ def analizza_nome(stem: str):
     if sigla not in SIGLE_STAFF:
         return None, None, None, None      # lettere sì, ma non una sigla che conosco
     return cognome, None, sigla, data_nome
+
+
+def flag_pubblicato(vecchia: dict) -> bool:
+    """
+    L'interruttore "questa card si vede sul sito", letto da data/locandine.json.
+
+    Vale quello che c'e' scritto li' dentro. Se non c'e' scritto niente:
+      · voce GIA' PRESENTE nel JSON (scritta prima che il flag esistesse) -> True,
+        altrimenti al primo lancio sparirebbero dal sito le locandine gia' online;
+      · voce NUOVA -> False: le immagini appena importate restano spente, e le
+        accendi tu una alla volta mettendo "pubblicato": true.
+
+    Accetto anche true/false scritti fra virgolette: e' l'errore piu' facile da
+    fare a mano in un JSON, e farlo passare in silenzio come "spento" sarebbe
+    il modo peggiore di scoprirlo (la card semplicemente non esce).
+    """
+    v = vecchia.get(CAMPO_FLAG)
+    if isinstance(v, bool):
+        return v
+    if isinstance(v, str):
+        return v.strip().lower() in ("true", "si", "si'", "s", "1", "yes")
+    return bool(vecchia)      # dizionario vuoto = voce nuova = spenta
 
 
 def formato_reale(percorso: Path):
@@ -192,7 +227,7 @@ def main(argv):
     file_sorgente = sorted(p for p in sorgente.iterdir()
                            if p.is_file() and not p.name.startswith("."))
     voci, nuovi, aggiornati, invariati, problemi = [], 0, 0, 0, 0
-    id_visti = set()
+    id_visti, timbrate = set(), []
 
     # Parametri con cui vengono generate le derivate: se li cambi in
     # tools/config.json, le immagini gia' lavorate vanno rifatte. Salvandoli
@@ -275,11 +310,26 @@ def main(argv):
             else:
                 nuovi += 1
 
-        # --- 3. data e ordine cronologico ------------------------------------
-        # Priorita': data_pubblicazione scritta a mano > data nel nome file > mtime.
+        # --- 3. flag di pubblicazione, data e ordine cronologico -------------
+        # Il flag decide solo se la card si vede sul sito: l'immagine viene
+        # comunque copiata e ridotta, cosi' quando lo accendi non c'e' altro da
+        # fare che rilanciare lo script.
+        pubblicato = flag_pubblicato(vecchia)
+
+        # Priorita' della data: data_pubblicazione (scritta a mano o timbrata da
+        # me) > data nel nome file > mtime.
         manuale = (vecchia.get("data_pubblicazione") or "").strip()
         if manuale:
             data, fonte = manuale, "manuale"
+        elif pubblicato:
+            # Prima volta che vedo questa locandina accesa e senza una data sua:
+            # la timbro con oggi, e da qui in poi resta quella. Serve perche' le
+            # foto si caricano tutte insieme (stesso mtime) ma escono una alla
+            # volta: la griglia e la home devono seguire l'ordine di USCITA, non
+            # quello di importazione.
+            manuale = date.today().isoformat()
+            data, fonte = manuale, "pubblicazione"
+            timbrate.append(f"{ident} -> {manuale}")
         elif data_nome:
             data, fonte = data_nome, "nomefile"
         else:
@@ -287,6 +337,9 @@ def main(argv):
 
         voce = {
             "id": ident,
+            # In cima, subito dopo l'id: e' il campo che vai a cercare a occhio
+            # dentro il JSON quando devi far uscire qualcuno.
+            CAMPO_FLAG: pubblicato,
             "file": f"{cfg['destinazione']}/{file_out.name}",
             "web": f"{cfg['versione_web']}/{web_out.name}",
             "thumb": f"{cfg['miniature']}/{thumb_out.name}",
@@ -310,13 +363,20 @@ def main(argv):
         for k, v in vecchia.items():
             if k not in voce and not k.startswith("_"):
                 voce[k] = v
+        # Questi due li riscrivo dopo il giro qui sopra, altrimenti se li
+        # ripescasse dalla voce vecchia perderei la timbratura di oggi e
+        # normalizzerei a booleano un "true" scritto fra virgolette.
+        voce[CAMPO_FLAG] = pubblicato
+        voce["data_pubblicazione"] = manuale
 
         voci.append(voce)
 
     # --- 4. ordinamento: piu' recenti in alto, i file rotti in fondo ---------
     # NB: il numero nel nome file e' il numero di MAGLIA, non un progressivo:
     # non entra in nessun modo nell'ordinamento.
-    voci.sort(key=lambda v: (v["valida"], v["data"], v["id"]), reverse=True)
+    # Le locandine ancora spente stanno tutte sotto quelle pubblicate: sul sito
+    # non si vedono comunque, ma cosi' il JSON si legge come una lista d'attesa.
+    voci.sort(key=lambda v: (v["valida"], v[CAMPO_FLAG], v["data"], v["id"]), reverse=True)
     for i, v in enumerate(voci, start=1):
         v["ordine"] = i
 
@@ -329,7 +389,9 @@ def main(argv):
     # --- 6. scrittura del JSON ----------------------------------------------
     uscita = {
         "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO "
-                 "data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive.",
+                 "pubblicato, data_pubblicazione, giocatore e didascalia: lo script non li "
+                 "sovrascrive. \"pubblicato\": false = la card e' pronta ma non si vede sul "
+                 "sito; mettilo a true e rilancia sync.command per farla uscire.",
         "generato_il": datetime.now().isoformat(timespec="seconds"),
         "totale": len(voci),
         "locandine": voci,
@@ -356,8 +418,12 @@ def main(argv):
     rosa_doc = leggi_json(ROOT / cfg["json_rosa"], {})
     rosa = rosa_doc.get("giocatori", [])
     staff = rosa_doc.get("staff", [])
-    numeri_con_foto = {v["numero"] for v in voci if v.get("numero") is not None}
-    cognomi_con_foto = {slug(v["cognome"]) for v in voci if v.get("sigla") and v.get("cognome")}
+    # "Presentato" = card accesa. Una foto importata ma con il flag ancora a
+    # false non conta: sul sito quella persona non c'e'.
+    pubblicate = [v for v in voci if v[CAMPO_FLAG]]
+    in_attesa = [v for v in voci if not v[CAMPO_FLAG]]
+    numeri_con_foto = {v["numero"] for v in pubblicate if v.get("numero") is not None}
+    cognomi_con_foto = {slug(v["cognome"]) for v in pubblicate if v.get("sigla") and v.get("cognome")}
 
     senza = [g for g in rosa if g.get("numero") not in numeri_con_foto]
     senza_staff = [s for s in staff if slug(s.get("cognome", "")) not in cognomi_con_foto]
@@ -370,6 +436,15 @@ def main(argv):
     print(f"  Nuove: {nuovi}   aggiornate: {aggiornati}   invariate: {invariati}   "
           f"da sistemare: {problemi}")
     print(f"  Presentati sul sito: {presentati} su {totale}.")
+    for t in timbrate:
+        ok(f"prima uscita, data di pubblicazione timbrata{' [dry-run]' if dry else ''}: {t}")
+    if in_attesa:
+        print()
+        info(f"Pronte ma spente ({len(in_attesa)}): "
+             + ", ".join(v["id"] for v in in_attesa))
+        info(f"Per farne uscire una: apri {cfg['json_locandine']}, cerca il suo \"id\" "
+             f"e metti \"{CAMPO_FLAG}\": true, poi rilancia questo script.")
+        print()
     if senza:
         info("Giocatori ancora da presentare: "
              + ", ".join(f"#{g['numero']} {g['cognome']}" for g in senza))
@@ -388,10 +463,21 @@ def main(argv):
     if dry or senza_git:
         return 0
     cambiati = nuovi + aggiornati + len(orfane)
-    if cambiati == 0:
+    # Attenzione: girare un flag non produce nessuna immagine nuova, ma cambia
+    # comunque il JSON. Se guardassi solo i contatori delle immagini, dopo una
+    # pubblicazione lo script direbbe "niente da committare" e la card non
+    # uscirebbe mai online.
+    if cambiati == 0 and identico:
         info("Niente di nuovo da committare.")
         return 0
-    proponi_git(nuovi if nuovi else cambiati)
+    if nuovi:
+        messaggio = f"chore: sync locandine (+{nuovi})"
+    elif timbrate:
+        usciti = ", ".join(t.split(" -> ")[0] for t in timbrate)
+        messaggio = f"feat: pubblica {usciti}"
+    else:
+        messaggio = "chore: aggiorna locandine"
+    proponi_git(messaggio)
     return 0
 
 
@@ -399,7 +485,7 @@ def git(*args, **kw):
     return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, **kw)
 
 
-def proponi_git(n):
+def proponi_git(messaggio):
     if not (ROOT / ".git").exists():
         info("Non e' un repository git: salto commit e push.")
         return
@@ -415,7 +501,6 @@ def proponi_git(n):
     for riga in stato.stdout.strip().splitlines():
         print(f"    {riga}")
 
-    messaggio = f"chore: sync locandine (+{n})"
     try:
         risposta = input(f"\n  Faccio add + commit \"{messaggio}\" + push su origin? [s/N] ").strip().lower()
     except EOFError:

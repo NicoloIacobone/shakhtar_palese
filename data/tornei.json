@@ -1,6 +1,6 @@
 {
   "corrente": "birra-peroni-2026",
-  "_nota": "La prossima partita e il countdown in home sono la prima partita con stato 'da_giocare' in ordine di data e ora. Finche' il calendario e' vuoto, la home lo dice e basta.",
+  "_nota": "La prossima partita e il countdown in home sono la prima partita con stato 'da_giocare' in ordine di data e ora. Le partite con stato 'da_definire' hanno data e ora ancora vuote: compaiono in fondo al calendario come 'data da definire' e non entrano nel countdown. Appena sai giorno e orario, riempi 'data' e 'ora' e cambia lo stato in 'da_giocare'.",
   "tornei": [
     {
       "id": "birra-peroni-2026",
@@ -9,10 +9,44 @@
       "instagram": "",
       "stato": "in_programma",
       "nostra_squadra": "Shakhtar Palese",
+      "regolamento": {
+        "_fonte": "Sintesi dei due PDF degli organizzatori: 'Regolamento Torneo Birra Peroni' e 'Regolamento di gioco / arbitrale', settembre 2026. In caso di dubbio fa fede il testo originale.",
+        "gruppi": [
+          {
+            "titolo": "Struttura",
+            "voci": [
+              "Si gioca 7 contro 7, due tempi da 30 minuti.",
+              "Fase a campionato: 4 gironi — 2 di andata e 2 di ritorno — per un totale di 20 partite a squadra.",
+              "Fasi finali: semifinali di andata e ritorno (1ª contro 4ª, 2ª contro 3ª), poi finale secca. C'è anche la finalina fra 5ª e 6ª.",
+              "Lista di massimo 14 giocatori. Due finestre di mercato, 6 cambi di lista in tutto.",
+              "Si gioca al De Palo. Le date le concordano i capitani, almeno la settimana prima."
+            ]
+          },
+          {
+            "titolo": "In campo",
+            "voci": [
+              "Cambi illimitati, a gioco fermo e avvisando il direttore di gara.",
+              "5 secondi per battere punizioni, rimesse laterali e dal fondo, e per liberare il pallone dalle mani del portiere: oltre, la palla passa agli avversari.",
+              "Sulle punizioni la distanza è di 7 passi: la chiedi all'arbitro e riparti al suo fischio.",
+              "Rinvio dal fondo coi piedi dall'area piccola, e può superare il centrocampo al volo. Il retropassaggio si gioca solo di piede.",
+              "Ogni 5 falli di squadra si batte uno shootout dal dischetto di centrocampo: 5 secondi per tirare, il portiere può uscire dall'area.",
+              "Doppia ammonizione uguale rosso; diffida al 2º giallo, squalifica al 3º. Col rosso breve si sta 10 minuti in inferiorità, poi entra un altro: l'espulso non rientra."
+            ]
+          },
+          {
+            "titolo": "Premi e quote",
+            "voci": [
+              "Premi: prima classificata della fase a campionato, MVP del torneo (l'arbitro ne assegna uno per squadra a partita), capocannoniere e miglior portiere (voto da 1 a 5 dell'arbitro).",
+              "Dopo le finali: coppa al primo e al secondo posto, più il premio della finalina.",
+              "Niente quota d'iscrizione. Si pagano il campo (6 € a testa, 7 € con doccia), l'arbitro (30 € a partita, 25 € se se ne giocano due di fila) e una quota trofei a squadra entro la quarta giornata."
+            ]
+          }
+        ]
+      },
       "classifica": [
         {
           "pos": 1,
-          "squadra": "Shakhtar Palese",
+          "squadra": "Borussia Enziteto",
           "punti": 0,
           "g": 0,
           "v": 0,
@@ -24,7 +58,7 @@
         },
         {
           "pos": 2,
-          "squadra": "TBA",
+          "squadra": "FC Vision",
           "punti": 0,
           "g": 0,
           "v": 0,
@@ -36,7 +70,7 @@
         },
         {
           "pos": 3,
-          "squadra": "TBA",
+          "squadra": "Jalapeños",
           "punti": 0,
           "g": 0,
           "v": 0,
@@ -48,7 +82,7 @@
         },
         {
           "pos": 4,
-          "squadra": "TBA",
+          "squadra": "La Breda",
           "punti": 0,
           "g": 0,
           "v": 0,
@@ -60,7 +94,7 @@
         },
         {
           "pos": 5,
-          "squadra": "TBA",
+          "squadra": "Midal FC",
           "punti": 0,
           "g": 0,
           "v": 0,
@@ -72,7 +106,7 @@
         },
         {
           "pos": 6,
-          "squadra": "TBA",
+          "squadra": "Shakhtar Palese",
           "punti": 0,
           "g": 0,
           "v": 0,
@@ -83,7 +117,80 @@
           "dr": 0
         }
       ],
-      "calendario": []
+      "_nota_classifica": "Nessuno ha ancora giocato: sono tutte a zero e l'ordine e' alfabetico, non una graduatoria. Dalla prima giornata riscrivi 'pos' seguendo i punti.",
+      "_nota_calendario": "Qui ci sono solo le NOSTRE partite del 1º girone di andata. Le altre del girone non servono al sito: la classifica arriva dagli organizzatori gia' fatta. Quando escono le date delle giornate 2-5, riempi 'data' e 'ora' e metti \"stato\": \"da_giocare\".",
+      "calendario": [
+        {
+          "id": "bp26-a1g1",
+          "girone": "1º girone di andata",
+          "giornata": 1,
+          "data": "2026-09-16",
+          "ora": "21:00",
+          "casa": "Midal FC",
+          "ospite": "Shakhtar Palese",
+          "gol_casa": null,
+          "gol_ospite": null,
+          "stato": "da_giocare",
+          "campo": "De Palo Sporting Center",
+          "note": ""
+        },
+        {
+          "id": "bp26-a1g2",
+          "girone": "1º girone di andata",
+          "giornata": 2,
+          "data": "",
+          "ora": "",
+          "casa": "Shakhtar Palese",
+          "ospite": "FC Vision",
+          "gol_casa": null,
+          "gol_ospite": null,
+          "stato": "da_definire",
+          "campo": "De Palo Sporting Center",
+          "note": ""
+        },
+        {
+          "id": "bp26-a1g3",
+          "girone": "1º girone di andata",
+          "giornata": 3,
+          "data": "",
+          "ora": "",
+          "casa": "Shakhtar Palese",
+          "ospite": "La Breda",
+          "gol_casa": null,
+          "gol_ospite": null,
+          "stato": "da_definire",
+          "campo": "De Palo Sporting Center",
+          "note": ""
+        },
+        {
+          "id": "bp26-a1g4",
+          "girone": "1º girone di andata",
+          "giornata": 4,
+          "data": "",
+          "ora": "",
+          "casa": "Borussia Enziteto",
+          "ospite": "Shakhtar Palese",
+          "gol_casa": null,
+          "gol_ospite": null,
+          "stato": "da_definire",
+          "campo": "De Palo Sporting Center",
+          "note": ""
+        },
+        {
+          "id": "bp26-a1g5",
+          "girone": "1º girone di andata",
+          "giornata": 5,
+          "data": "",
+          "ora": "",
+          "casa": "Shakhtar Palese",
+          "ospite": "Jalapeños",
+          "gol_casa": null,
+          "gol_ospite": null,
+          "stato": "da_definire",
+          "campo": "De Palo Sporting Center",
+          "note": ""
+        }
+      ]
     }
   ]
 }

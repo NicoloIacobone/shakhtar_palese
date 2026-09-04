@@ -33,8 +33,30 @@ Il sito mostra **solo chi è già stato presentato**. Gli altri sono già scritt
 3. Lo script copia l'immagine, genera le versioni ridotte, aggiorna
    `data/locandine.json` e ti chiede se fare commit e push. Rispondi `s`.
 
+**Le foto nuove entrano spente.** Nella loro voce di `data/locandine.json` trovi
+`"pubblicato": false`: l'immagine è già pronta e ridimensionata, ma la card non
+compare da nessuna parte. Puoi quindi caricare **tutte** le foto quando hai
+tempo, in una volta sola, e poi far uscire una persona al giorno.
+
+Per far uscire qualcuno:
+
+1. apri `data/locandine.json` e cerca il suo `"id"` (es. `tedesco-11`);
+2. in quella voce cambia `"pubblicato": false` in `"pubblicato": true`;
+3. doppio click su `sync.command` e rispondi `s` al commit.
+
 Da quel momento la persona compare nella Rosa, nelle Statistiche, in home fra gli
-ultimi presentati, e il contatore "N di 16" si aggiorna da solo.
+ultimi presentati, e il contatore "N di 16" si aggiorna da solo. La **data di
+pubblicazione** viene timbrata da sola con il giorno in cui accendi il flag: è
+quella a decidere l'ordine della griglia e chi sono gli "ultimi presentati" in
+home, quindi l'ordine segue le uscite e non il giorno in cui hai importato le
+foto. Se sbagli, `data_pubblicazione` resta modificabile a mano.
+
+Se ci ripensi, rimetti `false`: la card sparisce dal sito al prossimo push.
+Attenzione però: il flag **nasconde, non protegge**. L'immagine viene comunque
+copiata nel repo ed è raggiungibile da chi ne indovina l'indirizzo
+(`assets/locandine/web/tedesco-11.jpg`) — sul sito, semplicemente, non la linka
+nessuno. Per una sorpresa a prova di curiosi, tieni la foto fuori da
+`foto_presentazione/` finché non è il suo turno.
 
 Lo script salva tre versioni della stessa immagine: la **miniatura** (~55 KB) per
 le griglie, la versione **web** (~290 KB) per la scheda aperta, e l'**originale**

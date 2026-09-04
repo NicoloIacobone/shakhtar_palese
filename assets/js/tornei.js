@@ -7,6 +7,8 @@
   const elCal      = document.getElementById('calendario');
   const elTitolo   = document.getElementById('titolo-torneo');
   const elSotto    = document.getElementById('sottotitolo-torneo');
+  const elRegole   = document.getElementById('regolamento-torneo');
+  const bloccoReg  = document.getElementById('blocco-regolamento');
 
   let tutti = [], attivo = null;
 
@@ -85,9 +87,27 @@
           GF gol fatti &middot; GS gol subiti &middot; DR differenza reti. La riga arancione siamo noi.</p>`;
     }
 
+    /* ------------------------------------------------- come funziona --- */
+    // Il regolamento non ce l'hanno tutti i tornei (l'archivio no): se manca,
+    // la sezione non esiste proprio, invece di restare li' vuota.
+    const gruppi = attivo.regolamento?.gruppi || [];
+    if (bloccoReg) bloccoReg.hidden = gruppi.length === 0;
+    if (elRegole) {
+      elRegole.innerHTML = gruppi.map((g) => `
+        <div class="card">
+          <h3 class="regola-titolo">${SP.esc(g.titolo)}</h3>
+          <ul class="regole">${(g.voci || []).map((v) => `<li>${SP.esc(v)}</li>`).join('')}</ul>
+        </div>`).join('');
+    }
+
     /* ------------------------------------------- calendario e risultati --- */
+    // Prima le partite con una data, in ordine cronologico; poi quelle ancora
+    // da fissare, in ordine di giornata. Ordinando sulla sola stringa della
+    // data, quelle vuote finirebbero in cima al calendario.
     const partite = [...(attivo.calendario || [])].sort((a, b) =>
-      (a.data + a.ora).localeCompare(b.data + b.ora));
+      (a.data ? 0 : 1) - (b.data ? 0 : 1)
+      || (a.data + a.ora).localeCompare(b.data + b.ora)
+      || (a.giornata || 0) - (b.giornata || 0));
     if (!partite.length) {
       elCal.innerHTML = `<p class="vuoto">Il calendario non è ancora uscito.
         Appena c'è, date e avversari compaiono qui.</p>`;
@@ -97,11 +117,22 @@
     elCal.innerHTML = partite.map((m) => {
       if (m.stato === 'giocata') return SP.rigaRisultato(m, noi);
       const inCasa = m.casa === noi;
+      const daFissare = !m.data || m.stato === 'da_definire';
+      // Giorno e ora stanno insieme nella riga sotto, non in mezzo alle due
+      // squadre: al posto del punteggio ci va "VS", altrimenti l'orario si
+      // legge come il risultato della partita.
+      const riga = [
+        m.girone ? SP.esc(m.girone) : null,
+        m.giornata != null ? `giornata ${SP.esc(m.giornata)}` : null,
+        daFissare ? '<b>data e ora da definire</b>' : `${SP.dataIt(m.data)}, ore ${SP.esc(m.ora)}`,
+        SP.esc(m.campo),
+        m.stato === 'rinviata' ? '<b>rinviata</b>' : null,
+      ].filter(Boolean).join(' &middot; ');
       return `<article class="risultato" data-esito="">
         <div class="sq ${inCasa ? 'noi' : ''}">${SP.esc(m.casa)}</div>
-        <div class="punteggio" style="color:var(--testo-debole);font-size:.8rem">${SP.esc(m.ora)}</div>
+        <div class="punteggio vs">VS</div>
         <div class="sq ${inCasa ? '' : 'noi'}">${SP.esc(m.ospite)}</div>
-        <div class="data">${SP.dataIt(m.data)} &middot; ${SP.esc(m.campo)} &middot; da giocare</div>
+        <div class="data">${riga}</div>
       </article>`;
     }).join('');
   }
