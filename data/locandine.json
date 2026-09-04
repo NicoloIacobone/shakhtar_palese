@@ -1,8 +1,42 @@
 {
   "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO pubblicato, data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive. \"pubblicato\": false = la card e' pronta ma non si vede sul sito; mettilo a true e rilancia sync.command per farla uscire.",
-  "generato_il": "2026-09-04T14:54:04",
+  "generato_il": "2026-09-04T17:26:56",
   "totale": 10,
   "locandine": [
+    {
+      "id": "petruzzelli-5",
+      "pubblicato": true,
+      "file": "assets/locandine/petruzzelli-5.png",
+      "web": "assets/locandine/web/petruzzelli-5.jpg",
+      "thumb": "assets/locandine/thumbs/petruzzelli-5.jpg",
+      "w": 1024,
+      "h": 1536,
+      "web_w": 933,
+      "web_h": 1400,
+      "thumb_w": 400,
+      "thumb_h": 600,
+      "cognome": "Petruzzelli",
+      "numero": 5,
+      "sigla": null,
+      "data": "2026-09-04",
+      "data_fonte": "pubblicazione",
+      "valida": true,
+      "ordine": 1,
+      "_sorgente": {
+        "nome": "PETRUZZELLI_5.png",
+        "dimensione": 2876089,
+        "mtime": 1788525102
+      },
+      "_parametri": {
+        "thumb_lato_max": 600,
+        "thumb_qualita": 80,
+        "web_lato_max": 1400,
+        "web_qualita": 82
+      },
+      "data_pubblicazione": "2026-09-04",
+      "giocatore": "",
+      "didascalia": ""
+    },
     {
       "id": "papapicco-6",
       "pubblicato": true,
@@ -21,7 +55,7 @@
       "data": "2026-09-04",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 1,
+      "ordine": 2,
       "_sorgente": {
         "nome": "PAPAPICCO_6.png",
         "dimensione": 2847337,
@@ -55,7 +89,7 @@
       "data": "2026-09-03",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 2,
+      "ordine": 3,
       "_sorgente": {
         "nome": "ESPOSITO_29.jpeg",
         "dimensione": 2848752,
@@ -89,7 +123,7 @@
       "data": "2026-09-02",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 3,
+      "ordine": 4,
       "_sorgente": {
         "nome": "SPADARO_12.png",
         "dimensione": 2662027,
@@ -123,44 +157,10 @@
       "data": "2026-09-04",
       "data_fonte": "mtime",
       "valida": true,
-      "ordine": 4,
+      "ordine": 5,
       "_sorgente": {
         "nome": "TEDESCO_11.png",
         "dimensione": 2842699,
-        "mtime": 1788525102
-      },
-      "_parametri": {
-        "thumb_lato_max": 600,
-        "thumb_qualita": 80,
-        "web_lato_max": 1400,
-        "web_qualita": 82
-      },
-      "data_pubblicazione": "",
-      "giocatore": "",
-      "didascalia": ""
-    },
-    {
-      "id": "petruzzelli-5",
-      "pubblicato": false,
-      "file": "assets/locandine/petruzzelli-5.png",
-      "web": "assets/locandine/web/petruzzelli-5.jpg",
-      "thumb": "assets/locandine/thumbs/petruzzelli-5.jpg",
-      "w": 1024,
-      "h": 1536,
-      "web_w": 933,
-      "web_h": 1400,
-      "thumb_w": 400,
-      "thumb_h": 600,
-      "cognome": "Petruzzelli",
-      "numero": 5,
-      "sigla": null,
-      "data": "2026-09-04",
-      "data_fonte": "mtime",
-      "valida": true,
-      "ordine": 5,
-      "_sorgente": {
-        "nome": "PETRUZZELLI_5.png",
-        "dimensione": 2876089,
         "mtime": 1788525102
       },
       "_parametri": {
