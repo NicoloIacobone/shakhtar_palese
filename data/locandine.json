@@ -1,8 +1,41 @@
 {
   "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive.",
-  "generato_il": "2026-09-03T18:16:31",
-  "totale": 2,
+  "generato_il": "2026-09-04T14:15:13",
+  "totale": 3,
   "locandine": [
+    {
+      "id": "papapicco-6",
+      "file": "assets/locandine/papapicco-6.png",
+      "web": "assets/locandine/web/papapicco-6.jpg",
+      "thumb": "assets/locandine/thumbs/papapicco-6.jpg",
+      "w": 1024,
+      "h": 1536,
+      "web_w": 933,
+      "web_h": 1400,
+      "thumb_w": 400,
+      "thumb_h": 600,
+      "cognome": "Papapicco",
+      "numero": 6,
+      "sigla": null,
+      "data": "2026-09-04",
+      "data_fonte": "mtime",
+      "valida": true,
+      "ordine": 1,
+      "_sorgente": {
+        "nome": "PAPAPICCO_6.png",
+        "dimensione": 2847337,
+        "mtime": 1788524092
+      },
+      "_parametri": {
+        "thumb_lato_max": 600,
+        "thumb_qualita": 80,
+        "web_lato_max": 1400,
+        "web_qualita": 82
+      },
+      "data_pubblicazione": "",
+      "giocatore": "",
+      "didascalia": ""
+    },
     {
       "id": "esposito-29",
       "file": "assets/locandine/esposito-29.png",
@@ -20,7 +53,7 @@
       "data": "2026-09-03",
       "data_fonte": "mtime",
       "valida": true,
-      "ordine": 1,
+      "ordine": 2,
       "_sorgente": {
         "nome": "ESPOSITO_29.jpeg",
         "dimensione": 2848752,
@@ -53,7 +86,7 @@
       "data": "2026-09-02",
       "data_fonte": "mtime",
       "valida": true,
-      "ordine": 2,
+      "ordine": 3,
       "_sorgente": {
         "nome": "SPADARO_12.png",
         "dimensione": 2662027,
