@@ -440,6 +440,28 @@ def controlla_file_sito():
         pass
 
 
+# ------------------------------------------------- versioni degli asset ---
+def controlla_versioni_asset():
+    """
+    Le pagine devono citare CSS e JS con l'impronta del loro contenuto
+    (style.css?v=6446c4fc). Se hai modificato un file ma non hai rilanciato
+    versiona_asset.py, chi ha gia' visitato il sito continua a vedere il codice
+    vecchio con i dati nuovi: sembra un bug del sito, e non lo e'.
+    """
+    try:
+        from versiona_asset import versiona
+    except ImportError:
+        return
+    da_fare = versiona(dry=True)
+    if da_fare:
+        avviso("pagine HTML",
+               "CSS o JS modificati, ma le pagine puntano ancora alla versione vecchia ("
+               + ", ".join(da_fare) + "). Lancia sync.command, oppure "
+               "./.venv/bin/python tools/versiona_asset.py")
+    else:
+        print(f"{GRIGIO}  ·{FINE} versioni di CSS e JS nelle pagine: aggiornate")
+
+
 def main():
     print(f"\n{'=' * 62}\n  CHECK DATA — Shakhtar Palese\n{'=' * 62}\n")
     controlla_config()
@@ -449,6 +471,7 @@ def main():
     controlla_locandine(numeri, cognomi_staff)
     controlla_storia()
     controlla_file_sito()
+    controlla_versioni_asset()
 
     print(f"\n{'-' * 62}")
     if segnaposto:

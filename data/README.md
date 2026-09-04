@@ -256,6 +256,10 @@ Metti l'immagine in `foto_presentazione/` e chiamala:
   quello di **maglia**, non un progressivo.
 - **`COGNOME_SIGLA.jpg`** per lo staff — es. `DIFRANCO_ALL.jpg`,
   `BUONAMICO_PRS.jpg`, `IACOBONE_SMM.jpg`.
+- **Cognome doppio**: con l'underscore, `DE_TULLIO_10.png`.
+- **Omonimi**: l'iniziale del nome prima del numero, `DE_TULLIO_C_20.png` e
+  `DE_TULLIO_I_9.png`. Sul sito compare comunque "De Tullio": l'iniziale serve
+  solo a distinguere i file, e il collegamento al giocatore lo fa il numero.
 
 Poi doppio click su `sync.command`. La locandina entra nel sito **spenta**: per
 farla uscire metti `"pubblicato": true`, come spiegato qui sopra.

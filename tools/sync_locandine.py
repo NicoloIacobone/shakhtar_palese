@@ -15,7 +15,9 @@ Cosa fa, in ordine:
      dell'originale. L'originale resta comunque nel repo come archivio;
   5. riscrive data/locandine.json IN MERGE, senza mai toccare i campi che
      compili a mano (pubblicato, data_pubblicazione, giocatore, didascalia);
-  6. propone il commit su git, chiedendo conferma.
+  6. aggiorna la versione con cui le pagine citano CSS e JS, cosi' chi ha gia'
+     visitato il sito non resta col codice vecchio in cache (versiona_asset.py);
+  7. propone il commit su git, chiedendo conferma.
 
 Le immagini nuove entrano nel sito SPENTE: nella loro voce di
 data/locandine.json trovi "pubblicato": false, e finche' resta false la card
@@ -44,6 +46,8 @@ import unicodedata
 from datetime import datetime, date
 from pathlib import Path
 
+from versiona_asset import versiona   # sta nella stessa cartella di questo file
+
 try:
     from PIL import Image, ImageOps
 except ImportError:
@@ -58,9 +62,13 @@ CONFIG = Path(__file__).resolve().parent / "config.json"
 # COGNOME_NUMERO.ext, con eventuale data davanti: 2026-09-03_ESPOSITO_29.jpg
 # Per lo staff, che non ha un numero di maglia, il numero e' sostituito dalla
 # sigla del ruolo: DIFRANCO_ALL.jpg, BUONAMICO_PRS.jpg, IACOBONE_SMM.jpg.
+# Il cognome puo' contenere underscore, perche' e' il modo naturale di scrivere
+# un cognome doppio col telefono: DE_TULLIO_20.png. E puo' finire con una
+# lettera secca, l'iniziale del nome, per distinguere due omonimi:
+# DE_TULLIO_C_20.png e DE_TULLIO_I_9.png.
 RE_NOME = re.compile(
     r"^(?:(\d{4}-\d{2}-\d{2})[_-])?"
-    r"(?P<cognome>[A-Za-zÀ-ÿ'’\- ]+)[_-]"
+    r"(?P<cognome>[A-Za-zÀ-ÿ'’\-_ ]+)[_-]"
     r"(?P<codice>\d{1,2}|[A-Za-z]{2,4})$"
 )
 
@@ -123,7 +131,13 @@ def analizza_nome(stem: str):
     if not m:
         return None, None, None, None
     data_nome = m.group(1)
-    cognome = " ".join(m.group("cognome").split()).title()
+    parti = m.group("cognome").replace("_", " ").split()
+    if len(parti) > 1 and len(parti[-1]) == 1:
+        # La lettera singola prima del numero e' l'iniziale del nome, messa li'
+        # solo per distinguere gli omonimi (i tre De Tullio): non fa parte del
+        # cognome, e nel cognome non ci deve finire.
+        parti.pop()
+    cognome = " ".join(parti).title()
     codice = m.group("codice")
     if codice.isdigit():
         return cognome, int(codice), None, data_nome
@@ -459,7 +473,16 @@ def main(argv):
              + ", ".join(orfani_staff) + ".")
     print(f"{'-' * 62}")
 
-    # --- 8. git: proposta, non automatismo ----------------------------------
+    # --- 8. versioni di CSS e JS --------------------------------------------
+    # Se ho toccato un foglio di stile o uno script, le pagine devono citarlo
+    # col nuovo indirizzo (style.css?v=...). Senza questo passaggio chi ha gia'
+    # aperto il sito si tiene il codice vecchio per una decina di minuti e vede
+    # i dati nuovi disegnati alla maniera vecchia.
+    riversionate = versiona(dry=dry)
+    for f in riversionate:
+        ok(f"versione di CSS/JS aggiornata in {f}{' [dry-run]' if dry else ''}")
+
+    # --- 9. git: proposta, non automatismo ----------------------------------
     if dry or senza_git:
         return 0
     cambiati = nuovi + aggiornati + len(orfane)
@@ -467,7 +490,7 @@ def main(argv):
     # comunque il JSON. Se guardassi solo i contatori delle immagini, dopo una
     # pubblicazione lo script direbbe "niente da committare" e la card non
     # uscirebbe mai online.
-    if cambiati == 0 and identico:
+    if cambiati == 0 and identico and not riversionate:
         info("Niente di nuovo da committare.")
         return 0
     if nuovi:
@@ -475,8 +498,10 @@ def main(argv):
     elif timbrate:
         usciti = ", ".join(t.split(" -> ")[0] for t in timbrate)
         messaggio = f"feat: pubblica {usciti}"
-    else:
+    elif cambiati or not identico:
         messaggio = "chore: aggiorna locandine"
+    else:
+        messaggio = "chore: aggiorna le versioni di CSS e JS"
     proponi_git(messaggio)
     return 0
 

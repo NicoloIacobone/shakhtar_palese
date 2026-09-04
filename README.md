@@ -25,6 +25,11 @@ Il sito mostra **solo chi è già stato presentato**. Gli altri sono già scritt
      Il numero è quello di **maglia**, non un progressivo.
    - **`COGNOME_SIGLA.jpg`** per lo staff — es. `DIFRANCO_ALL.jpg`
      (`ALL` allenatore, `PRS` presidente, `SMM` social media manager).
+   - Cognome doppio: scrivilo con l'underscore, `DE_TULLIO_10.jpg`.
+   - Omonimi: aggiungi l'**iniziale del nome** prima del numero,
+     `DE_TULLIO_C_20.jpg` e `DE_TULLIO_I_9.jpg`. L'iniziale serve solo a te per
+     ritrovare il file: sul sito resta "De Tullio", e l'aggancio al giocatore
+     giusto lo fa comunque il numero di maglia.
 
    Vanno bene `.jpg`, `.jpeg`, `.png` e `.webp` (la lista sta in
    `tools/config.json`). L'estensione può anche essere sbagliata: lo script
@@ -66,6 +71,26 @@ servito a chi naviga.
 > La prima volta che apri `sync.command`, macOS potrebbe dire che è di uno
 > sviluppatore non identificato: tasto destro → **Apri** → **Apri**. Succede
 > solo la prima volta.
+
+### Se il sito sembra "vecchio" dopo un push
+
+Non dovrebbe più succedere, ma vale la pena sapere perché. GitHub Pages dice al
+browser di tenersi i file per 10 minuti (`max-age=600`), quindi dopo un push il
+browser può continuare a usare la **copia vecchia** di `style.css` o di uno
+script — mentre i dati in `data/*.json`, che vengono chiesti con `no-cache`,
+sono già quelli nuovi. Il risultato è una pagina a metà: dati aggiornati
+disegnati alla maniera vecchia. Sembra un bug del sito e non lo è.
+
+Per questo `sync.command` fa passare `tools/versiona_asset.py`, che scrive nelle
+pagine l'impronta del contenuto di ogni file:
+
+```html
+<script src="assets/js/tornei.js?v=1058253e"></script>
+```
+
+Cambi lo script, cambia l'impronta, cambia l'indirizzo, e il browser è costretto
+a riscaricarlo. Se modifichi un CSS o un JS a mano e fai push senza passare da
+`sync.command`, `check_data.py` te lo dice.
 
 ### 2. Aggiornare risultati, classifica e statistiche
 
@@ -212,6 +237,9 @@ E quando escono le informazioni ufficiali:
 
 # controlla tutti i JSON
 ./.venv/bin/python tools/check_data.py
+
+# riscrive style.css?v=... e *.js?v=... nelle pagine (lo fa gia' sync.command)
+./.venv/bin/python tools/versiona_asset.py
 
 # rigenera favicon, icone e copertina social dal logo
 ./.venv/bin/python tools/make_icons.py
