@@ -25,8 +25,8 @@ non compare da nessuna parte (rosa, home, statistiche). Puoi quindi caricare
 tutte le foto in una volta sola e poi, quando tocca a quella persona, aprire
 data/locandine.json, cambiare quel false in true e rilanciare lo script: al
 primo lancio con il flag acceso la data di pubblicazione viene timbrata con
-la data di oggi, cosi' la griglia resta in ordine di uscita e non di
-importazione.
+data e ora di adesso, cosi' la griglia resta in ordine di uscita e non di
+importazione (anche fra due uscite nello stesso giorno).
 
 Si lancia con:   ./.venv/bin/python tools/sync_locandine.py
 oppure con doppio click su sync.command dal Finder.
@@ -337,11 +337,14 @@ def main(argv):
             data, fonte = manuale, "manuale"
         elif pubblicato:
             # Prima volta che vedo questa locandina accesa e senza una data sua:
-            # la timbro con oggi, e da qui in poi resta quella. Serve perche' le
-            # foto si caricano tutte insieme (stesso mtime) ma escono una alla
-            # volta: la griglia e la home devono seguire l'ordine di USCITA, non
-            # quello di importazione.
-            manuale = date.today().isoformat()
+            # la timbro con adesso (data e ORA), e da qui in poi resta quella.
+            # Serve perche' le foto si caricano tutte insieme (stesso mtime) ma
+            # escono una alla volta: la griglia e la home devono seguire
+            # l'ordine di USCITA, non quello di importazione. L'ora e' quello
+            # che permette di distinguere due uscite nello stesso giorno: senza,
+            # l'ordinamento andrebbe a pescare l'id come spareggio, che non ha
+            # niente a che vedere con l'ordine cronologico reale.
+            manuale = datetime.now().isoformat(timespec="seconds")
             data, fonte = manuale, "pubblicazione"
             timbrate.append(f"{ident} -> {manuale}")
         elif data_nome:
