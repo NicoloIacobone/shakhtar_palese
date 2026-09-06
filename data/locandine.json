@@ -1,8 +1,42 @@
 {
   "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO pubblicato, data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive. \"pubblicato\": false = la card e' pronta ma non si vede sul sito; mettilo a true e rilancia sync.command per farla uscire.",
-  "generato_il": "2026-09-06T13:27:44",
+  "generato_il": "2026-09-06T15:07:24",
   "totale": 13,
   "locandine": [
+    {
+      "id": "marzulli-45",
+      "pubblicato": true,
+      "file": "assets/locandine/marzulli-45.png",
+      "web": "assets/locandine/web/marzulli-45.jpg",
+      "thumb": "assets/locandine/thumbs/marzulli-45.jpg",
+      "w": 1024,
+      "h": 1536,
+      "web_w": 933,
+      "web_h": 1400,
+      "thumb_w": 400,
+      "thumb_h": 600,
+      "cognome": "Marzulli",
+      "numero": 45,
+      "sigla": null,
+      "data": "2026-09-06T15:07:24",
+      "data_fonte": "pubblicazione",
+      "valida": true,
+      "ordine": 1,
+      "_sorgente": {
+        "nome": "MARZULLI_45.png",
+        "dimensione": 2987098,
+        "mtime": 1788525102
+      },
+      "_parametri": {
+        "thumb_lato_max": 600,
+        "thumb_qualita": 80,
+        "web_lato_max": 1400,
+        "web_qualita": 82
+      },
+      "data_pubblicazione": "2026-09-06T15:07:24",
+      "giocatore": "",
+      "didascalia": ""
+    },
     {
       "id": "tesser-8",
       "pubblicato": true,
@@ -19,9 +53,9 @@
       "numero": 8,
       "sigla": null,
       "data": "2026-09-06T13:27:44",
-      "data_fonte": "pubblicazione",
+      "data_fonte": "manuale",
       "valida": true,
-      "ordine": 1,
+      "ordine": 2,
       "_sorgente": {
         "nome": "TESSER_8.png",
         "dimensione": 2685081,
@@ -55,7 +89,7 @@
       "data": "2026-09-05T21:22:16",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 2,
+      "ordine": 3,
       "_sorgente": {
         "nome": "MELE_22.png",
         "dimensione": 2816666,
@@ -89,7 +123,7 @@
       "data": "2026-09-05T15:12:07",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 3,
+      "ordine": 4,
       "_sorgente": {
         "nome": "DE_TULLIO_M_10.PNG",
         "dimensione": 2627562,
@@ -123,7 +157,7 @@
       "data": "2026-09-05T12:59:57",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 4,
+      "ordine": 5,
       "_sorgente": {
         "nome": "LARICCHIA_3.png",
         "dimensione": 2812608,
@@ -157,7 +191,7 @@
       "data": "2026-09-04",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 5,
+      "ordine": 6,
       "_sorgente": {
         "nome": "TEDESCO_11.png",
         "dimensione": 2842699,
@@ -191,7 +225,7 @@
       "data": "2026-09-04",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 6,
+      "ordine": 7,
       "_sorgente": {
         "nome": "PETRUZZELLI_5.png",
         "dimensione": 2876089,
@@ -225,7 +259,7 @@
       "data": "2026-09-04",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 7,
+      "ordine": 8,
       "_sorgente": {
         "nome": "PAPAPICCO_6.png",
         "dimensione": 2847337,
@@ -259,7 +293,7 @@
       "data": "2026-09-03",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 8,
+      "ordine": 9,
       "_sorgente": {
         "nome": "ESPOSITO_29.jpeg",
         "dimensione": 2848752,
@@ -293,7 +327,7 @@
       "data": "2026-09-02",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 9,
+      "ordine": 10,
       "_sorgente": {
         "nome": "SPADARO_12.png",
         "dimensione": 2662027,
@@ -327,7 +361,7 @@
       "data": "2026-09-05",
       "data_fonte": "mtime",
       "valida": true,
-      "ordine": 10,
+      "ordine": 11,
       "_sorgente": {
         "nome": "RESSA_7.png",
         "dimensione": 2700686,
@@ -361,7 +395,7 @@
       "data": "2026-09-05",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 11,
+      "ordine": 12,
       "_sorgente": {
         "nome": "DE_TULLIO_C_20.png",
         "dimensione": 2893752,
@@ -374,40 +408,6 @@
         "web_qualita": 82
       },
       "data_pubblicazione": "2026-09-05",
-      "giocatore": "",
-      "didascalia": ""
-    },
-    {
-      "id": "marzulli-45",
-      "pubblicato": false,
-      "file": "assets/locandine/marzulli-45.png",
-      "web": "assets/locandine/web/marzulli-45.jpg",
-      "thumb": "assets/locandine/thumbs/marzulli-45.jpg",
-      "w": 1024,
-      "h": 1536,
-      "web_w": 933,
-      "web_h": 1400,
-      "thumb_w": 400,
-      "thumb_h": 600,
-      "cognome": "Marzulli",
-      "numero": 45,
-      "sigla": null,
-      "data": "2026-09-04",
-      "data_fonte": "mtime",
-      "valida": true,
-      "ordine": 12,
-      "_sorgente": {
-        "nome": "MARZULLI_45.png",
-        "dimensione": 2987098,
-        "mtime": 1788525102
-      },
-      "_parametri": {
-        "thumb_lato_max": 600,
-        "thumb_qualita": 80,
-        "web_lato_max": 1400,
-        "web_qualita": 82
-      },
-      "data_pubblicazione": "",
       "giocatore": "",
       "didascalia": ""
     },
