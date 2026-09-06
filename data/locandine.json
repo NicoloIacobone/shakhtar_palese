@@ -1,7 +1,7 @@
 {
   "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO pubblicato, data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive. \"pubblicato\": false = la card e' pronta ma non si vede sul sito; mettilo a true e rilancia sync.command per farla uscire.",
-  "generato_il": "2026-09-06T15:07:24",
-  "totale": 13,
+  "generato_il": "2026-09-06T18:36:55",
+  "totale": 14,
   "locandine": [
     {
       "id": "marzulli-45",
@@ -19,7 +19,7 @@
       "numero": 45,
       "sigla": null,
       "data": "2026-09-06T15:07:24",
-      "data_fonte": "pubblicazione",
+      "data_fonte": "manuale",
       "valida": true,
       "ordine": 1,
       "_sorgente": {
@@ -344,6 +344,40 @@
       "didascalia": "Quelle fanno sempre over."
     },
     {
+      "id": "schino-77",
+      "pubblicato": false,
+      "file": "assets/locandine/schino-77.png",
+      "web": "assets/locandine/web/schino-77.jpg",
+      "thumb": "assets/locandine/thumbs/schino-77.jpg",
+      "w": 1024,
+      "h": 1536,
+      "web_w": 933,
+      "web_h": 1400,
+      "thumb_w": 400,
+      "thumb_h": 600,
+      "cognome": "Schino",
+      "numero": 77,
+      "sigla": null,
+      "data": "2026-09-06",
+      "data_fonte": "mtime",
+      "valida": true,
+      "ordine": 11,
+      "_sorgente": {
+        "nome": "SCHINO_77.PNG",
+        "dimensione": 2551710,
+        "mtime": 1788712594
+      },
+      "_parametri": {
+        "thumb_lato_max": 600,
+        "thumb_qualita": 80,
+        "web_lato_max": 1400,
+        "web_qualita": 82
+      },
+      "data_pubblicazione": "",
+      "giocatore": "",
+      "didascalia": ""
+    },
+    {
       "id": "ressa-7",
       "pubblicato": false,
       "file": "assets/locandine/ressa-7.png",
@@ -361,7 +395,7 @@
       "data": "2026-09-05",
       "data_fonte": "mtime",
       "valida": true,
-      "ordine": 11,
+      "ordine": 12,
       "_sorgente": {
         "nome": "RESSA_7.png",
         "dimensione": 2700686,
@@ -395,7 +429,7 @@
       "data": "2026-09-05",
       "data_fonte": "manuale",
       "valida": true,
-      "ordine": 12,
+      "ordine": 13,
       "_sorgente": {
         "nome": "DE_TULLIO_C_20.png",
         "dimensione": 2893752,
@@ -429,7 +463,7 @@
       "data": "2026-09-04",
       "data_fonte": "mtime",
       "valida": true,
-      "ordine": 13,
+      "ordine": 14,
       "_sorgente": {
         "nome": "DE_TULLIO_I_9.png",
         "dimensione": 2753599,
