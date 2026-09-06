@@ -317,6 +317,18 @@ dialog.modale::backdrop { background: rgba(0, 0, 0, .78); backdrop-filter: blur(
 .scheda-stat b { display: block; font-family: var(--font-num); font-size: 1.25rem; color: var(--arancio); }
 .scheda-stat small { font-size: .62rem; text-transform: uppercase; letter-spacing: .06em; color: var(--testo-debole); }
 
+/* Spider chart delle caratteristiche (dentro la scheda).
+   Il disegno arriva da rosa.js gia' in coordinate: qui ci sono solo i colori,
+   cosi' segue il tema chiaro/scuro senza che il JS sappia niente della palette. */
+.radar { display: block; width: 100%; max-width: 420px; height: auto; margin: .2rem auto 0; }
+.rc-griglia { fill: none; stroke: var(--bordo); stroke-width: 1; }
+.rc-asse { stroke: var(--bordo); stroke-width: 1; }
+.rc-area { fill: var(--arancio); fill-opacity: .22; stroke: var(--arancio); stroke-width: 2; stroke-linejoin: round; }
+.rc-punto { fill: var(--arancio); }
+.rc-et { font-family: var(--font); font-size: 10px; font-weight: 700; fill: var(--testo-tenue); }
+.rc-num { font-family: var(--font-num); font-size: 11px; font-weight: 800; fill: var(--arancio); }
+.rc-nota { text-align: center; color: var(--testo-debole); font-size: .78rem; margin: .4rem 0 0; }
+
 /* --- Tabelle (classifica, statistiche) --- */
 .tabella-wrap { overflow-x: auto; border: 1px solid var(--bordo); border-radius: var(--raggio); }
 table.tab { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 560px; }

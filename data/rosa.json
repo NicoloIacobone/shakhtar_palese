@@ -1,6 +1,6 @@
 {
   "_placeholder": true,
-  "_nota": "Nomi, numeri e ruoli sono quelli veri. I campi personali (classe, posizione preferita, frase, superstizione, rito post-allenamento, skill fuori dal campo) sono SEGNAPOSTO inventati: falli confermare dai diretti interessati prima di pubblicare. La foto non si scrive qui: si collega dal numero di maglia (o dal cognome, per lo staff) tramite data/locandine.json.",
+  "_nota": "Nomi, numeri e ruoli sono quelli veri. I campi personali (classe, posizione preferita, frase, superstizione, rito post-allenamento, skill fuori dal campo) e le caratteristiche dello spider chart sono SEGNAPOSTO inventati: falli confermare dai diretti interessati prima di pubblicare. Le caratteristiche si modificano comodamente dal pannello locale (admin/, scheda \"Caratteristiche\"). La foto non si scrive qui: si collega dal numero di maglia (o dal cognome, per lo staff) tramite data/locandine.json.",
   "giocatori": [
     {
       "numero": 12,
@@ -17,6 +17,13 @@
       "superstizione": "Virtuali alla GoldBet",
       "rito_post_allenamento": "Dino Street Food",
       "skill_fuori_campo": "Doppia pita maxi",
+      "caratteristiche": {
+        "lunghezza_capelli": 4,
+        "lunghezza_pene": 7,
+        "fame_gol": 5,
+        "fiducia_presidente": 4,
+        "fiducia_allenatore": 7
+      },
       "_placeholder": true
     },
     {
@@ -34,6 +41,13 @@
       "superstizione": "Edit di paletta al Milan su TikTok",
       "rito_post_allenamento": "Vaschetta di chele di granchio da Dino",
       "skill_fuori_campo": "Over 10.5 Nastro Azzurro",
+      "caratteristiche": {
+        "lunghezza_capelli": 9,
+        "lunghezza_pene": 6,
+        "fame_gol": 7,
+        "fiducia_presidente": 1,
+        "fiducia_allenatore": 6
+      },
       "_placeholder": true
     },
     {
@@ -51,6 +65,13 @@
       "superstizione": "Serie di insulti a Marzulli",
       "rito_post_allenamento": "Cicchetto di cianuro",
       "skill_fuori_campo": "Dare ripetizioni alle professoresse",
+      "caratteristiche": {
+        "lunghezza_capelli": 9,
+        "lunghezza_pene": 9,
+        "fame_gol": 4,
+        "fiducia_presidente": 5,
+        "fiducia_allenatore": 6
+      },
       "_placeholder": true
     },
     {
@@ -68,6 +89,13 @@
       "superstizione": "Risoluzione di 4 integrali doppi",
       "rito_post_allenamento": "Ricontrollare gli integrali di prima",
       "skill_fuori_campo": "Pomiciare alla Praja",
+      "caratteristiche": {
+        "lunghezza_capelli": 10,
+        "lunghezza_pene": 7,
+        "fame_gol": 5,
+        "fiducia_presidente": 8,
+        "fiducia_allenatore": 8
+      },
       "_placeholder": true
     },
     {
@@ -85,6 +113,13 @@
       "superstizione": "Assunzione di 100g di proteine",
       "rito_post_allenamento": "Perdere almeno 7 gratta e vinci",
       "skill_fuori_campo": "Arrivare primo all'Hyrox... e anche secondo",
+      "caratteristiche": {
+        "lunghezza_capelli": 10,
+        "lunghezza_pene": 7,
+        "fame_gol": 4,
+        "fiducia_presidente": 7,
+        "fiducia_allenatore": 9
+      },
       "_placeholder": true
     },
     {
@@ -102,6 +137,13 @@
       "superstizione": "Controllare se è più famosa la Coca-Cola o la Nutella",
       "rito_post_allenamento": "Fare le domande a Nicolò",
       "skill_fuori_campo": "Sbagliare gli 0-0 ai big match",
+      "caratteristiche": {
+        "lunghezza_capelli": 1,
+        "lunghezza_pene": 8,
+        "fame_gol": 5,
+        "fiducia_presidente": 9,
+        "fiducia_allenatore": 6
+      },
       "_placeholder": true
     },
     {
@@ -119,6 +161,13 @@
       "superstizione": "Magnesio e potassio scaduto nel 2020",
       "rito_post_allenamento": "Boscaiolo + mongolfiera",
       "skill_fuori_campo": "Testa-coda col treno",
+      "caratteristiche": {
+        "lunghezza_capelli": 3,
+        "lunghezza_pene": 3,
+        "fame_gol": 6,
+        "fiducia_presidente": 8,
+        "fiducia_allenatore": 8
+      },
       "_placeholder": true
     },
     {
@@ -136,6 +185,13 @@
       "superstizione": "Balsamo di cavallo",
       "rito_post_allenamento": "Schedina ammoniti Plus",
       "skill_fuori_campo": "Accalappiaracchie",
+      "caratteristiche": {
+        "lunghezza_capelli": 7,
+        "lunghezza_pene": 6,
+        "fame_gol": 7,
+        "fiducia_presidente": 10,
+        "fiducia_allenatore": 10
+      },
       "_placeholder": true
     },
     {
@@ -153,6 +209,13 @@
       "superstizione": "Nerissima e Papa V in cuffia",
       "rito_post_allenamento": "10 sigarette di fila",
       "skill_fuori_campo": "Riconosce i giocatori dai piedi delle mogli",
+      "caratteristiche": {
+        "lunghezza_capelli": 10,
+        "lunghezza_pene": 6,
+        "fame_gol": 5,
+        "fiducia_presidente": 7,
+        "fiducia_allenatore": 4
+      },
       "_placeholder": true
     },
     {
@@ -170,6 +233,13 @@
       "superstizione": "3 RedBull e tanta ansia da prestazione",
       "rito_post_allenamento": "Ordinare tutte le vaschette nel menù da Dino Street Food",
       "skill_fuori_campo": "Capire se esce Crazy Time prima che la ruota giri",
+      "caratteristiche": {
+        "lunghezza_capelli": 1,
+        "lunghezza_pene": 10,
+        "fame_gol": 10,
+        "fiducia_presidente": 5,
+        "fiducia_allenatore": 7
+      },
       "_placeholder": true
     },
     {
@@ -187,6 +257,13 @@
       "superstizione": "Guardare 40 volte \"Skills and goals Lionel Messi\"",
       "rito_post_allenamento": "Finanziare Santosmash",
       "skill_fuori_campo": "Capelli e sopracciglia sempre perfette",
+      "caratteristiche": {
+        "lunghezza_capelli": 10,
+        "lunghezza_pene": 7,
+        "fame_gol": 6,
+        "fiducia_presidente": 8,
+        "fiducia_allenatore": 9
+      },
       "_placeholder": true
     },
     {
@@ -204,6 +281,13 @@
       "superstizione": "Smettere di rispondere al telefono",
       "rito_post_allenamento": "Implorare di essere accompagnato a Palese",
       "skill_fuori_campo": "Mantenere segreta la via di casa sua",
+      "caratteristiche": {
+        "lunghezza_capelli": 7,
+        "lunghezza_pene": 1,
+        "fame_gol": 8,
+        "fiducia_presidente": 5,
+        "fiducia_allenatore": 6
+      },
       "_placeholder": true
     },
     {
@@ -221,6 +305,13 @@
       "superstizione": "Playlist Lamine Yamal a restare umili",
       "rito_post_allenamento": "Doppio Gran Crispy a sciacquare",
       "skill_fuori_campo": "Tipster di gran classe",
+      "caratteristiche": {
+        "lunghezza_capelli": 9,
+        "lunghezza_pene": 1,
+        "fame_gol": 7,
+        "fiducia_presidente": 4,
+        "fiducia_allenatore": 3
+      },
       "_placeholder": true
     },
     {
@@ -238,6 +329,13 @@
       "superstizione": "Giro di tutte le sale bet di Palese",
       "rito_post_allenamento": "Svaligiare il MC Donald's",
       "skill_fuori_campo": "Abbandonare la propria squadra per giocare nello Shakhtar Palese",
+      "caratteristiche": {
+        "lunghezza_capelli": 7,
+        "lunghezza_pene": 6,
+        "fame_gol": 9,
+        "fiducia_presidente": 6,
+        "fiducia_allenatore": 5
+      },
       "_placeholder": true
     }
   ],

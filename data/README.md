@@ -80,6 +80,23 @@ Poi i due gruppi che si vedono nella scheda:
 `superstizione` (quella pre-partita), `rito_post_allenamento`,
 `skill_fuori_campo`.
 
+**Caratteristiche** — il blocco `caratteristiche`, cinque valori interi **da 1 a
+10**, che nella scheda diventano lo **spider chart**:
+
+| campo | cosa misura |
+|---|---|
+| `lunghezza_capelli` | quanti capelli hai in testa. Con `1` finisci anche nel filtro **Pelati** della pagina Rosa: quel filtro prende solo i pelati veri, non i capelli corti |
+| `lunghezza_pene` | vedi tu |
+| `fame_gol` | quanto vuole segnare |
+| `fiducia_presidente` | quanta ne ha nel presidente |
+| `fiducia_allenatore` | quanta ne ha nell'allenatore |
+
+Sono numeri **senza virgolette** (`"fame_gol": 9`, non `"9"`). Il modo comodo di
+metterli è il pannello locale, scheda **Caratteristiche**: una riga per
+giocatore, un cursore per valore, poi *Scarica rosa.json*. Se il blocco manca
+del tutto lo spider chart semplicemente non compare nella scheda; se c'è, ci
+devono essere **tutti e cinque** i campi — `check_data.py` te lo dice.
+
 **Un campo lasciato vuoto semplicemente non compare nella scheda.** Non ci sono
 buchi ne' trattini: meglio una scheda corta che una piena di caselle vuote. Puoi
 quindi riempirli con calma, uno alla volta.
@@ -99,9 +116,9 @@ locandina si collega **col cognome**, non col numero: vedi sotto.
 **La foto non si scrive qui.** Si aggancia da sola: vedi `locandine.json`.
 
 `"_placeholder": true` significa "questi dati sono ancora inventati". I nomi, i
-numeri e i ruoli sono veri; classe, frase preferita, superstizione, rito e skill
-sono segnaposto scritti da Claude: **falli confermare dai diretti interessati**,
-poi togli il flag.
+numeri e i ruoli sono veri; classe, frase preferita, superstizione, rito, skill
+e i cinque valori delle caratteristiche sono segnaposto scritti da Claude:
+**falli confermare dai diretti interessati**, poi togli il flag.
 
 ## `statistiche.json` — i numeri dei giocatori
 

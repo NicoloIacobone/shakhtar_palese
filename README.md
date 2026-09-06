@@ -101,6 +101,10 @@ Due modi, scegli quello che ti va:
 - **Col pannello**: fai partire il server locale (sotto), apri
   <http://localhost:8000/admin/>, modifica nei form, premi *Scarica JSON
   aggiornato* e metti il file scaricato al posto di quello in `data/`.
+  Le schede sono *Rosa*, *Staff*, *Caratteristiche* (i cinque valori da 1 a 10
+  dello spider chart, uno per cursore), *Statistiche*, *Classifica* e
+  *Calendario*. Rosa, Staff e Caratteristiche lavorano tutte e tre sullo stesso
+  `rosa.json`: sistemale e poi scaricalo **una volta sola**.
 
 Poi, sempre:
 

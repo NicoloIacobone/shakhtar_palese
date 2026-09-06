@@ -7,6 +7,7 @@ Verifica, per ogni file in data/:
   · che sia JSON valido;
   · che ci siano i campi obbligatori e che i numeri siano numeri;
   · che i riferimenti incrociati tornino (statistiche <-> rosa, locandine <-> rosa);
+  · che le caratteristiche dello spider chart ci siano tutte e stiano fra 1 e 10;
   · che ogni immagine citata nei JSON esista davvero su disco;
   · che la classifica sia coerente (punti = 3*V + N, G = V+N+P, DR = GF-GS)
     e che combaci con i risultati del calendario per la nostra squadra.
@@ -105,6 +106,43 @@ CAMPI_PERSONALI = ["soprannome", "provenienza", "classe", "posizione_preferita",
                    "skill_fuori_campo"]
 SIGLE_STAFF = {"ALL", "PRS", "SMM", "DS", "PREP", "MAG"}
 
+# Le caratteristiche dello spider chart della scheda giocatore: numeri interi da
+# 1 a 10. Stessa lista, stessi nomi, anche in assets/js/rosa.js (che la disegna)
+# e in admin/admin.js (che la fa modificare): se ne aggiungi una, aggiungila in
+# tutti e tre i posti.
+CARATTERISTICHE = ["lunghezza_capelli", "lunghezza_pene", "fame_gol",
+                   "fiducia_presidente", "fiducia_allenatore"]
+CAR_MIN, CAR_MAX = 1, 10
+# Con i capelli a questo valore sei nel filtro "Pelati" della pagina Rosa
+# (assets/js/rosa.js): pelato vero, non "cortissimi".
+PELATO_MAX = 1
+
+
+def controlla_caratteristiche(dove, giocatore, etichetta=""):
+    """Il blocco 'caratteristiche': o non c'e', o c'e' tutto e nei limiti."""
+    car = giocatore.get("caratteristiche")
+    if car is None:
+        return False
+    if not isinstance(car, dict):
+        errore(dove, f"{etichetta}'caratteristiche' deve essere un oggetto con i "
+                     f"cinque valori, invece e' {car!r}")
+        return False
+    for c in CARATTERISTICHE:
+        if c not in car:
+            errore(dove, f"{etichetta}caratteristiche → manca '{c}'")
+            continue
+        v = car[c]
+        if isinstance(v, bool) or not isinstance(v, int):
+            errore(dove, f"{etichetta}caratteristiche → '{c}' deve essere un numero "
+                         f"intero senza virgolette, invece e' {v!r}")
+        elif not (CAR_MIN <= v <= CAR_MAX):
+            errore(dove, f"{etichetta}caratteristiche → '{c}' vale {v}: la scala va "
+                         f"da {CAR_MIN} a {CAR_MAX}")
+    for extra in set(car) - set(CARATTERISTICHE):
+        avviso(dove, f"{etichetta}caratteristiche → '{extra}' non e' fra quelle "
+                     f"disegnate nello spider chart: verra' ignorata")
+    return True
+
 
 def controlla_rosa():
     """Ritorna (numeri di maglia, cognomi dello staff)."""
@@ -119,6 +157,7 @@ def controlla_rosa():
         return {}, set()
 
     visti, vuoti = {}, 0
+    con_car, senza_car = [], []
     for i, g in enumerate(giocatori, 1):
         et = f"giocatore #{i} ({g.get('cognome', '?')}) → "
         obbligatori("rosa.json", g, ["numero", "nome", "cognome", "ruolo"], et)
@@ -136,6 +175,10 @@ def controlla_rosa():
         if g.get("classe") not in (None, "") and not (1940 <= int(g.get("classe", 0) or 0) <= 2020):
             errore("rosa.json", f"{et}classe '{g.get('classe')}': mi aspettavo un anno di nascita")
         vuoti += sum(1 for c in CAMPI_PERSONALI if not g.get(c))
+        if controlla_caratteristiche("rosa.json", g, et):
+            con_car.append(g)
+        else:
+            senza_car.append(f"#{n}" if isinstance(n, int) else g.get("cognome", "?"))
 
     # --- staff (allenatore, presidente, social media manager…) ---
     staff = d.get("staff") or []
@@ -162,6 +205,15 @@ def controlla_rosa():
           f"numeri {sorted(visti)}")
     if vuoti:
         print(f"{GRIGIO}  ·{FINE} campi personali ancora da compilare: {vuoti}")
+    if senza_car:
+        avviso("rosa.json", "senza le caratteristiche dello spider chart (nella scheda "
+               "non comparira'): " + ", ".join(senza_car)
+               + " — compilale dal pannello locale, scheda \"Caratteristiche\"")
+    pelati = sorted(g.get("caratteristiche", {}).get("lunghezza_capelli", CAR_MAX)
+                    for g in con_car
+                    if g.get("caratteristiche", {}).get("lunghezza_capelli", CAR_MAX) <= PELATO_MAX)
+    print(f"{GRIGIO}  ·{FINE} caratteristiche: {len(con_car)} giocatori su {len(giocatori)}, "
+          f"di cui {len(pelati)} nel filtro \"Pelati\" (capelli a {PELATO_MAX})")
     return visti, cognomi_staff
 
 

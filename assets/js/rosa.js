@@ -7,20 +7,26 @@
    La griglia mette in cima l'ultimo presentato: reparti dagli attaccanti ai
    portieri e, dentro il reparto, dalla locandina piu' recente.
    La foto NON e' scritta in rosa.json: i giocatori si collegano col numero di
-   maglia, lo staff col cognome. */
+   maglia, lo staff col cognome.
+   La scheda aperta mostra anche lo spider chart delle caratteristiche (da 1 a
+   10, scritte in rosa.json sotto "caratteristiche" e modificabili dal pannello
+   locale). Oltre ai reparti i filtri sono tre: "Staff", "Pelati" (chi ha la
+   lunghezza dei capelli a PELATO_MAX, cioe' i pelati veri) e "De Tullio",
+   che raduna la dinastia. */
 
 (async function rosa() {
   const griglia    = document.getElementById('griglia-rosa');
   const grigliaSt  = document.getElementById('griglia-staff');
   const bloccoSt   = document.getElementById('blocco-staff');
   const filtri     = document.getElementById('filtri-ruolo');
+  const notaFiltro = document.getElementById('nota-filtro');
   const avanzam    = document.getElementById('avanzamento-rosa');
   const intro      = document.getElementById('intro-rosa');
   const modale     = document.getElementById('scheda-giocatore');
   const dentro     = document.getElementById('scheda-contenuto');
   const PLACEHOLDER = 'assets/img/placeholder-giocatore.svg';
 
-  let persone = [], statPerNumero = {}, fotoPerChiave = {}, ruoloAttivo = 'tutti';
+  let persone = [], statPerNumero = {}, fotoPerChiave = {}, filtroAttivo = 'tutti';
   let soloPresentati = true;
 
   try {
@@ -96,19 +102,49 @@
     intro.textContent = 'La presentazione della rosa comincia a breve. Torna fra poco.';
   }
 
-  /* ------------------------------------------------- filtri per ruolo --- */
+  /* ------------------------------------------------------------ filtri --- */
+  /* Oltre ai reparti ci sono tre filtri che non sono ruoli: "Staff" porta nella
+     griglia principale chi di solito sta nel blocco in fondo, "Pelati" tiene i
+     pelati veri e "De Tullio" raduna la dinastia. Tutti e tre compaiono solo se
+     hanno qualcuno dentro: un chip che apre una griglia vuota non serve. */
+  const PELATO_MAX = 1;                       // pelato = capelli a 1, non "cortissimi"
+  const DINASTIA = 'De Tullio';               // il cognome che si merita un filtro suo
+  const capelli = (p) => p.caratteristiche?.lunghezza_capelli;
   const giocatoriVisibili = () => visibili().filter((p) => p._tipo === 'giocatore');
-  const ruoli = ['tutti', ...[...new Set(giocatoriVisibili().map((g) => g.ruolo))]
-    .sort((a, b) => pesoRuolo(a) - pesoRuolo(b))];
+  const staffVisibile     = () => visibili().filter((p) => p._tipo === 'staff');
+  // Chi non ha ancora le caratteristiche non e' un pelato: e' uno di cui non si sa
+  // niente. Senza questo controllo un campo mancante varrebbe 0 e finirebbe primo.
+  const pelati = () => giocatoriVisibili()
+    .filter((g) => Number.isFinite(capelli(g)) && capelli(g) <= PELATO_MAX)
+    .sort((a, b) => capelli(a) - capelli(b) || (a.numero ?? 0) - (b.numero ?? 0));
+  // Confronto sul cognome ripulito (SP.slug), cosi' regge un "de tullio" scritto
+  // storto nel JSON. Guarda anche lo staff: se un domani ce n'e' uno, sta qui.
+  const dinastia = () => visibili()
+    .filter((p) => SP.slug(p.cognome || '') === SP.slug(DINASTIA))
+    .sort(perGriglia);
+
+  const ruoli = [...new Set(giocatoriVisibili().map((g) => g.ruolo))]
+    .sort((a, b) => pesoRuolo(a) - pesoRuolo(b));
+  const FILTRI = [
+    { id: 'tutti', et: 'Tutti' },
+    ...ruoli.map((r) => ({ id: r, et: SP.plurale(r) })),
+    ...(staffVisibile().length ? [{ id: 'staff', et: 'Staff' }] : []),
+    ...(pelati().length ? [{ id: 'pelati', et: 'Pelati' }] : []),
+    ...(dinastia().length ? [{ id: 'dinastia', et: DINASTIA }] : []),
+  ];
+  const NOTE_FILTRO = {
+    pelati: `Solo chi ha la lunghezza dei capelli a ${PELATO_MAX}: i pelati veri.`,
+    dinastia: `Tutti i ${DINASTIA} della rosa in una griglia sola.`,
+  };
   // Con uno o due giocatori i filtri non servono a niente: li mostro da 3 in su.
-  if (ruoli.length > 2 && giocatoriVisibili().length > 2) {
-    filtri.innerHTML = ruoli.map((r) =>
-      `<button class="chip" type="button" data-ruolo="${SP.esc(r)}" aria-pressed="${r === 'tutti'}">
-         ${r === 'tutti' ? 'Tutti' : SP.esc(SP.plurale(r))}</button>`).join('');
+  if (FILTRI.length > 2 && giocatoriVisibili().length > 2) {
+    filtri.innerHTML = FILTRI.map((f) =>
+      `<button class="chip" type="button" data-filtro="${SP.esc(f.id)}" aria-pressed="${f.id === 'tutti'}">
+         ${SP.esc(f.et)}</button>`).join('');
     filtri.addEventListener('click', (e) => {
-      const b = e.target.closest('[data-ruolo]');
+      const b = e.target.closest('[data-filtro]');
       if (!b) return;
-      ruoloAttivo = b.dataset.ruolo;
+      filtroAttivo = b.dataset.filtro;
       filtri.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c === b)));
       disegna();
     });
@@ -118,22 +154,119 @@
 
   /* ------------------------------------------------------- le griglie --- */
   function disegna() {
-    const lista = giocatoriVisibili()
-      .filter((g) => ruoloAttivo === 'tutti' || g.ruolo === ruoloAttivo)
-      .sort(perGriglia);
+    const staffAParte = filtroAttivo === 'tutti';   // col filtro attivo il blocco in fondo sparisce
+    let lista, vuoto = 'Nessuno con questo ruolo.';
+    if (filtroAttivo === 'staff') {
+      lista = staffVisibile().sort(perGriglia);
+      vuoto = 'Nessuno dello staff presentato, per ora.';
+    } else if (filtroAttivo === 'pelati') {
+      lista = pelati();
+      vuoto = 'Nessun pelato. Per adesso.';
+    } else if (filtroAttivo === 'dinastia') {
+      lista = dinastia();
+      vuoto = `Nessun ${DINASTIA} presentato, per ora.`;
+    } else {
+      lista = giocatoriVisibili()
+        .filter((g) => filtroAttivo === 'tutti' || g.ruolo === filtroAttivo)
+        .sort(perGriglia);
+    }
+
+    if (notaFiltro) {
+      notaFiltro.textContent = NOTE_FILTRO[filtroAttivo] || '';
+      notaFiltro.hidden = !notaFiltro.textContent;
+    }
 
     griglia.innerHTML = lista.length
       ? lista.map((g) => SP.cardPersona(g, fotoPerChiave[g._chiave])).join('')
       : `<p class="vuoto" style="grid-column:1/-1">${soloPresentati && presentati === 0
           ? 'Ancora nessuno presentato. Le card arrivano una al giorno su Instagram.'
-          : 'Nessuno con questo ruolo.'}</p>`;
+          : vuoto}</p>`;
 
     // Lo staff non ha reparti: resta l'ordine di uscita.
-    const staff = visibili().filter((p) => p._tipo === 'staff').sort(perGriglia);
-    bloccoSt.hidden = staff.length === 0;
+    const staff = staffVisibile().sort(perGriglia);
+    bloccoSt.hidden = !staffAParte || staff.length === 0;
     grigliaSt.innerHTML = staff.map((p) => SP.cardPersona(p, fotoPerChiave[p._chiave])).join('');
   }
   disegna();
+
+  /* --------------------------------------------------- spider chart --- */
+  /* Le cinque caratteristiche di rosa.json, da 1 a 10. L'ORDINE di questa lista
+     e' anche la posizione sul grafico: la prima sta in alto, le altre in senso
+     orario. Per aggiungerne una basta metterla qui (e nel pannello e in
+     check_data.py): il pentagono diventa un esagono da solo. */
+  const CARATTERISTICHE = [
+    { k: 'fame_gol',           righe: ['Fame', 'di gol'] },
+    { k: 'fiducia_presidente', righe: ['Fiducia nel', 'presidente'] },
+    { k: 'fiducia_allenatore', righe: ['Fiducia', "nell'allenatore"] },
+    { k: 'lunghezza_pene',     righe: ['Lunghezza', 'pene'] },
+    { k: 'lunghezza_capelli',  righe: ['Lunghezza', 'capelli'] },
+  ];
+  const CAR_MAX = 10;
+  const CAR_ANELLI = [2, 4, 6, 8, 10];
+
+  const valoreCar = (car, k) => {
+    const n = Number(car?.[k]);
+    return Number.isFinite(n) ? Math.max(0, Math.min(CAR_MAX, n)) : null;
+  };
+  /* Il grafico esce solo se c'e' almeno un valore: cosi' chi non e' ancora stato
+     "valutato" ha la scheda di prima, senza un pentagono schiacciato al centro. */
+  const haCaratteristiche = (p) => CARATTERISTICHE.some((c) => valoreCar(p.caratteristiche, c.k) !== null);
+
+  function spider(p) {
+    const car = p.caratteristiche || {};
+    const R = 86, CX = 170, CY = 128, PASSO = 12;
+    const angolo = (i) => (-90 + i * (360 / CARATTERISTICHE.length)) * Math.PI / 180;
+    const punto = (i, raggio) => {
+      const a = angolo(i);
+      return [CX + Math.cos(a) * raggio, CY + Math.sin(a) * raggio];
+    };
+    const poligono = (raggi) => raggi
+      .map((r, i) => punto(i, r).map((n) => n.toFixed(1)).join(',')).join(' ');
+
+    const valori = CARATTERISTICHE.map((c) => valoreCar(car, c.k) ?? 0);
+    const raggi = valori.map((v) => (v / CAR_MAX) * R);
+
+    const anelli = CAR_ANELLI.map((liv) =>
+      `<polygon class="rc-griglia" points="${poligono(CARATTERISTICHE.map(() => (liv / CAR_MAX) * R))}"/>`).join('');
+    const assi = CARATTERISTICHE.map((c, i) => {
+      const [x, y] = punto(i, R);
+      return `<line class="rc-asse" x1="${CX}" y1="${CY}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    }).join('');
+    const punte = raggi.map((r, i) => {
+      const [x, y] = punto(i, r);
+      return `<circle class="rc-punto" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.8"/>`;
+    }).join('');
+
+    const etichette = CARATTERISTICHE.map((c, i) => {
+      const [x, y] = punto(i, R + 14);
+      const ux = Math.cos(angolo(i)), uy = Math.sin(angolo(i));
+      const ancora = ux > 0.2 ? 'start' : ux < -0.2 ? 'end' : 'middle';
+      const n = c.righe.length;
+      // L'etichetta si appoggia al vertice: sopra se l'asse punta in alto,
+      // sotto se punta in basso, centrata sulle due punte laterali.
+      const base = uy < -0.5 ? y - 6 - (n - 1) * PASSO
+                 : uy > 0.5  ? y + 14
+                 : y - ((n - 1) * PASSO) / 2 + 4;
+      const xs = x.toFixed(1);
+      const righe = c.righe.map((t, j) => {
+        const num = j === n - 1
+          ? ` <tspan class="rc-num">${valoreCar(car, c.k) ?? '&ndash;'}</tspan>` : '';
+        return `<tspan x="${xs}"${j ? ` dy="${PASSO}"` : ''}>${SP.esc(t)}${num}</tspan>`;
+      }).join('');
+      return `<text class="rc-et" x="${xs}" y="${base.toFixed(1)}" text-anchor="${ancora}">${righe}</text>`;
+    }).join('');
+
+    const riassunto = CARATTERISTICHE
+      .map((c) => `${c.righe.join(' ').toLowerCase()} ${valoreCar(car, c.k) ?? 'non assegnata'}`)
+      .join(', ');
+
+    return `<svg class="radar" viewBox="0 0 340 250" role="img"
+        aria-label="Caratteristiche di ${SP.esc(p.nome + ' ' + p.cognome)}, da 1 a ${CAR_MAX}: ${SP.esc(riassunto)}">
+      ${anelli}${assi}
+      <polygon class="rc-area" points="${poligono(raggi)}"/>
+      ${punte}${etichette}
+    </svg>`;
+  }
 
   /* --------------------------------------------- scheda in una modale --- */
   document.addEventListener('click', (e) => {
@@ -189,6 +322,12 @@
         dato('Rito post-allenamento', p.rito_post_allenamento),
         dato('Skill fuori dal campo', p.skill_fuori_campo),
       ].join(''))}
+
+      ${haCaratteristiche(p) ? `<div class="scheda-sezione">
+        <h3>Caratteristiche</h3>
+        ${spider(p)}
+        <p class="rc-nota">Valori da 1 a 10, assegnati a insindacabile giudizio dello spogliatoio.</p>
+      </div>` : ''}
 
       ${st ? `<div class="scheda-sezione">
         <h3>Statistiche</h3>

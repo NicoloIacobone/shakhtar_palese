@@ -53,6 +53,16 @@ table.editor-tab tr:last-child td { border-bottom: 0; }
 .editor input:hover, .editor select:hover { border-color: var(--bordo); }
 .editor input:focus, .editor select:focus, .editor textarea:focus { border-color: var(--arancio); outline: none; }
 .editor input[type="number"] { min-width: 4.2rem; font-family: var(--font-num); }
+
+/* Cursore da 1 a 10 col numero a fianco (scheda Caratteristiche). */
+.editor .scala { display: flex; align-items: center; gap: .5rem; min-width: 9rem; }
+.editor .scala input[type="range"] { min-width: 6rem; padding: 0; accent-color: var(--arancio); background: none; border: 0; }
+.editor .scala output {
+  font-family: var(--font-num); font-weight: 800; font-size: .9rem; color: var(--arancio);
+  min-width: 1.4rem; text-align: right;
+}
+/* Colonna di sola lettura: dice su quale riga stai lavorando. */
+.editor .fisso { display: inline-block; padding: .4rem .5rem; color: var(--testo-tenue); font-weight: 700; white-space: nowrap; }
 .editor .lungo input { min-width: 14rem; }
 .editor .invalido { border-color: var(--rosso) !important; background: color-mix(in srgb, var(--rosso) 14%, var(--superficie)); }
 

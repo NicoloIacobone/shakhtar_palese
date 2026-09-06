@@ -16,10 +16,36 @@
   /* Cosa e' caricato in memoria, per nome di file JSON. */
   const doc = {};
 
+  /* I campi si indirizzano col punto quando stanno dentro un oggetto annidato:
+     'caratteristiche.fame_gol' legge e scrive riga.caratteristiche.fame_gol.
+     Senza punto e' un campo normale, come e' sempre stato. */
+  const leggi = (obj, k) => k.split('.').reduce((o, pezzo) => (o == null ? undefined : o[pezzo]), obj);
+  const scrivi = (obj, k, v) => {
+    const pezzi = k.split('.');
+    const ultimo = pezzi.pop();
+    const dentro = pezzi.reduce((o, pezzo) => (o[pezzo] ??= {}), obj);
+    dentro[ultimo] = v;
+  };
+
+  /* Le caratteristiche dello spider chart. Stessa lista, stessi nomi di campo, in
+     tre posti: qui, in assets/js/rosa.js (che le disegna) e in tools/check_data.py
+     (che le controlla). Se ne aggiungi una, aggiungila in tutti e tre. */
+  const CAR_MIN = 1, CAR_MAX = 10;
+  const CARATTERISTICHE = [
+    { k: 'lunghezza_capelli',  et: 'Capelli' },
+    { k: 'lunghezza_pene',     et: 'Pene' },
+    { k: 'fame_gol',           et: 'Fame di gol' },
+    { k: 'fiducia_presidente', et: 'Fiducia nel presidente' },
+    { k: 'fiducia_allenatore', et: "Fiducia nell'allenatore" },
+  ];
+  const CARATTERISTICHE_DEFAULT = Object.fromEntries(CARATTERISTICHE.map((c) => [c.k, 5]));
+
   /* -----------------------------------------------------------------------
      Definizione delle sezioni. Per aggiungere un campo a una tabella basta
-     aggiungere una voce a "campi": tipo 'int' obbliga a un numero, 'obbl'
-     evidenzia il campo se lo lasci vuoto.
+     aggiungere una voce a "campi": tipo 'int' obbliga a un numero, 'scala' un
+     cursore da 1 a 10, 'fisso' una casella che si legge e non si tocca; 'obbl'
+     evidenzia il campo se lo lasci vuoto. Con "soloModifica" la sezione non fa
+     aggiungere ne' togliere righe: lavora su una lista che comanda altrove.
      ----------------------------------------------------------------------- */
   const SEZIONI = [
     {
@@ -74,6 +100,26 @@
         { k: 'superstizione', et: 'Superstizione pre-partita', lungo: true },
         { k: 'rito_post_allenamento', et: 'Rito post-allenamento', lungo: true },
         { k: 'skill_fuori_campo', et: 'Skill fuori dal campo', lungo: true },
+      ],
+    },
+    {
+      id: 'caratteristiche', titolo: 'Caratteristiche', file: 'rosa.json', soloModifica: true,
+      aiuto: 'Le cinque caratteristiche dello spider chart che si apre nella scheda del giocatore, ' +
+             'da 1 a 10. Trascina il cursore, il numero a fianco si aggiorna da solo. ' +
+             'Le righe sono quelle della Rosa: qui non si aggiungono né si tolgono giocatori. ' +
+             'Il file da scaricare è lo stesso della Rosa (rosa.json), quindi scaricalo una volta ' +
+             'sola dopo aver sistemato tutte e due le schede.',
+      lista: (d) => d.giocatori,
+      /* Un giocatore aggiunto dalla scheda Rosa non ha ancora le caratteristiche:
+         gliele metto a 5 (il centro della scala) appena apro questa scheda, cosi'
+         nel JSON scaricato non resta mai un blocco a meta'. */
+      normalizza: (righe) => righe.forEach((r) => {
+        r.caratteristiche = { ...CARATTERISTICHE_DEFAULT, ...(r.caratteristiche || {}) };
+      }),
+      campi: [
+        { k: 'numero', et: '#', tipo: 'fisso' },
+        { k: 'cognome', et: 'Chi', tipo: 'fisso' },
+        ...CARATTERISTICHE.map((c) => ({ k: `caratteristiche.${c.k}`, et: c.et, tipo: 'scala' })),
       ],
     },
     {
@@ -197,6 +243,7 @@
   function disegna() {
     const s = sezioneAttiva;
     const righe = righeAttive() || [];
+    s.normalizza?.(righe);
 
     const sceltaTorneo = s.torneo ? `
       <label style="font-size:.85rem;color:var(--testo-tenue)">Torneo
@@ -212,7 +259,7 @@
         <h2>${esc(s.titolo)}</h2>
         ${sceltaTorneo}
         <span class="spazio"></span>
-        <button class="btn btn-fantasma" type="button" id="aggiungi">+ Aggiungi riga</button>
+        ${s.soloModifica ? '' : '<button class="btn btn-fantasma" type="button" id="aggiungi">+ Aggiungi riga</button>'}
         <button class="btn btn-primario" type="button" id="scarica">Scarica ${esc(s.file)}</button>
       </div>
       <p class="aiuto">${s.aiuto}</p>
@@ -221,7 +268,7 @@
           <thead><tr>
             ${s.campi.map((c) => `<th>${esc(c.et)}${c.obbl ? ' *' : ''}</th>`).join('')}
             ${s.etichettaRiga ? '<th>Chi è</th>' : ''}
-            <th></th>
+            ${s.soloModifica ? '' : '<th></th>'}
           </tr></thead>
           <tbody id="righe">${righe.map((r, i) => rigaHtml(r, i)).join('')}</tbody>
         </table>
@@ -231,7 +278,7 @@
     document.getElementById('scelta-torneo')?.addEventListener('change', (e) => {
       idxTorneo = Number(e.target.value); disegna();
     });
-    document.getElementById('aggiungi').addEventListener('click', () => {
+    document.getElementById('aggiungi')?.addEventListener('click', () => {
       righeAttive().push(s.nuova()); disegna();
     });
     document.getElementById('scarica').addEventListener('click', () => scarica(s.file));
@@ -268,9 +315,20 @@
     const s = sezioneAttiva;
     const prossima = i === indiceProssima();
     const celle = s.campi.map((c) => {
-      const v = r[c.k];
+      const v = leggi(r, c.k);
       let campo;
-      if (c.tipo === 'select') {
+      if (c.tipo === 'fisso') {
+        // colonna di sola lettura: dice su quale riga stai lavorando
+        campo = `<span class="fisso">${esc(v)}</span>`;
+      } else if (c.tipo === 'scala') {
+        // cursore + numero a fianco: il numero si aggiorna senza ridisegnare la tabella
+        campo = `<span class="scala">
+          <input type="range" min="${CAR_MIN}" max="${CAR_MAX}" step="1"
+                 data-i="${i}" data-k="${c.k}" data-tipo="scala"
+                 value="${Number(v) || CARATTERISTICHE_DEFAULT[c.k.split('.').pop()]}"
+                 aria-label="${esc(c.et)}">
+          <output>${esc(v)}</output></span>`;
+      } else if (c.tipo === 'select') {
         campo = `<select data-i="${i}" data-k="${c.k}">${
           c.opzioni.map((o) => `<option${String(v) === o ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
       } else if (c.tipo === 'int') {
@@ -284,9 +342,10 @@
       return `<td class="${c.lungo ? 'lungo' : ''}">${campo}</td>`;
     }).join('');
     const etichetta = s.etichettaRiga ? `<td style="color:var(--testo-debole);white-space:nowrap">${esc(s.etichettaRiga(r))}</td>` : '';
+    const bottone = s.soloModifica ? ''
+      : `<td><button class="btn-riga" type="button" data-elimina="${i}" aria-label="Elimina la riga ${i + 1}">×</button></td>`;
     return `<tr class="${prossima ? 'riga-prossima' : ''}" title="${prossima ? 'È la prossima partita mostrata in home' : ''}">
-      ${celle}${etichetta}
-      <td><button class="btn-riga" type="button" data-elimina="${i}" aria-label="Elimina la riga ${i + 1}">×</button></td>
+      ${celle}${etichetta}${bottone}
     </tr>`;
   }
 
@@ -297,15 +356,22 @@
     const k = el.dataset.k;
 
     if (el.dataset.tipo === 'int') {
-      if (el.value.trim() === '') riga[k] = el.dataset.vuotoNull ? null : 0;
-      else riga[k] = Number.parseInt(el.value, 10);
+      if (el.value.trim() === '') scrivi(riga, k, el.dataset.vuotoNull ? null : 0);
+      else scrivi(riga, k, Number.parseInt(el.value, 10));
+    } else if (el.dataset.tipo === 'scala') {
+      scrivi(riga, k, Number.parseInt(el.value, 10));
+      // il numero a fianco si aggiorna qui, senza ridisegnare: se ridisegnassi
+      // il cursore perderebbe il trascinamento a meta' gesto
+      el.parentElement.querySelector('output').textContent = el.value;
     } else {
-      riga[k] = el.value;
+      scrivi(riga, k, el.value);
     }
 
     if (sezioneAttiva.id === 'staff' && k === 'codice') riga.ruolo_sigla = riga.codice;
     if (sezioneAttiva.extra) sezioneAttiva.extra(riga, el);
-    if (sezioneAttiva.etichettaRiga || sezioneAttiva.id === 'calendario') {
+    // "Chi è" dipende solo dal numero di maglia, l'evidenza della prossima partita
+    // da data, ora e stato: ridisegno solo quando cambia una di quelle, non a ogni tasto.
+    if ((sezioneAttiva.etichettaRiga && k === 'numero') || sezioneAttiva.id === 'calendario') {
       // il nome del giocatore e l'evidenza "prossima partita" dipendono dai valori: ridisegno
       const attivo = document.activeElement;
       const pos = [attivo?.dataset?.i, attivo?.dataset?.k];
@@ -349,9 +415,12 @@
     const numeriVisti = new Map();
     righe.forEach((r, i) => {
       s.campi.forEach((c) => {
-        const v = r[c.k];
+        const v = leggi(r, c.k);
         if (c.obbl && (v === '' || v === null || v === undefined)) segna(i, c.k, 'obbligatorio, non lasciarlo vuoto');
         if (c.tipo === 'int' && v !== null && v !== undefined && Number.isNaN(Number(v))) segna(i, c.k, 'deve essere un numero');
+        if (c.tipo === 'scala' && !(Number.isInteger(v) && v >= CAR_MIN && v <= CAR_MAX)) {
+          segna(i, c.k, `deve essere un numero intero da ${CAR_MIN} a ${CAR_MAX}`);
+        }
       });
       // numero di maglia unico (rosa e statistiche)
       if ((s.id === 'rosa' || s.id === 'statistiche') && r.numero !== undefined) {
