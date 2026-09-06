@@ -343,7 +343,10 @@ def controlla_locandine(numeri_rosa, cognomi_staff=frozenset()):
         if v.get("valida") is not False and v.get("numero") is None and not v.get("sigla"):
             errore("locandine.json", f"{et}non ha ne' numero di maglia ne' sigla staff: "
                                      f"rilancia sync.command")
-        if not re.match(r"^\d{4}-\d{2}-\d{2}$", str(v.get("data", ""))):
+        # sync_locandine.py timbra "data" con anche l'ora (AAAA-MM-GGTHH:MM:SS)
+        # quando due locandine escono lo stesso giorno, per poterle ordinare:
+        # va accettato anche quel formato, non solo la data secca.
+        if not re.match(r"^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?$", str(v.get("data", ""))):
             errore("locandine.json", f"{et}data '{v.get('data')}' non in formato AAAA-MM-GG")
         # Il flag deve essere true o false NUDI. "false" fra virgolette e' la
         # svista tipica di chi modifica il JSON a mano, ed e' la piu' insidiosa:

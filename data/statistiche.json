@@ -3,6 +3,20 @@
   "_nota": "Tutto a zero: la stagione non e' ancora cominciata. Aggiorna questi numeri dopo ogni partita, a mano o dal pannello in admin/. Una riga per giocatore, collegata alla rosa dal numero di maglia.",
   "giocatori": [
     {
+      "numero": 77,
+      "presenze": 0,
+      "minuti": 0,
+      "gol": 0,
+      "assist": 0,
+      "ammonizioni": 0,
+      "espulsioni": 0,
+      "mvp": 0,
+      "papere": 0,
+      "gol_sbagliati": 0,
+      "ritardi": 0,
+      "multe_euro": 0
+    },
+    {
       "numero": 12,
       "presenze": 0,
       "minuti": 0,
