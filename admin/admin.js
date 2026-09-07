@@ -81,7 +81,7 @@
     {
       id: 'staff', titolo: 'Staff', file: 'rosa.json',
       aiuto: 'Chi non scende in campo. Non ha numero di maglia: la locandina si collega col ' +
-             'cognome, quindi il file va chiamato COGNOME_SIGLA (es. DIFRANCO_ALL.jpg).',
+             'cognome, quindi il file va chiamato COGNOME_SIGLA (es. DI_FRANCO_ALL.jpg).',
       lista: (d) => (d.staff || (d.staff = [])),
       nuova: () => ({ codice: 'ALL', nome: '', cognome: '', ruolo: 'Allenatore',
                       ruolo_sigla: 'ALL', provenienza: '', classe: '', soprannome: '',

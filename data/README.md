@@ -273,7 +273,7 @@ Metti l'immagine in `foto_presentazione/` e chiamala:
 
 - **`COGNOME_NUMERO.jpg`** per un giocatore — es. `ESPOSITO_29.jpg`. Il numero e'
   quello di **maglia**, non un progressivo.
-- **`COGNOME_SIGLA.jpg`** per lo staff — es. `DIFRANCO_ALL.jpg`,
+- **`COGNOME_SIGLA.jpg`** per lo staff — es. `DI_FRANCO_ALL.jpg`,
   `BUONAMICO_PRS.jpg`, `IACOBONE_SMM.jpg`.
 - **Cognome doppio**: con l'underscore, `DE_TULLIO_10.png`.
 - **Omonimi**: l'iniziale del nome prima del numero, `DE_TULLIO_C_20.png` e

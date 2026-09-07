@@ -61,7 +61,7 @@ CONFIG = Path(__file__).resolve().parent / "config.json"
 
 # COGNOME_NUMERO.ext, con eventuale data davanti: 2026-09-03_ESPOSITO_29.jpg
 # Per lo staff, che non ha un numero di maglia, il numero e' sostituito dalla
-# sigla del ruolo: DIFRANCO_ALL.jpg, BUONAMICO_PRS.jpg, IACOBONE_SMM.jpg.
+# sigla del ruolo: DI_FRANCO_ALL.jpg, BUONAMICO_PRS.jpg, IACOBONE_SMM.jpg.
 # Il cognome puo' contenere underscore, perche' e' il modo naturale di scrivere
 # un cognome doppio col telefono: DE_TULLIO_20.png. E puo' finire con una
 # lettera secca, l'iniziale del nome, per distinguere due omonimi:

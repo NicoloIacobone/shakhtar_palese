@@ -23,7 +23,7 @@ Il sito mostra **solo chi è già stato presentato**. Gli altri sono già scritt
 1. Metti l'immagine in `foto_presentazione/`, chiamandola:
    - **`COGNOME_NUMERO.jpg`** per un giocatore — es. `ESPOSITO_29.jpg`.
      Il numero è quello di **maglia**, non un progressivo.
-   - **`COGNOME_SIGLA.jpg`** per lo staff — es. `DIFRANCO_ALL.jpg`
+   - **`COGNOME_SIGLA.jpg`** per lo staff — es. `DI_FRANCO_ALL.jpg`
      (`ALL` allenatore, `PRS` presidente, `SMM` social media manager).
    - Cognome doppio: scrivilo con l'underscore, `DE_TULLIO_10.jpg`.
    - Omonimi: aggiungi l'**iniziale del nome** prima del numero,
