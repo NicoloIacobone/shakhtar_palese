@@ -1,7 +1,7 @@
 {
   "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO pubblicato, data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive. \"pubblicato\": false = la card e' pronta ma non si vede sul sito; mettilo a true e rilancia sync.command per farla uscire.",
-  "generato_il": "2026-09-07T13:01:45",
-  "totale": 16,
+  "generato_il": "2026-09-07T18:19:46",
+  "totale": 17,
   "locandine": [
     {
       "id": "buonamico-prs",
@@ -19,7 +19,7 @@
       "numero": null,
       "sigla": "PRS",
       "data": "2026-09-07T13:01:45",
-      "data_fonte": "pubblicazione",
+      "data_fonte": "manuale",
       "valida": true,
       "ordine": 1,
       "_sorgente": {
@@ -546,6 +546,40 @@
       "data_pubblicazione": "2026-09-02",
       "giocatore": "Savio Spadaro",
       "didascalia": "Quelle fanno sempre over."
+    },
+    {
+      "id": "iacobone-ssm",
+      "pubblicato": false,
+      "file": "assets/locandine/iacobone-ssm.jpg",
+      "web": "assets/locandine/web/iacobone-ssm.jpg",
+      "thumb": "assets/locandine/thumbs/iacobone-ssm.jpg",
+      "w": 1080,
+      "h": 1350,
+      "web_w": 1080,
+      "web_h": 1350,
+      "thumb_w": 480,
+      "thumb_h": 600,
+      "cognome": null,
+      "numero": null,
+      "sigla": null,
+      "data": "2026-09-07",
+      "data_fonte": "mtime",
+      "valida": false,
+      "ordine": 17,
+      "_sorgente": {
+        "nome": "IACOBONE_SSM.jpg",
+        "dimensione": 461937,
+        "mtime": 1788797978
+      },
+      "_parametri": {
+        "thumb_lato_max": 600,
+        "thumb_qualita": 80,
+        "web_lato_max": 1400,
+        "web_qualita": 82
+      },
+      "data_pubblicazione": "",
+      "giocatore": "",
+      "didascalia": ""
     }
   ]
 }
