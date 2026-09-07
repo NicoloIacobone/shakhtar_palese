@@ -1,6 +1,6 @@
 {
   "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO pubblicato, data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive. \"pubblicato\": false = la card e' pronta ma non si vede sul sito; mettilo a true e rilancia sync.command per farla uscire.",
-  "generato_il": "2026-09-07T18:19:46",
+  "generato_il": "2026-09-07T18:20:28",
   "totale": 17,
   "locandine": [
     {
@@ -549,7 +549,7 @@
     },
     {
       "id": "iacobone-ssm",
-      "pubblicato": false,
+      "pubblicato": true,
       "file": "assets/locandine/iacobone-ssm.jpg",
       "web": "assets/locandine/web/iacobone-ssm.jpg",
       "thumb": "assets/locandine/thumbs/iacobone-ssm.jpg",
@@ -562,8 +562,8 @@
       "cognome": null,
       "numero": null,
       "sigla": null,
-      "data": "2026-09-07",
-      "data_fonte": "mtime",
+      "data": "2026-09-07T18:20:28",
+      "data_fonte": "pubblicazione",
       "valida": false,
       "ordine": 17,
       "_sorgente": {
@@ -577,7 +577,7 @@
         "web_lato_max": 1400,
         "web_qualita": 82
       },
-      "data_pubblicazione": "",
+      "data_pubblicazione": "2026-09-07T18:20:28",
       "giocatore": "",
       "didascalia": ""
     }
