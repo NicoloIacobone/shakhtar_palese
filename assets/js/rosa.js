@@ -96,10 +96,10 @@
       const perc = Math.round((presentati / totale) * 100);
       avanzam.innerHTML = `<span class="barra"><span style="width:${perc}%"></span></span>
         <span><b>${presentati}</b> di ${totale} presentati &middot; i prossimi arrivano uno al giorno</span>`;
-    } else if (soloPresentati) {
-      avanzam.innerHTML = `<span class="barra"><span style="width:100%"></span></span>
-        <span>Presentati tutti e <b>${totale}</b>. Adesso si gioca.</span>`;
     } else {
+      // Ci siamo tutti (o la regola "solo presentati" e' spenta): la barra non
+      // ha piu' niente da dire e sparisce. Se un domani entra qualcuno di nuovo
+      // in rosa, il conteggio "N di M" qui sopra torna da solo.
       avanzam.hidden = true;
     }
   }
