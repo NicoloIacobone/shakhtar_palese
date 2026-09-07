@@ -7,17 +7,21 @@
    La griglia mette in cima l'ultimo presentato: reparti dagli attaccanti ai
    portieri e, dentro il reparto, dalla locandina piu' recente.
    La foto NON e' scritta in rosa.json: i giocatori si collegano col numero di
-   maglia, lo staff col cognome.
+   maglia, staff e tifosi col cognome.
    La scheda aperta mostra anche lo spider chart delle caratteristiche (da 1 a
    10, scritte in rosa.json sotto "caratteristiche" e modificabili dal pannello
    locale). Oltre ai reparti i filtri sono tre: "Staff", "Pelati" (chi ha la
-   lunghezza dei capelli a PELATO_MAX, cioe' i pelati veri) e "De Tullio",
-   che raduna la dinastia. */
+   lunghezza dei capelli a PELATO_MAX, cioe' i pelati veri), "De Tullio",
+   che raduna la dinastia, e "Tifosi", che porta in griglia il blocco in fondo.
+   Staff e tifosi sono due liste separate di rosa.json ma si comportano allo
+   stesso modo: stessa card, stessa scheda, stesso blocco a fine pagina. */
 
 (async function rosa() {
   const griglia    = document.getElementById('griglia-rosa');
   const grigliaSt  = document.getElementById('griglia-staff');
   const bloccoSt   = document.getElementById('blocco-staff');
+  const grigliaTf  = document.getElementById('griglia-tifosi');
+  const bloccoTf   = document.getElementById('blocco-tifosi');
   const filtri     = document.getElementById('filtri-ruolo');
   const notaFiltro = document.getElementById('nota-filtro');
   const avanzam    = document.getElementById('avanzamento-rosa');
@@ -49,6 +53,7 @@
     persone = [
       ...(r.giocatori || []).map((p) => marca(p, 'giocatore')),
       ...(r.staff || []).map((p) => marca(p, 'staff')),
+      ...(r.tifosi || []).map((p) => marca(p, 'tifoso')),
     ];
   } catch (e) {
     console.error(e);
@@ -103,15 +108,17 @@
   }
 
   /* ------------------------------------------------------------ filtri --- */
-  /* Oltre ai reparti ci sono tre filtri che non sono ruoli: "Staff" porta nella
-     griglia principale chi di solito sta nel blocco in fondo, "Pelati" tiene i
-     pelati veri e "De Tullio" raduna la dinastia. Tutti e tre compaiono solo se
-     hanno qualcuno dentro: un chip che apre una griglia vuota non serve. */
+  /* Oltre ai reparti ci sono quattro filtri che non sono ruoli: "Staff" e
+     "Tifosi" portano nella griglia principale chi di solito sta nei blocchi in
+     fondo, "Pelati" tiene i pelati veri e "De Tullio" raduna la dinastia. Tutti
+     compaiono solo se hanno qualcuno dentro: un chip che apre una griglia vuota
+     non serve. */
   const PELATO_MAX = 1;                       // pelato = capelli a 1, non "cortissimi"
   const DINASTIA = 'De Tullio';               // il cognome che si merita un filtro suo
   const capelli = (p) => p.caratteristiche?.lunghezza_capelli;
   const giocatoriVisibili = () => visibili().filter((p) => p._tipo === 'giocatore');
   const staffVisibile     = () => visibili().filter((p) => p._tipo === 'staff');
+  const tifosiVisibili    = () => visibili().filter((p) => p._tipo === 'tifoso');
   // Chi non ha ancora le caratteristiche non e' un pelato: e' uno di cui non si sa
   // niente. Senza questo controllo un campo mancante varrebbe 0 e finirebbe primo.
   const pelati = () => giocatoriVisibili()
@@ -129,6 +136,7 @@
     { id: 'tutti', et: 'Tutti' },
     ...ruoli.map((r) => ({ id: r, et: SP.plurale(r) })),
     ...(staffVisibile().length ? [{ id: 'staff', et: 'Staff' }] : []),
+    ...(tifosiVisibili().length ? [{ id: 'tifosi', et: 'Tifosi' }] : []),
     ...(pelati().length ? [{ id: 'pelati', et: 'Pelati' }] : []),
     ...(dinastia().length ? [{ id: 'dinastia', et: DINASTIA }] : []),
   ];
@@ -154,11 +162,14 @@
 
   /* ------------------------------------------------------- le griglie --- */
   function disegna() {
-    const staffAParte = filtroAttivo === 'tutti';   // col filtro attivo il blocco in fondo sparisce
+    const aParte = filtroAttivo === 'tutti';   // col filtro attivo i blocchi in fondo spariscono
     let lista, vuoto = 'Nessuno con questo ruolo.';
     if (filtroAttivo === 'staff') {
       lista = staffVisibile().sort(perGriglia);
       vuoto = 'Nessuno dello staff presentato, per ora.';
+    } else if (filtroAttivo === 'tifosi') {
+      lista = tifosiVisibili().sort(perGriglia);
+      vuoto = 'Nessun tifoso presentato, per ora.';
     } else if (filtroAttivo === 'pelati') {
       lista = pelati();
       vuoto = 'Nessun pelato. Per adesso.';
@@ -182,10 +193,14 @@
           ? 'Ancora nessuno presentato. Le card arrivano una al giorno su Instagram.'
           : vuoto}</p>`;
 
-    // Lo staff non ha reparti: resta l'ordine di uscita.
-    const staff = staffVisibile().sort(perGriglia);
-    bloccoSt.hidden = !staffAParte || staff.length === 0;
-    grigliaSt.innerHTML = staff.map((p) => SP.cardPersona(p, fotoPerChiave[p._chiave])).join('');
+    // Staff e tifosi non hanno reparti: resta l'ordine di uscita.
+    const inFondo = (blocco, griglia, gente) => {
+      if (!blocco) return;
+      blocco.hidden = !aParte || gente.length === 0;
+      griglia.innerHTML = gente.map((p) => SP.cardPersona(p, fotoPerChiave[p._chiave])).join('');
+    };
+    inFondo(bloccoSt, grigliaSt, staffVisibile().sort(perGriglia));
+    inFondo(bloccoTf, grigliaTf, tifosiVisibili().sort(perGriglia));
   }
   disegna();
 
@@ -286,8 +301,9 @@
     const gruppo = (titolo, dati) => dati.trim()
       ? `<div class="scheda-sezione"><h3>${titolo}</h3><dl class="dati">${dati}</dl></div>` : '';
 
-    const occhiello = p._tipo === 'staff'
-      ? `Staff &middot; ${SP.esc(p.ruolo)}`
+    const OCCHIELLO = { staff: 'Staff', tifoso: 'Tifosi' };
+    const occhiello = OCCHIELLO[p._tipo]
+      ? `${OCCHIELLO[p._tipo]} &middot; ${SP.esc(p.ruolo)}`
       : `#${SP.esc(p.numero)} &middot; ${SP.esc(p.ruolo)}`;
 
     dentro.innerHTML = `

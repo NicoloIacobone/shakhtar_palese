@@ -60,8 +60,9 @@ ROOT = Path(__file__).resolve().parent.parent
 CONFIG = Path(__file__).resolve().parent / "config.json"
 
 # COGNOME_NUMERO.ext, con eventuale data davanti: 2026-09-03_ESPOSITO_29.jpg
-# Per lo staff, che non ha un numero di maglia, il numero e' sostituito dalla
-# sigla del ruolo: DI_FRANCO_ALL.jpg, BUONAMICO_PRS.jpg, IACOBONE_SMM.jpg.
+# Per staff e tifosi, che non hanno un numero di maglia, il numero e' sostituito
+# dalla sigla del ruolo: DI_FRANCO_ALL.jpg, BUONAMICO_PRS.jpg, IACOBONE_SMM.jpg,
+# ROSSI_TIF.jpg.
 # Il cognome puo' contenere underscore, perche' e' il modo naturale di scrivere
 # un cognome doppio col telefono: DE_TULLIO_20.png. E puo' finire con una
 # lettera secca, l'iniziale del nome, per distinguere due omonimi:
@@ -72,9 +73,13 @@ RE_NOME = re.compile(
     r"(?P<codice>\d{1,2}|[A-Za-z]{2,4})$"
 )
 
-# Sigle ammesse per lo staff. Se ne aggiungi una qui, il file COGNOME_SIGLA.ext
-# viene riconosciuto e collegato allo staff in data/rosa.json.
+# Sigle ammesse per chi non ha un numero di maglia: staff e tifosi. Se ne
+# aggiungi una qui, il file COGNOME_SIGLA.ext viene riconosciuto e collegato alla
+# lista corrispondente di data/rosa.json (aggiungila anche in tools/check_data.py
+# e in admin/admin.js).
 SIGLE_STAFF = {"ALL", "PRS", "SMM", "DS", "PREP", "MAG"}
+SIGLE_TIFOSI = {"TIF", "ULT"}
+SIGLE = SIGLE_STAFF | SIGLE_TIFOSI
 
 # Estensione da usare in uscita, in base al formato VERO letto da Pillow.
 EST_PER_FORMATO = {"JPEG": ".jpg", "PNG": ".png", "WEBP": ".webp", "MPO": ".jpg", "GIF": ".gif"}
@@ -123,8 +128,8 @@ def leggi_json(percorso: Path, default):
 
 def analizza_nome(stem: str):
     """
-    Ritorna (cognome, numero, sigla_staff, data_dal_nome).
-    Per un giocatore: numero valorizzato e sigla None. Per lo staff: il contrario.
+    Ritorna (cognome, numero, sigla, data_dal_nome).
+    Per un giocatore: numero valorizzato e sigla None. Per staff e tifosi: il contrario.
     Fuori convenzione: tutto None.
     """
     m = RE_NOME.match(stem.strip())
@@ -142,7 +147,7 @@ def analizza_nome(stem: str):
     if codice.isdigit():
         return cognome, int(codice), None, data_nome
     sigla = codice.upper()
-    if sigla not in SIGLE_STAFF:
+    if sigla not in SIGLE:
         return None, None, None, None      # lettere sì, ma non una sigla che conosco
     return cognome, None, sigla, data_nome
 
@@ -270,7 +275,7 @@ def main(argv):
         valida = cognome is not None
         if not valida:
             warn(f"{f.name}: nome fuori convenzione COGNOME_NUMERO.ext "
-                 f"(o COGNOME_SIGLA.ext per lo staff: {', '.join(sorted(SIGLE_STAFF))}). "
+                 f"(o COGNOME_SIGLA.ext per staff e tifosi: {', '.join(sorted(SIGLE))}). "
                  f"Lo pubblico lo stesso, ma finisce in fondo e non e' collegato a nessuno.")
             problemi += 1
 
@@ -365,7 +370,7 @@ def main(argv):
             "thumb_w": thumb_size[0], "thumb_h": thumb_size[1],
             "cognome": cognome,
             "numero": numero,          # giocatori: numero di maglia
-            "sigla": sigla,            # staff: ALL / PRS / SMM ...
+            "sigla": sigla,            # staff e tifosi: ALL / PRS / SMM / TIF ...
             "data": data,
             "data_fonte": fonte,
             "valida": valida,
@@ -431,10 +436,12 @@ def main(argv):
 
     # --- 7. incrocio con la rosa: chi ha la foto e chi no --------------------
     # Chi e' gia' stato presentato e chi manca ancora all'appello.
-    # I giocatori si agganciano col numero di maglia, lo staff col cognome.
+    # I giocatori si agganciano col numero di maglia, staff e tifosi col cognome.
     rosa_doc = leggi_json(ROOT / cfg["json_rosa"], {})
     rosa = rosa_doc.get("giocatori", [])
-    staff = rosa_doc.get("staff", [])
+    # Staff e tifosi si agganciano tutti col cognome: per il conteggio "chi e'
+    # gia' uscito" sono la stessa cosa, li tengo in una lista sola.
+    staff = list(rosa_doc.get("staff", [])) + list(rosa_doc.get("tifosi", []))
     # "Presentato" = card accesa. Una foto importata ma con il flag ancora a
     # false non conta: sul sito quella persona non c'e'.
     pubblicate = [v for v in voci if v[CAMPO_FLAG]]
@@ -466,13 +473,13 @@ def main(argv):
         info("Giocatori ancora da presentare: "
              + ", ".join(f"#{g['numero']} {g['cognome']}" for g in senza))
     if senza_staff:
-        info("Staff ancora da presentare: "
+        info("Staff e tifosi ancora da presentare: "
              + ", ".join(f"{s['cognome']} ({s.get('codice', '?')})" for s in senza_staff))
     if orfani:
         warn("Numeri di maglia presenti nelle locandine ma non nella rosa: "
              + ", ".join(f"#{n}" for n in orfani) + ". Controlla data/rosa.json.")
     if orfani_staff:
-        warn("Locandine staff senza corrispondenza in data/rosa.json: "
+        warn("Locandine di staff o tifosi senza corrispondenza in data/rosa.json: "
              + ", ".join(orfani_staff) + ".")
     print(f"{'-' * 62}")
 

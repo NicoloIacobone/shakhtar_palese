@@ -42,7 +42,7 @@ cambia ovunque nel sito.
 
 ## `rosa.json` — le persone della squadra
 
-Due liste: `giocatori` e `staff`.
+Tre liste: `giocatori`, `staff` e `tifosi`.
 
 **Regola importante:** sul sito compaiono **solo le persone gia' presentate**,
 cioe' quelle che hanno la loro locandina con `"pubblicato": true` in
@@ -103,7 +103,8 @@ quindi riempirli con calma, uno alla volta.
 
 ### Lo staff
 
-Stessi campi, ma senza `numero` e senza `posizione_preferita`. In piu':
+Stessi campi, ma senza `numero` (quindi anche senza `piede` e senza
+`caratteristiche`). In piu':
 
 | campo | note |
 |---|---|
@@ -112,6 +113,20 @@ Stessi campi, ma senza `numero` e senza `posizione_preferita`. In piu':
 
 Lo staff non ha statistiche e non compare nella pagina Statistiche. La sua
 locandina si collega **col cognome**, non col numero: vedi sotto.
+
+### I tifosi
+
+La lista `tifosi` funziona **esattamente come lo staff**: stessi campi, stessa
+card, stessa scheda, locandina agganciata al cognome. Cambiano solo le sigle
+ammesse in `codice`: `TIF` tifoso, `ULT` ultras.
+
+Nella pagina Rosa hanno un blocco tutto loro in fondo, sotto quello dello staff,
+e un filtro *Tifosi* fra i chip in alto. Blocco e filtro compaiono **solo quando
+c'e' dentro qualcuno gia' presentato**: finche' la lista e' vuota la pagina e'
+identica a prima.
+
+Il cognome dev'essere diverso da quelli dello staff: la locandina si aggancia a
+quello, e due omonimi si scambierebbero la foto. `check_data.py` te lo dice.
 
 **La foto non si scrive qui.** Si aggancia da sola: vedi `locandine.json`.
 
@@ -273,8 +288,8 @@ Metti l'immagine in `foto_presentazione/` e chiamala:
 
 - **`COGNOME_NUMERO.jpg`** per un giocatore — es. `ESPOSITO_29.jpg`. Il numero e'
   quello di **maglia**, non un progressivo.
-- **`COGNOME_SIGLA.jpg`** per lo staff — es. `DI_FRANCO_ALL.jpg`,
-  `BUONAMICO_PRS.jpg`, `IACOBONE_SMM.jpg`.
+- **`COGNOME_SIGLA.jpg`** per staff e tifosi — es. `DI_FRANCO_ALL.jpg`,
+  `BUONAMICO_PRS.jpg`, `IACOBONE_SMM.jpg`, `ROSSI_TIF.jpg`.
 - **Cognome doppio**: con l'underscore, `DE_TULLIO_10.png`.
 - **Omonimi**: l'iniziale del nome prima del numero, `DE_TULLIO_C_20.png` e
   `DE_TULLIO_I_9.png`. Sul sito compare comunque "De Tullio": l'iniziale serve

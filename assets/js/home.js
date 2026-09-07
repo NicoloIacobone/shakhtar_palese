@@ -136,6 +136,7 @@
     const persone = [
       ...(r.giocatori || []).map((p) => ({ ...p, _chiave: SP.chiavePersona(p) })),
       ...(r.staff || []).map((p) => ({ ...p, _chiave: SP.chiavePersona(p) })),
+      ...(r.tifosi || []).map((p) => ({ ...p, _chiave: SP.chiavePersona(p) })),
     ];
     const perChiave = Object.fromEntries(persone.map((p) => [p._chiave, p]));
 

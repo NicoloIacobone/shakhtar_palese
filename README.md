@@ -25,6 +25,8 @@ Il sito mostra **solo chi è già stato presentato**. Gli altri sono già scritt
      Il numero è quello di **maglia**, non un progressivo.
    - **`COGNOME_SIGLA.jpg`** per lo staff — es. `DI_FRANCO_ALL.jpg`
      (`ALL` allenatore, `PRS` presidente, `SMM` social media manager).
+   - **`COGNOME_SIGLA.jpg`** anche per i tifosi — es. `ROSSI_TIF.jpg`
+     (`TIF` tifoso, `ULT` ultras).
    - Cognome doppio: scrivilo con l'underscore, `DE_TULLIO_10.jpg`.
    - Omonimi: aggiungi l'**iniziale del nome** prima del numero,
      `DE_TULLIO_C_20.jpg` e `DE_TULLIO_I_9.jpg`. L'iniziale serve solo a te per
@@ -101,9 +103,9 @@ Due modi, scegli quello che ti va:
 - **Col pannello**: fai partire il server locale (sotto), apri
   <http://localhost:8000/admin/>, modifica nei form, premi *Scarica JSON
   aggiornato* e metti il file scaricato al posto di quello in `data/`.
-  Le schede sono *Rosa*, *Staff*, *Caratteristiche* (i cinque valori da 1 a 10
-  dello spider chart, uno per cursore), *Statistiche*, *Classifica* e
-  *Calendario*. Rosa, Staff e Caratteristiche lavorano tutte e tre sullo stesso
+  Le schede sono *Rosa*, *Staff*, *Tifosi*, *Caratteristiche* (i cinque valori
+  da 1 a 10 dello spider chart, uno per cursore), *Statistiche*, *Classifica* e
+  *Calendario*. Rosa, Staff, Tifosi e Caratteristiche lavorano tutte sullo stesso
   `rosa.json`: sistemale e poi scaricalo **una volta sola**.
 
 Poi, sempre:

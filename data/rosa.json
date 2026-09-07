@@ -1,6 +1,6 @@
 {
   "_placeholder": true,
-  "_nota": "Nomi, numeri e ruoli sono quelli veri. I campi personali (classe, posizione preferita, frase, superstizione, rito post-allenamento, skill fuori dal campo) e le caratteristiche dello spider chart sono SEGNAPOSTO inventati: falli confermare dai diretti interessati prima di pubblicare. Le caratteristiche si modificano comodamente dal pannello locale (admin/, scheda \"Caratteristiche\"). La foto non si scrive qui: si collega dal numero di maglia (o dal cognome, per lo staff) tramite data/locandine.json.",
+  "_nota": "Nomi, numeri e ruoli sono quelli veri. I campi personali (classe, posizione preferita, frase, superstizione, rito post-allenamento, skill fuori dal campo) e le caratteristiche dello spider chart sono SEGNAPOSTO inventati: falli confermare dai diretti interessati prima di pubblicare. Le caratteristiche si modificano comodamente dal pannello locale (admin/, scheda \"Caratteristiche\"). La foto non si scrive qui: si collega dal numero di maglia (o dal cognome, per staff e tifosi) tramite data/locandine.json.",
   "giocatori": [
     {
       "numero": 12,
@@ -345,14 +345,15 @@
       "nome": "Michel",
       "cognome": "Di Franco",
       "ruolo": "Allenatore",
-      "ruolo_sigla": "ALL",
-      "soprannome": "Il Mister",
-      "provenienza": "Palese",
-      "classe": 1990,
-      "frase_preferita": "In settimana si lavora, la domenica si raccoglie.",
-      "superstizione": "Lavagnetta sempre nella stessa tasca.",
-      "rito_post_allenamento": "Ultimo a spegnere le luci del campo.",
-      "skill_fuori_campo": "Legge di tattica più di quanto ammetta.",
+      "ruolo_sigla": "Allenatore di penosità",
+      "soprannome": "Michi Michon",
+      "provenienza": "Sop a Pales",
+      "classe": 1997,
+      "posizione_preferita": "Via Napoli",
+      "frase_preferita": "Japr na birr",
+      "superstizione": "Analizzare i mercati azionari cinesi",
+      "rito_post_allenamento": "30 minuti nello spogliatoio per sistemare il ciuffo",
+      "skill_fuori_campo": "Doppia cifra di Gin Lemon al postaccio",
       "_placeholder": true
     },
     {
@@ -364,6 +365,7 @@
       "soprannome": "Il Presidente",
       "provenienza": "L Grastudde",
       "classe": 1998,
+      "posizione_preferita": "Via Umberto Oriolo",
       "frase_preferita": "Ride bene chi ride ultimo",
       "superstizione": "Diffidare Marzulli",
       "rito_post_allenamento": "Panino col wurstel da 20 Euro",
@@ -375,15 +377,17 @@
       "nome": "Nicolo'",
       "cognome": "Iacobone",
       "ruolo": "Social Media Manager",
-      "ruolo_sigla": "SMM",
-      "soprannome": "Il Social",
-      "provenienza": "Palese",
-      "classe": 1999,
-      "frase_preferita": "Aspetta, che questa la posto.",
-      "superstizione": "Pubblica la locandina sempre alla stessa ora.",
-      "rito_post_allenamento": "Sceglie la foto per il post prima ancora di cambiarsi.",
-      "skill_fuori_campo": "Ha costruito questo sito.",
+      "ruolo_sigla": "Social Media Manager per contattare le femmine",
+      "soprannome": "Missile",
+      "provenienza": "Sop a Pales",
+      "classe": 2000,
+      "posizione_preferita": "La pecorina veloce",
+      "frase_preferita": "Drim?",
+      "superstizione": "Doppia sega e doppia siga",
+      "rito_post_allenamento": "Pensare alla sua ex fino a mettersi a piangere",
+      "skill_fuori_campo": "Rimorchiare le minorenni",
       "_placeholder": true
     }
-  ]
+  ],
+  "tifosi": []
 }

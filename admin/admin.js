@@ -85,8 +85,8 @@
       lista: (d) => (d.staff || (d.staff = [])),
       nuova: () => ({ codice: 'ALL', nome: '', cognome: '', ruolo: 'Allenatore',
                       ruolo_sigla: 'ALL', provenienza: '', classe: '', soprannome: '',
-                      frase_preferita: '', superstizione: '', rito_post_allenamento: '',
-                      skill_fuori_campo: '' }),
+                      posizione_preferita: '', frase_preferita: '', superstizione: '',
+                      rito_post_allenamento: '', skill_fuori_campo: '' }),
       campi: [
         { k: 'codice', et: 'Sigla', tipo: 'select', obbl: true,
           opzioni: ['ALL', 'PRS', 'SMM', 'DS', 'PREP', 'MAG'] },
@@ -96,6 +96,33 @@
         { k: 'soprannome', et: 'Soprannome', lungo: true },
         { k: 'provenienza', et: 'Provenienza' },
         { k: 'classe', et: 'Classe', tipo: 'int' },
+        { k: 'posizione_preferita', et: 'Posizione preferita', lungo: true },
+        { k: 'frase_preferita', et: 'Frase preferita', lungo: true },
+        { k: 'superstizione', et: 'Superstizione pre-partita', lungo: true },
+        { k: 'rito_post_allenamento', et: 'Rito post-allenamento', lungo: true },
+        { k: 'skill_fuori_campo', et: 'Skill fuori dal campo', lungo: true },
+      ],
+    },
+    {
+      id: 'tifosi', titolo: 'Tifosi', file: 'rosa.json',
+      aiuto: 'Chi sta dall\'altra parte della rete. Funziona esattamente come lo staff: ' +
+             'niente numero di maglia, la locandina si collega col cognome, quindi il file ' +
+             'va chiamato COGNOME_SIGLA (es. ROSSI_TIF.jpg). Il cognome deve essere diverso ' +
+             'da quelli dello staff, altrimenti le due locandine si scambiano la foto.',
+      lista: (d) => (d.tifosi || (d.tifosi = [])),
+      nuova: () => ({ codice: 'TIF', nome: '', cognome: '', ruolo: 'Tifoso',
+                      ruolo_sigla: 'TIF', provenienza: '', classe: '', soprannome: '',
+                      posizione_preferita: '', frase_preferita: '', superstizione: '',
+                      rito_post_allenamento: '', skill_fuori_campo: '' }),
+      campi: [
+        { k: 'codice', et: 'Sigla', tipo: 'select', obbl: true, opzioni: ['TIF', 'ULT'] },
+        { k: 'nome', et: 'Nome', obbl: true },
+        { k: 'cognome', et: 'Cognome', obbl: true },
+        { k: 'ruolo', et: 'Ruolo per esteso', obbl: true, lungo: true },
+        { k: 'soprannome', et: 'Soprannome', lungo: true },
+        { k: 'provenienza', et: 'Provenienza' },
+        { k: 'classe', et: 'Classe', tipo: 'int' },
+        { k: 'posizione_preferita', et: 'Posizione preferita', lungo: true },
         { k: 'frase_preferita', et: 'Frase preferita', lungo: true },
         { k: 'superstizione', et: 'Superstizione pre-partita', lungo: true },
         { k: 'rito_post_allenamento', et: 'Rito post-allenamento', lungo: true },
@@ -367,7 +394,9 @@
       scrivi(riga, k, el.value);
     }
 
-    if (sezioneAttiva.id === 'staff' && k === 'codice') riga.ruolo_sigla = riga.codice;
+    if ((sezioneAttiva.id === 'staff' || sezioneAttiva.id === 'tifosi') && k === 'codice') {
+      riga.ruolo_sigla = riga.codice;
+    }
     if (sezioneAttiva.extra) sezioneAttiva.extra(riga, el);
     // "Chi è" dipende solo dal numero di maglia, l'evidenza della prossima partita
     // da data, ora e stato: ridisegno solo quando cambia una di quelle, non a ogni tasto.

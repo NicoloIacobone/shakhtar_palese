@@ -100,11 +100,16 @@ def controlla_config():
 
 
 # ------------------------------------------------------------------ rosa ---
-# Campi personali facoltativi: se vuoti la scheda semplicemente non li mostra.
+# Campi personali facoltativi, uguali per giocatori, staff e tifosi: se vuoti la
+# scheda semplicemente non li mostra.
 CAMPI_PERSONALI = ["soprannome", "provenienza", "classe", "posizione_preferita",
                    "frase_preferita", "superstizione", "rito_post_allenamento",
                    "skill_fuori_campo"]
 SIGLE_STAFF = {"ALL", "PRS", "SMM", "DS", "PREP", "MAG"}
+# I tifosi funzionano come lo staff: niente numero di maglia, locandina agganciata
+# al cognome. Se aggiungi una sigla qui, mettila anche in tools/sync_locandine.py
+# (che riconosce il nome del file) e in admin/admin.js (la tendina del pannello).
+SIGLE_TIFOSI = {"TIF", "ULT"}
 
 # Le caratteristiche dello spider chart della scheda giocatore: numeri interi da
 # 1 a 10. Stessa lista, stessi nomi, anche in assets/js/rosa.js (che la disegna)
@@ -145,7 +150,7 @@ def controlla_caratteristiche(dove, giocatore, etichetta=""):
 
 
 def controlla_rosa():
-    """Ritorna (numeri di maglia, cognomi dello staff)."""
+    """Ritorna (numeri di maglia, cognomi di staff e tifosi)."""
     d = carica("rosa.json")
     if d is None:
         return {}, set()
@@ -180,29 +185,41 @@ def controlla_rosa():
         else:
             senza_car.append(f"#{n}" if isinstance(n, int) else g.get("cognome", "?"))
 
-    # --- staff (allenatore, presidente, social media manager…) ---
-    staff = d.get("staff") or []
-    if not isinstance(staff, list):
-        errore("rosa.json", "'staff' deve essere una lista")
-        staff = []
-    cognomi_staff = set()
-    for i, p in enumerate(staff, 1):
-        et = f"staff #{i} ({p.get('cognome', '?')}) → "
-        obbligatori("rosa.json", p, ["codice", "nome", "cognome", "ruolo"], et)
-        if p.get("codice") and p["codice"] not in SIGLE_STAFF:
-            errore("rosa.json", f"{et}sigla '{p['codice']}' non riconosciuta "
-                                f"(ammesse: {', '.join(sorted(SIGLE_STAFF))})")
-        if p.get("cognome"):
-            chiave = p["cognome"].strip().lower()
-            if chiave in cognomi_staff:
-                errore("rosa.json", f"{et}cognome ripetuto nello staff: la locandina "
-                                    f"si collega col cognome, quindi devono essere distinti")
-            cognomi_staff.add(chiave)
-        # lo staff non ha una 'posizione preferita': non la conto come mancante
-        vuoti += sum(1 for c in CAMPI_PERSONALI if c != 'posizione_preferita' and not p.get(c))
+    # --- staff (allenatore, presidente, social media manager…) e tifosi ---
+    # Due liste distinte in rosa.json, stesse regole: niente numero di maglia e
+    # locandina agganciata al cognome. Il cognome dev'essere unico fra TUTTI e
+    # due i gruppi, non solo dentro il proprio: la chiave della locandina non
+    # sa da quale lista arrivi, e due omonimi si scambierebbero la foto.
+    cognomi_senza_numero: set[str] = set()
 
-    print(f"{GRIGIO}  ·{FINE} rosa: {len(giocatori)} giocatori + {len(staff)} staff, "
-          f"numeri {sorted(visti)}")
+    def controlla_gruppo(chiave_lista, etichetta, sigle):
+        gente = d.get(chiave_lista) or []
+        if not isinstance(gente, list):
+            errore("rosa.json", f"'{chiave_lista}' deve essere una lista")
+            return [], 0
+        mancanti = 0
+        for i, p in enumerate(gente, 1):
+            et = f"{etichetta} #{i} ({p.get('cognome', '?')}) → "
+            obbligatori("rosa.json", p, ["codice", "nome", "cognome", "ruolo"], et)
+            if p.get("codice") and p["codice"] not in sigle:
+                errore("rosa.json", f"{et}sigla '{p['codice']}' non riconosciuta "
+                                    f"(ammesse: {', '.join(sorted(sigle))})")
+            if p.get("cognome"):
+                chiave = p["cognome"].strip().lower()
+                if chiave in cognomi_senza_numero:
+                    errore("rosa.json", f"{et}cognome gia' usato da un altro fra staff e "
+                                        f"tifosi: la locandina si collega col cognome, "
+                                        f"quindi devono essere distinti")
+                cognomi_senza_numero.add(chiave)
+            mancanti += sum(1 for c in CAMPI_PERSONALI if not p.get(c))
+        return gente, mancanti
+
+    staff, mancanti_staff_campi = controlla_gruppo("staff", "staff", SIGLE_STAFF)
+    tifosi, mancanti_tifosi_campi = controlla_gruppo("tifosi", "tifoso", SIGLE_TIFOSI)
+    vuoti += mancanti_staff_campi + mancanti_tifosi_campi
+
+    print(f"{GRIGIO}  ·{FINE} rosa: {len(giocatori)} giocatori + {len(staff)} staff"
+          f"{f' + {len(tifosi)} tifosi' if tifosi else ''}, numeri {sorted(visti)}")
     if vuoti:
         print(f"{GRIGIO}  ·{FINE} campi personali ancora da compilare: {vuoti}")
     if senza_car:
@@ -214,7 +231,7 @@ def controlla_rosa():
                     if g.get("caratteristiche", {}).get("lunghezza_capelli", CAR_MAX) <= PELATO_MAX)
     print(f"{GRIGIO}  ·{FINE} caratteristiche: {len(con_car)} giocatori su {len(giocatori)}, "
           f"di cui {len(pelati)} nel filtro \"Pelati\" (capelli a {PELATO_MAX})")
-    return visti, cognomi_staff
+    return visti, cognomi_senza_numero
 
 
 # ----------------------------------------------------------- statistiche ---
@@ -369,7 +386,7 @@ def controlla_tornei():
 
 
 # ------------------------------------------------------------- locandine ---
-def controlla_locandine(numeri_rosa, cognomi_staff=frozenset()):
+def controlla_locandine(numeri_rosa, cognomi_senza_numero=frozenset()):
     d = carica("locandine.json")
     if d is None:
         avviso("locandine.json", "non c'e': lancia sync.command per generarlo")
@@ -414,9 +431,10 @@ def controlla_locandine(numeri_rosa, cognomi_staff=frozenset()):
                                      f"(o COGNOME_SIGLA.ext per lo staff): "
                                      f"rinominalo e rilancia sync.command")
         elif sigla:
-            # locandina di staff: si collega col cognome, non col numero
-            if cognomi_staff and str(v.get("cognome", "")).strip().lower() not in cognomi_staff:
-                errore("locandine.json", f"{et}'{v.get('cognome')}' non e' nello staff di rosa.json")
+            # locandina di staff o di un tifoso: si collega col cognome, non col numero
+            if cognomi_senza_numero and str(v.get("cognome", "")).strip().lower() not in cognomi_senza_numero:
+                errore("locandine.json", f"{et}'{v.get('cognome')}' non e' fra lo staff "
+                                         f"e i tifosi di rosa.json")
         elif numeri_rosa and n not in numeri_rosa:
             errore("locandine.json", f"{et}numero di maglia {n} non presente in rosa.json")
     if ordini and sorted(ordini) != list(range(1, len(ordini) + 1)):
@@ -429,8 +447,8 @@ def controlla_locandine(numeri_rosa, cognomi_staff=frozenset()):
     coperti = {v.get("numero") for v in online if v.get("numero") is not None}
     coperti_staff = {str(v.get("cognome", "")).strip().lower() for v in online if v.get("sigla")}
     mancanti = sorted(n for n in numeri_rosa if n not in coperti)
-    mancanti_staff = sorted(c for c in cognomi_staff if c not in coperti_staff)
-    totale = len(numeri_rosa) + len(cognomi_staff)
+    mancanti_staff = sorted(c for c in cognomi_senza_numero if c not in coperti_staff)
+    totale = len(numeri_rosa) + len(cognomi_senza_numero)
     presentati = totale - len(mancanti) - len(mancanti_staff)
     print(f"{GRIGIO}  ·{FINE} locandine: {len(online)} pubblicate, {len(spente)} pronte ma spente — "
           f"presentati {presentati} su {totale}")
@@ -441,7 +459,7 @@ def controlla_locandine(numeri_rosa, cognomi_staff=frozenset()):
         print(f"{GRIGIO}  ·{FINE} giocatori non ancora presentati: "
               + ", ".join(f"#{n}" for n in mancanti))
     if mancanti_staff:
-        print(f"{GRIGIO}  ·{FINE} staff non ancora presentato: "
+        print(f"{GRIGIO}  ·{FINE} staff e tifosi non ancora presentati: "
               + ", ".join(c.title() for c in mancanti_staff))
 
 
@@ -520,10 +538,10 @@ def controlla_versioni_asset():
 def main():
     print(f"\n{'=' * 62}\n  CHECK DATA — Shakhtar Palese\n{'=' * 62}\n")
     controlla_config()
-    numeri, cognomi_staff = controlla_rosa()
+    numeri, cognomi_senza_numero = controlla_rosa()
     controlla_statistiche(numeri)
     controlla_tornei()
-    controlla_locandine(numeri, cognomi_staff)
+    controlla_locandine(numeri, cognomi_senza_numero)
     controlla_storia()
     controlla_file_sito()
     controlla_versioni_asset()
