@@ -1,6 +1,6 @@
 {
   "_nota": "File generato da tools/sync_locandine.py. Puoi modificare a mano SOLO pubblicato, data_pubblicazione, giocatore e didascalia: lo script non li sovrascrive. \"pubblicato\": false = la card e' pronta ma non si vede sul sito; mettilo a true e rilancia sync.command per farla uscire.",
-  "generato_il": "2026-09-07T18:20:28",
+  "generato_il": "2026-09-07T18:25:24",
   "totale": 17,
   "locandine": [
     {
@@ -563,7 +563,7 @@
       "numero": null,
       "sigla": null,
       "data": "2026-09-07T18:20:28",
-      "data_fonte": "pubblicazione",
+      "data_fonte": "manuale",
       "valida": false,
       "ordine": 17,
       "_sorgente": {
