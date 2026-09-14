@@ -1,0 +1,74 @@
+{
+  "_placeholder": true,
+  "_nota": "Gli sponsor del sito. I nomi e i loghi sono quelli veri (arrivano dal simulatore della maglia). Le 'descrizione' invece le ha scritte Claude a partire da quello che c'e' gia' sul sito: falle leggere agli interessati prima di lasciarle li', oppure svuotale — un campo vuoto semplicemente non compare. Poi togli \"_placeholder\": true.",
+
+  "_come_funziona": {
+    "livello": "'main' = sponsor di maglia, esce dappertutto (home, footer, rosa, tornei, statistiche, pagina sponsor). 'partner' = esce solo nella pagina sponsor e nel footer. 'tecnico' = chi produce la maglia: esce solo nella pagina sponsor, in una sezione sua.",
+    "sfondo": "Su che colore va appoggiato il logo: 'scuro' per i loghi chiari, 'chiaro' per i loghi neri. Serve perche' il sito ha due temi e un logo nero su fondo nero non si vede.",
+    "attivo": "false = lo sponsor resta scritto qui ma sparisce dal sito, come il 'pubblicato' delle locandine.",
+    "ordine": "L'ordine di questa lista e' l'ordine in cui compaiono sul sito."
+  },
+
+  "sponsor": [
+    {
+      "id": "goldbet",
+      "nome": "PAY GoldBet Palese",
+      "livello": "main",
+      "logo": "assets/sponsor/goldbet.png",
+      "sfondo": "scuro",
+      "posizione_maglia": "Fronte, sotto lo stemma",
+      "descrizione": "Angioletto e Nandrolone hanno scelto Shakhtar, tu scegli GoldBet.",
+      "sito": "",
+      "instagram": "",
+      "dal": 2026,
+      "attivo": true
+    },
+    {
+      "id": "ventidue",
+      "nome": "Ventidue Concept Store",
+      "livello": "main",
+      "logo": "assets/sponsor/ventidue.png",
+      "sfondo": "scuro",
+      "posizione_maglia": "Retro, sotto il numero",
+      "descrizione": "Se siamo vestiti bene è grazie a Luigi, per favore non fare brutte figure, fai un salto al negozio.",
+      "sito": "",
+      "instagram": "",
+      "dal": 2026,
+      "attivo": true
+    },
+    {
+      "id": "dreambar",
+      "nome": "Dream Café Bar",
+      "livello": "main",
+      "logo": "assets/sponsor/dreambar.png",
+      "sfondo": "scuro",
+      "posizione_maglia": "Retro, in fondo alla schiena",
+      "descrizione": "Non abbiamo davvero nulla da aggiungere, il Dream è un nome che parla da solo, grazie per il sostegno.",
+      "sito": "",
+      "instagram": "",
+      "dal": 2026,
+      "attivo": true
+    },
+    {
+      "id": "mj",
+      "nome": "MJ",
+      "livello": "tecnico",
+      "logo": "assets/sponsor/mj.png",
+      "sfondo": "chiaro",
+      "posizione_maglia": "Petto, lato sinistro",
+      "descrizione": "Il marchio che produce la maglia: quando chiudono il negozio, iniziano ad aprire le birre come noi.",
+      "sito": "",
+      "instagram": "",
+      "dal": 2026,
+      "attivo": true,
+      "_placeholder": true
+    }
+  ],
+
+  "diventa_sponsor": {
+    "attivo": true,
+    "titolo": "C'è ancora spazio sulla maglia",
+    "testo": "Siamo una squadra amatoriale di Palese: il tuo marchio finisce su una maglia che gira per il De Palo tutte le settimane, sulle locandine dei giocatori e su questo sito. Scrivici e ne parliamo.",
+    "mostra_simulatore": true
+  }
+}

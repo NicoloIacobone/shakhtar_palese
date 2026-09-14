@@ -138,6 +138,7 @@ Per fermarlo: `Ctrl+C` nel Terminale.
 shakhtar_palese/
 ├── index.html  rosa.html  statistiche.html
 ├── tornei.html  storia.html  contatti.html  404.html
+├── maglia.html  sponsor.html  privacy.html
 ├── sync.command              ← doppio click: pubblica le nuove locandine
 ├── manifest.json  robots.txt  sitemap.xml  .nojekyll
 ├── assets/
@@ -145,6 +146,9 @@ shakhtar_palese/
 │   ├── js/                   ← uno script per pagina + main.js condiviso
 │   ├── img/                  ← stemma, icone, copertina social, placeholder,
 │   │                            e qui va anche la foto di squadra
+│   ├── sponsor/              ← i loghi degli sponsor per il sito
+│   ├── maglia/               ← il simulatore 3D + le texture della maglia
+│   ├── fonts/                ← i font del simulatore, serviti da qui e non da Google
 │   └── locandine/            ← originali + web/ + thumbs/ (le genera lo script)
 ├── data/                     ← i contenuti del sito. Vedi data/README.md
 ├── admin/                    ← pannello locale, non pubblicato
@@ -155,6 +159,106 @@ shakhtar_palese/
 │   └── make_icons.py         ← rigenera logo e icone dallo stemma ufficiale
 └── foto_presentazione/       ← le card generate con l'IA (non versionata)
 ```
+
+### Cambiare uno sponsor
+
+Tutto sta in **`data/sponsor.json`**: i loghi sul sito non sono scritti in
+nessuna pagina, ci sono solo dei contenitori vuoti che si riempiono da soli.
+Tocchi quel file e cambiano insieme la home, il footer di ogni pagina, la Rosa,
+i Tornei, le Statistiche e la pagina Sponsor.
+
+Per aggiungerne uno:
+
+1. metti il logo in `assets/sponsor/` — **PNG con lo sfondo trasparente**,
+   alto circa 160 px (più grande non serve, pesa e basta);
+2. aggiungi una voce alla lista `sponsor` copiando una di quelle che ci sono;
+3. `./.venv/bin/python tools/check_data.py` per controllare.
+
+I campi che contano:
+
+| campo | cosa fa |
+|---|---|
+| `livello` | `main` = esce dappertutto · `partner` = solo pagina sponsor e footer · `tecnico` = chi produce la maglia, sezione sua |
+| `sfondo` | su che colore appoggiare il logo: **`scuro`** per i loghi chiari, **`chiaro`** per quelli neri |
+| `attivo` | `false` lo toglie dal sito senza cancellarlo, come il `pubblicato` delle locandine |
+| `sito`, `instagram` | se ci sono, il logo diventa cliccabile. `instagram` senza la `@` |
+
+Il campo **`sfondo` è quello che si sbaglia più spesso**: un logo nero messo su
+`scuro` non è rotto, semplicemente non si vede. Guarda sempre la pagina in tutti
+e due i temi prima di pubblicare.
+
+L'ordine della lista è l'ordine in cui compaiono. L'invito a diventare sponsor
+in fondo alla pagina si spegne con `"diventa_sponsor": { "attivo": false }`.
+
+### La maglia in 3D
+
+Lo stesso file fa due cose diverse a seconda di come lo apri.
+
+| Dove | Cosa fa |
+|---|---|
+| `maglia.html` sul sito, e `assets/maglia/simulatore.html` aperto da solo | **Vetrina**: la maglia si gira e si ingrandisce, e basta. Niente pannello, niente cursori, niente da spostare. |
+| Pannello locale → scheda **Maglia** | **Editor**: compare il pannello con i cursori, i loghi si trascinano, si carica un logo nuovo, si scarica la foto e si scarica `maglia.json`. |
+
+L'editor si accende solo se **tutte e due** le condizioni sono vere: il sito
+gira in **locale** (`localhost`, `127.0.0.1`, `file://` o un nome `.local`) **e**
+la pagina è chiamata con `?modifica=1`. Su `shakhtarpalese.it` non si accende
+nemmeno aggiungendo il parametro a mano.
+
+Non è una serratura — il file è pubblico e chi vuole se lo legge — ma è quanto
+basta perché nessun visitatore possa spostare i loghi degli sponsor, nemmeno
+per sbaglio, e perché quello che si vede sul sito sia sempre e solo quello che
+sta scritto in `data/maglia.json`.
+
+> Se fai partire il server e apri il sito dal **telefono** con l'IP di rete
+> (`192.168.…`), resti in vetrina: l'editor vuole `localhost`. Usalo dal
+> computer.
+
+**Per cambiare la maglia del sito:**
+
+1. `./.venv/bin/python -m http.server`, poi <http://localhost:8000/admin/>;
+2. scheda **Maglia**, sposta quello che devi spostare;
+3. **«Scarica maglia.json»** in fondo al pannello di destra;
+4. metti il file in `data/maglia.json` al posto del vecchio e fai push.
+
+Finché non fai il passo 4 stai lavorando su una copia che resta nel tuo
+browser: il sito non cambia. Il pulsante «Torna alla maglia pubblicata» butta
+via le prove e rimette quella che sta in `data/maglia.json`.
+
+Un logo **caricato a mano** dal pannello vive solo nel tuo browser: serve a
+provare un marchio al volo, e nel JSON scaricato non ci finisce (te lo dice).
+Per pubblicarlo davvero metti il PNG in `assets/maglia/` e aggiungi la sua riga
+alla lista `loghi` di `data/maglia.json`.
+
+Le texture (`crest.png`, `mj.png`, `goldbet.png`, `dreambar.png`) stanno nella
+stessa cartella. Se cambi un logo lì dentro cambia la maglia, **non** i loghi
+del sito: quelli stanno in `assets/sponsor/` e sono due file diversi apposta,
+perché sulla maglia servono più grandi.
+
+I font (`assets/fonts/`) sono Barlow, Big Shoulders Display e Saira Semi
+Condensed, scaricati una volta da Google Fonts e serviti da qui. Non è un
+vezzo: caricarli da `fonts.googleapis.com` manderebbe l'indirizzo IP di chi
+naviga a Google a ogni visita, e allora servirebbe il banner del consenso.
+
+> `versiona_asset.py` non tocca `assets/maglia/simulatore.html` (lavora solo su
+> `assets/js/` e `assets/css/`). Se modifichi **il simulatore**, chi ha appena
+> visitato il sito può vederne la versione vecchia per una decina di minuti.
+> Non vale per `data/maglia.json`, che viene chiesto con `no-cache` come tutti
+> gli altri dati: la disposizione dei loghi si aggiorna subito.
+
+### La targa dei fondatori
+
+In fondo a ogni pagina, dopo la riga del copyright, c'è un piccone quasi
+invisibile (⚒ — Shakhtar in ucraino vuol dire "minatore"). Cliccandolo si apre
+la targa con tutti e diciassette i nomi.
+
+Non c'è nessun nome scritto lì dentro: li legge da `data/rosa.json`, quindi
+resta aggiornata da sola. Testo e interruttore stanno in `data/storia.json`,
+sotto `"targa"`:
+
+- `"attivo": false` toglie il piccone da tutte le pagine;
+- `"solo_presentati": true` fa comparire solo chi ha già la sua locandina
+  pubblicata — utile se stai ancora presentando la squadra una al giorno e non
+  vuoi che la targa anticipi i nomi.
 
 ### Cambiare i colori
 
@@ -222,6 +326,17 @@ Restano un paio di cose da sistemare, tutte visibili sul sito:
       `assets/img/` e scrivi il suo percorso in `data/storia.json`, campo
       `foto_squadra.file`. Il segnaposto sparisce da solo.
 
+- [ ] **Le descrizioni degli sponsor in `data/sponsor.json`** — le ha scritte
+      Claude a partire da quello che c'era già sul sito, non te le ha dette
+      nessuno. Falle leggere agli interessati oppure svuotale (un campo vuoto
+      non compare), poi togli `"_placeholder": true`. Se hai il sito o
+      l'Instagram degli sponsor, riempi anche quelli: il logo diventa cliccabile.
+
+- [ ] **`privacy.html`** — dice che il titolare del trattamento è "lo Shakhtar
+      Palese, squadra di calcio amatoriale di Palese (Bari)" e come contatto usa
+      la mail della squadra. Se un domani diventate un'associazione con una sede
+      e un codice fiscale, quel paragrafo va aggiornato.
+
 E quando escono le informazioni ufficiali:
 
 - [ ] Le 5 squadre `TBA` in `data/tornei.json`, l'handle `instagram` del torneo,
@@ -268,7 +383,20 @@ python3 -m venv .venv
 
 ## Cose che questo sito non fa, di proposito
 
-Niente analytics, niente cookie banner (perché non ci sono cookie), niente form
-di contatto, nessun backend. È un sito statico e deve restare tale: la sola
-cosa che deve funzionare per sempre è che il link, incollato in una storia
-Instagram, apra qualcosa di decente.
+Niente analytics, niente cookie, niente form di contatto, nessun backend.
+Niente caricato da fuori: nemmeno i font, che stanno in `assets/fonts/` proprio
+per non far chiamare Google al browser di chi naviga. È un sito statico e deve
+restare tale: la sola cosa che deve funzionare per sempre è che il link,
+incollato in una storia Instagram, apra qualcosa di decente.
+
+Niente banner dei cookie, perché non c'è niente da far accettare: le uniche due
+cose salvate (il tema scelto e la disposizione dei loghi sulla maglia 3D) stanno
+nella memoria locale del browser, sono tecniche e non richiedono consenso.
+`privacy.html` lo spiega per esteso — è l'informativa vera e propria, linkata
+dal footer di ogni pagina.
+
+**Se un giorno aggiungi qualcosa che raccoglie dati** — un contatore di visite,
+un modulo, un video di YouTube o un post di Instagram incorporato, un font di
+Google — da quel momento serve il consenso *prima* che parta la richiesta, e
+`privacy.html` va riscritta. Non è una formalità: è esattamente il caso in cui
+il banner diventa obbligatorio.

@@ -53,6 +53,7 @@
       numero: g.numero,
       giocatore: `${g.cognome} ${g.nome.charAt(0)}.`,
       cognome: g.cognome,
+      capelli: g.caratteristiche?.lunghezza_capelli,
       ruolo: g.ruolo,
       ruolo_sigla: g.ruolo_sigla || g.ruolo,
       presenze: 0, minuti: 0, gol: 0, assist: 0, ammonizioni: 0, espulsioni: 0,
@@ -111,10 +112,27 @@
   }
 
   /* -------------------------------------------------- filtri per ruolo --- */
-  const ruoli = ['tutti', ...new Set(righe.map((x) => x.ruolo))];
-  elFiltri.innerHTML = ruoli.map((r) =>
-    `<button class="chip" type="button" data-ruolo="${SP.esc(r)}" aria-pressed="${r === 'tutti'}">
-      ${r === 'tutti' ? 'Tutti' : SP.esc(SP.plurale(r))}</button>`).join('');
+  /* Oltre ai ruoli, gli stessi due filtri della pagina Rosa: "Pelati" (capelli
+     a PELATO_MAX in rosa.json) e "De Tullio". Compaiono solo se hanno qualcuno
+     dentro. */
+  const PELATO_MAX = 1;
+  const DINASTIA = 'De Tullio';
+  const EXTRA = {
+    pelati:   (x) => Number.isFinite(x.capelli) && x.capelli <= PELATO_MAX,
+    dinastia: (x) => SP.slug(x.cognome || '') === SP.slug(DINASTIA),
+  };
+  const passa = (x) => ruoloAttivo === 'tutti'
+    || (EXTRA[ruoloAttivo] ? EXTRA[ruoloAttivo](x) : x.ruolo === ruoloAttivo);
+
+  const FILTRI = [
+    { id: 'tutti', et: 'Tutti' },
+    ...[...new Set(righe.map((x) => x.ruolo))].map((r) => ({ id: r, et: SP.plurale(r) })),
+    ...(righe.some(EXTRA.pelati) ? [{ id: 'pelati', et: 'Pelati' }] : []),
+    ...(righe.some(EXTRA.dinastia) ? [{ id: 'dinastia', et: DINASTIA }] : []),
+  ];
+  elFiltri.innerHTML = FILTRI.map((f) =>
+    `<button class="chip" type="button" data-ruolo="${SP.esc(f.id)}" aria-pressed="${f.id === 'tutti'}">
+      ${SP.esc(f.et)}</button>`).join('');
   elFiltri.addEventListener('click', (e) => {
     const b = e.target.closest('[data-ruolo]');
     if (!b) return;
@@ -149,7 +167,7 @@
     const col = COLONNE.find((c) => c.k === ordinaPer) || COLONNE[0];
     const segno = direzione === 'asc' ? 1 : -1;
     return righe
-      .filter((x) => ruoloAttivo === 'tutti' || x.ruolo === ruoloAttivo)
+      .filter(passa)
       .sort((a, b) => {
         const va = a[ordinaPer], vb = b[ordinaPer];
         const cmp = col.testo ? String(va).localeCompare(String(vb), 'it') : (va - vb);
@@ -187,7 +205,7 @@
           <div><b>${SP.esc(x.ritardi)}</b><small>ritardi</small></div>
           <div><b>${SP.esc(x.multe_euro)}</b><small>multe €</small></div>
         </div>
-      </article>`).join('') : '<p class="vuoto">Nessun giocatore con questo ruolo.</p>';
+      </article>`).join('') : '<p class="vuoto">Nessun giocatore con questo filtro.</p>';
   }
 
   /* Su mobile non c'e' l'intestazione da cliccare: un select fa lo stesso lavoro. */

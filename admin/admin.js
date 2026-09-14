@@ -216,6 +216,17 @@
         { k: 'note', et: 'Note', lungo: true },
       ],
     },
+    {
+      /* L'unica scheda che non e' una tabella: dentro ci sta il simulatore 3D,
+         che ha un editor suo. Il JSON se lo scarica da solo, col bottone in
+         fondo al suo pannello — qui non c'e' niente da caricare in memoria,
+         per questo non ha "file". */
+      id: 'maglia', titolo: 'Maglia', pagina: 'maglia',
+      aiuto: 'Il simulatore della maglia, in versione modificabile. Sul sito la stessa maglia ' +
+             'si puo\' solo girare e ingrandire: i loghi si spostano solo da qui, e solo ' +
+             'con il server locale acceso. Quando sei contento premi «Scarica maglia.json» ' +
+             'in fondo al pannello a destra, metti il file in data/ e fai push.',
+    },
   ];
 
   let sezioneAttiva = SEZIONI[0];
@@ -223,7 +234,7 @@
 
   /* ------------------------------------------------------- caricamento --- */
   (async function carica() {
-    const files = [...new Set(SEZIONI.map((s) => s.file))];
+    const files = [...new Set(SEZIONI.map((s) => s.file).filter(Boolean))];
     try {
       const risposte = await Promise.all(files.map(async (f) => {
         const r = await fetch(`../data/${f}`, { cache: 'no-cache' });
@@ -269,6 +280,7 @@
 
   function disegna() {
     const s = sezioneAttiva;
+    if (s.pagina === 'maglia') { disegnaMaglia(s); return; }
     const righe = righeAttive() || [];
     s.normalizza?.(righe);
 
@@ -324,6 +336,30 @@
     });
 
     valida();
+  }
+
+  /* La scheda Maglia: il simulatore in un iframe, chiamato con ?modifica=1.
+     Senza quel parametro — e senza il server in locale — il simulatore parte in
+     vetrina e il pannello non compare nemmeno: e' la stessa pagina che sta sul
+     sito, cambia solo come la si apre. */
+  const SIMULATORE = '../assets/maglia/simulatore.html?modifica=1';
+
+  function disegnaMaglia(s) {
+    elPannello.innerHTML = `
+      <div class="barra-sezione">
+        <h2>${esc(s.titolo)}</h2>
+        <span class="spazio"></span>
+        <a class="btn btn-fantasma" href="${SIMULATORE}" target="_blank" rel="noopener">Apri a schermo intero</a>
+      </div>
+      <p class="aiuto">${s.aiuto}</p>
+      <div class="editor" style="padding:0;overflow:hidden">
+        <iframe src="${SIMULATORE}" title="Editor della maglia 2026"
+                style="display:block;width:100%;border:0;
+                       height:min(880px, calc(100dvh - 230px));min-height:620px"></iframe>
+      </div>`;
+    elMessaggi.innerHTML = '';
+    elStato.textContent = 'Maglia: scarica da qui dentro';
+    delete elStato.dataset.ok;
   }
 
   /* Indice della prossima partita: prima "da_giocare" in ordine cronologico. */
@@ -432,6 +468,7 @@
   /* ---------------------------------------------------------- validazione --- */
   function valida() {
     const s = sezioneAttiva;
+    if (!s.campi) return true;          // la scheda Maglia non e' una tabella
     const righe = righeAttive() || [];
     const problemi = [];
     document.querySelectorAll('.invalido').forEach((el) => el.classList.remove('invalido'));

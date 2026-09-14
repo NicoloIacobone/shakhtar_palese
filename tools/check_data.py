@@ -474,10 +474,139 @@ def controlla_storia():
         errore("storia.json", "'paragrafi' deve essere una lista non vuota")
         return
     parole = sum(len(p.split()) for p in par)
+
+    # La targa dei fondatori (l'easter egg nel footer). Non ha nomi dentro:
+    # li legge da rosa.json. Qui si controlla solo che il testo ci sia.
+    t = d.get("targa")
+    if isinstance(t, dict) and t.get("attivo") is not False:
+        obbligatori("storia.json", t, ["titolo"], "targa → ")
+        if t.get("solo_presentati") not in (True, False, None):
+            errore("storia.json", "targa → 'solo_presentati' deve essere true o false")
+
     if d.get("_da_rivedere"):
         segnaposto.append("data/storia.json — testo di bozza, da riscrivere "
                           "(poi metti \"_da_rivedere\": false)")
     print(f"{GRIGIO}  ·{FINE} storia: {len(par)} paragrafi, {parole} parole")
+
+
+# --------------------------------------------------------------- sponsor ---
+LIVELLI_SPONSOR = {"main", "partner", "tecnico"}
+SFONDI_SPONSOR = {"scuro", "chiaro"}
+
+
+def controlla_sponsor():
+    """
+    data/sponsor.json. Il campo che sbaglia piu' spesso e' 'sfondo': dice su che
+    colore appoggiare il logo (scuro per i loghi chiari, chiaro per quelli neri).
+    Se e' sbagliato il logo non e' rotto, semplicemente non si vede — ed e' il
+    tipo di errore che si scopre solo guardando il sito col tema giusto.
+    """
+    d = carica("sponsor.json")
+    if d is None:
+        return
+    lista = d.get("sponsor")
+    if not isinstance(lista, list):
+        errore("sponsor.json", "manca la lista 'sponsor'")
+        return
+
+    visti = set()
+    attivi = 0
+    for i, s in enumerate(lista):
+        dove = f"sponsor #{i + 1}"
+        nome = s.get("nome") or dove
+        obbligatori("sponsor.json", s, ["id", "nome", "logo", "livello"], f"{nome} → ")
+
+        ident = s.get("id")
+        if ident in visti:
+            errore("sponsor.json", f"l'id '{ident}' e' usato due volte")
+        visti.add(ident)
+
+        liv = s.get("livello")
+        if liv and liv not in LIVELLI_SPONSOR:
+            errore("sponsor.json", f"{nome}: livello '{liv}' sconosciuto "
+                                   f"(ammessi: {', '.join(sorted(LIVELLI_SPONSOR))})")
+
+        sf = s.get("sfondo")
+        if sf is None:
+            avviso("sponsor.json", f"{nome}: manca 'sfondo', il sito usera' 'scuro'. "
+                                   f"Se il logo e' nero, mettilo su 'chiaro' o non si vedra'.")
+        elif sf not in SFONDI_SPONSOR:
+            errore("sponsor.json", f"{nome}: sfondo '{sf}' sconosciuto (scuro o chiaro)")
+
+        immagine_esiste("sponsor.json", s.get("logo"), f"{nome} → ")
+
+        sito = s.get("sito") or ""
+        if sito and not sito.startswith(("http://", "https://")):
+            errore("sponsor.json", f"{nome}: 'sito' deve iniziare con https:// (adesso e' {sito!r})")
+        ig = s.get("instagram") or ""
+        if ig.startswith("@"):
+            avviso("sponsor.json", f"{nome}: l'handle Instagram va scritto senza '@' ({ig!r})")
+
+        if s.get("attivo") is not False:
+            attivi += 1
+
+    if d.get("_placeholder"):
+        segnaposto.append("data/sponsor.json — le descrizioni degli sponsor le ha scritte "
+                          "Claude: falle confermare agli interessati o svuotale, poi togli "
+                          "\"_placeholder\": true")
+    if not attivi:
+        avviso("sponsor.json", "nessuno sponsor attivo: le strisce sul sito restano nascoste")
+    print(f"{GRIGIO}  ·{FINE} sponsor: {attivi} attivi su {len(lista)}")
+
+
+# ---------------------------------------------------------------- maglia ---
+ZONE_MAGLIA = {"front", "back", "sleeveL", "sleeveR"}
+CARTELLA_MAGLIA = "assets/maglia"
+
+
+def controlla_maglia():
+    """
+    data/maglia.json: la disposizione dei loghi sulla maglia che si vede su
+    maglia.html. Lo scrive il pannello locale (scheda Maglia), ma si puo' anche
+    correggere a mano, ed e' li' che si sbaglia: un 'logo' che non sta nella
+    lista 'loghi', o un file PNG che non c'e'. In quel caso il logo non e'
+    rotto, semplicemente sparisce dalla maglia senza dire niente.
+    """
+    d = carica("maglia.json")
+    if d is None:
+        return
+
+    loghi = d.get("loghi")
+    if not isinstance(loghi, list) or not loghi:
+        errore("maglia.json", "manca la lista 'loghi' (id, nome e file di ogni logo stampabile)")
+        loghi = []
+
+    noti = set()
+    for i, l in enumerate(loghi):
+        dove = l.get("id") or f"logo #{i + 1}"
+        obbligatori("maglia.json", l, ["id", "file"], f"{dove} → ")
+        if l.get("id") in noti:
+            errore("maglia.json", f"l'id '{l.get('id')}' e' usato due volte nella lista 'loghi'")
+        noti.add(l.get("id"))
+        # I 'file' sono relativi alla cartella del simulatore, non alla radice.
+        if l.get("file"):
+            immagine_esiste("maglia.json", f"{CARTELLA_MAGLIA}/{l['file']}", f"{dove} → ")
+
+    elementi = d.get("elementi")
+    if not isinstance(elementi, list):
+        errore("maglia.json", "manca la lista 'elementi'")
+        return
+
+    for i, e in enumerate(elementi):
+        dove = f"elemento #{i + 1}"
+        obbligatori("maglia.json", e, ["logo", "zona"], f"{dove} → ")
+        if e.get("logo") and e["logo"] not in noti:
+            errore("maglia.json", f"{dove}: il logo '{e['logo']}' non e' nella lista 'loghi', "
+                                  f"quindi sulla maglia non comparira'")
+        z = e.get("zona")
+        if z and z not in ZONE_MAGLIA:
+            errore("maglia.json", f"{dove}: zona '{z}' sconosciuta "
+                                  f"(ammesse: {', '.join(sorted(ZONE_MAGLIA))})")
+        larg = e.get("larghezza")
+        if larg is not None and (not isinstance(larg, (int, float)) or isinstance(larg, bool) or larg <= 0):
+            errore("maglia.json", f"{dove}: 'larghezza' deve essere un numero di centimetri maggiore di zero")
+
+    print(f"{GRIGIO}  ·{FINE} maglia: {len(elementi)} loghi stampati su {len(noti)} disponibili")
 
 
 # ----------------------------------------------------- file del sito ------
@@ -486,8 +615,14 @@ def controlla_file_sito():
     attesi = [
         "index.html", "rosa.html", "statistiche.html",
         "tornei.html", "storia.html", "contatti.html", "404.html",
+        "sponsor.html", "maglia.html", "privacy.html",
         ".nojekyll", "manifest.json", "robots.txt", "sitemap.xml",
-        "assets/css/style.css", "assets/js/main.js",
+        "assets/css/style.css", "assets/js/main.js", "assets/js/sponsor.js",
+        # il simulatore 3D della maglia e le sue texture
+        "assets/maglia/simulatore.html", "assets/maglia/crest.png",
+        "assets/maglia/mj.png",
+        # il pannello locale: e' l'unico posto da cui la maglia si modifica
+        "admin/index.html", "admin/admin.js",
         # marchio e icone: le genera tools/make_icons.py dallo stemma ufficiale
         "assets/img/logo.png", "assets/img/logo-grande.png", "assets/img/favicon-32.png",
         "assets/img/apple-touch-icon.png", "assets/img/icon-192.png",
@@ -543,6 +678,8 @@ def main():
     controlla_tornei()
     controlla_locandine(numeri, cognomi_senza_numero)
     controlla_storia()
+    controlla_sponsor()
+    controlla_maglia()
     controlla_file_sito()
     controlla_versioni_asset()
 

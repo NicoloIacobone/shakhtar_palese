@@ -131,8 +131,13 @@ const SP = (() => {
     return !NEGAZIONI.includes(String(l.pubblicato).trim().toLowerCase());
   };
 
+  /* Percorso relativo -> assoluto a partire dalla radice del sito. Serve
+     ovunque l'HTML venga costruito dal JS: i data-* dicono "assets/sponsor/x.png"
+     e questa funzione lo rende giusto da qualsiasi profondita'. */
+  const url = (p) => new URL(String(p || ''), RADICE).href;
+
   return { dati, esc, dataIt, quando, errore, slug, rigaRisultato, plurale,
-           cardPersona, chiavePersona, chiaveLocandina, pubblicata };
+           cardPersona, chiavePersona, chiaveLocandina, pubblicata, url };
 })();
 
 /* ---------------------------------------------------------------- tema --- */
@@ -262,5 +267,160 @@ const SP = (() => {
     const k = el.dataset.config;
     if (valori[k] !== undefined && !el.hasAttribute('data-solo-href')) el.textContent = valori[k];
     if (el.tagName === 'A' && href[k]) el.href = href[k];
+  });
+})();
+
+/* ------------------------------------------------------------- sponsor --- */
+/* I loghi degli sponsor non stanno scritti nelle pagine: ogni pagina mette un
+   contenitore vuoto con data-sponsor="<livelli>" e ci pensa questo blocco a
+   riempirlo leggendo data/sponsor.json. Cosi' quando cambia uno sponsor si
+   tocca UN file e cambia in tutti i punti del sito insieme.
+
+     <div data-sponsor="main" data-sponsor-stile="strip"></div>
+
+   data-sponsor        quali livelli mostrare, separati da virgola (main, partner, tecnico)
+   data-sponsor-stile  strip | riga | footer   (la griglia della pagina sponsor la fa sponsor.js)
+   data-sponsor-et     l'etichetta sopra i loghi, se quella predefinita non va bene
+
+   I contenitori nascono con `hidden`: se il file non si carica, o se non c'e'
+   nessuno sponsor attivo, restano nascosti e la pagina non mostra un buco. */
+(async function sponsor() {
+  const posti = document.querySelectorAll('[data-sponsor]');
+  if (!posti.length) return;
+
+  let d;
+  try { d = await SP.dati('sponsor.json'); } catch (e) { console.error(e); return; }
+
+  const attivi = (d.sponsor || []).filter((s) => s.attivo !== false && s.logo);
+
+  /* Il link dello sponsor: prima il sito, poi Instagram, poi niente (e allora
+     la piastrella non e' cliccabile, invece di essere un link che non porta
+     da nessuna parte). */
+  const linkDi = (s) => (s.sito || (s.instagram ? `https://instagram.com/${s.instagram}` : ''));
+
+  function piastrella(s) {
+    const sfondo = s.sfondo === 'chiaro' ? 'chiaro' : 'scuro';
+    const img = `<img src="${SP.esc(SP.url(s.logo))}" alt="${SP.esc(s.nome)}" loading="lazy" decoding="async">`;
+    const href = linkDi(s);
+    return href
+      ? `<a class="sponsor-logo" data-sfondo="${sfondo}" href="${SP.esc(href)}"
+            target="_blank" rel="noopener" title="${SP.esc(s.nome)}">${img}</a>`
+      : `<div class="sponsor-logo" data-sfondo="${sfondo}" title="${SP.esc(s.nome)}">${img}</div>`;
+  }
+
+  const ET = { strip: 'I nostri sponsor', riga: 'Con il sostegno di', footer: 'Sponsor' };
+
+  posti.forEach((el) => {
+    const livelli = el.dataset.sponsor.split(',').map((x) => x.trim()).filter(Boolean);
+    const lista = attivi.filter((s) => livelli.includes(s.livello || 'main'));
+    if (!lista.length) return;                       // niente sponsor: resta hidden
+
+    const stile = el.dataset.sponsorStile || 'strip';
+    const et = el.dataset.sponsorEt || ET[stile] || ET.strip;
+    const loghi = lista.map(piastrella).join('');
+
+    if (stile === 'footer') {
+      el.className = 'sponsor-footer';
+      el.innerHTML = `<p class="et">${SP.esc(et)}</p>${loghi}`;
+    } else if (stile === 'riga') {
+      el.className = 'sponsor-riga';
+      el.innerHTML = `<p class="et">${SP.esc(et)}</p>${loghi}
+        <a class="sponsor-riga-link" href="${SP.esc(SP.url('sponsor.html'))}">Chi ci sostiene &rarr;</a>`;
+    } else {
+      el.innerHTML = `<div class="sponsor-strip">
+        <div class="sponsor-testa">
+          <p class="occhiello">${SP.esc(et)}</p>
+          <a href="${SP.esc(SP.url('sponsor.html'))}">Tutti gli sponsor &rarr;</a>
+        </div>
+        <div class="sponsor-loghi">${loghi}</div>
+      </div>`;
+    }
+    el.hidden = false;
+  });
+})();
+
+/* ------------------------------------------ targa dei fondatori (easter egg) --- */
+/* Il piccone in fondo a ogni pagina. Shakhtar, in ucraino, vuol dire
+   "minatore": e' il motivo per cui l'icona e' quella e non una stella.
+   La targa non ha nomi scritti dentro: li prende da data/rosa.json, cosi'
+   quando cambia la rosa cambia da sola. Il testo e l'interruttore stanno in
+   data/storia.json, sotto "targa". */
+(async function targa() {
+  const bottoni = document.querySelectorAll('[data-azione="targa"]');
+  if (!bottoni.length) return;
+
+  /* Il piccone nasce nascosto: compare solo quando storia.json conferma che la
+     targa e' accesa. Al contrario (bottone visibile subito, poi tolto) si
+     vedrebbe comparire e sparire un carattere in fondo alla pagina. */
+  let storia;
+  try { storia = await SP.dati('storia.json'); } catch (e) { return; }
+  if (!storia.targa || storia.targa.attivo === false) return;
+  bottoni.forEach((b) => { b.hidden = false; });
+
+  let dialogo = null;
+
+  async function costruisci() {
+    const [rosa, locandine] = await Promise.all([
+      SP.dati('rosa.json'), SP.dati('locandine.json').catch(() => null),
+    ]);
+    const t = storia.targa || {};
+
+    /* Chi si vede. Con "solo_presentati": true la targa segue le uscite
+       giornaliere e non anticipa i nomi di chi non ha ancora la locandina;
+       con false (il default) c'e' sempre tutta la squadra. */
+    const uscite = new Set(
+      ((locandine && locandine.locandine) || [])
+        .filter(SP.pubblicata).map(SP.chiaveLocandina));
+    const filtra = (lista) => (t.solo_presentati
+      ? lista.filter((p) => uscite.has(SP.chiavePersona(p)))
+      : lista.slice());
+
+    const giocatori = filtra(rosa.giocatori || [])
+      .sort((a, b) => (a.numero ?? 999) - (b.numero ?? 999));
+    const staff = filtra(rosa.staff || []);
+    const nascosti = (rosa.giocatori || []).length + (rosa.staff || []).length
+                   - giocatori.length - staff.length;
+
+    const nome = (p) => `<li>${p.numero != null ? `<span>${SP.esc(p.numero)}</span>` : ''}
+        ${SP.esc(p.nome)} ${SP.esc(p.cognome)}
+        ${p.numero == null ? `<small>${SP.esc(p.ruolo || '')}</small>` : ''}</li>`;
+    const gruppo = (titolo, lista) => (lista.length
+      ? `<div class="targa-gruppo"><h3>${titolo}</h3><ul class="targa-nomi">${lista.map(nome).join('')}</ul></div>`
+      : '');
+
+    dialogo = document.createElement('dialog');
+    dialogo.className = 'targa';
+    dialogo.innerHTML = `
+      <button class="btn-icona modale-chiudi" type="button" data-chiudi aria-label="Chiudi la targa">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="targa-in">
+        <p class="occhiello">${SP.esc(t.occhiello || 'Dal 2026')}</p>
+        <h2>${SP.esc(t.titolo || 'Targa dei fondatori')}</h2>
+        ${t.testo ? `<p class="targa-testo">${SP.esc(t.testo)}</p>` : ''}
+        ${gruppo('In campo', giocatori)}
+        ${gruppo('Fuori dal campo', staff)}
+        ${nascosti > 0 ? `<p class="targa-mancanti">e altri ${nascosti}, che escono una locandina alla volta.</p>` : ''}
+      </div>
+      <div class="targa-piede">
+        <p class="firma">Shakhtar &middot; in ucraino, minatore</p>
+        <a class="btn btn-fantasma" href="${SP.esc(SP.url('storia.html'))}">Com'&egrave; andata &rarr;</a>
+      </div>`;
+    document.body.appendChild(dialogo);
+
+    // Chiusura: bottone, ESC (nativo di <dialog>) e clic sullo sfondo.
+    dialogo.addEventListener('click', (e) => {
+      if (e.target === dialogo || e.target.closest('[data-chiudi]')) dialogo.close();
+    });
+  }
+
+  document.addEventListener('click', async (e) => {
+    if (!e.target.closest('[data-azione="targa"]')) return;
+    try {
+      if (!dialogo) await costruisci();
+    } catch (err) { console.error(err); return; }
+    if (typeof dialogo.showModal === 'function') dialogo.showModal();
+    else dialogo.setAttribute('open', '');
+    dialogo.querySelector('[data-chiudi]')?.focus();
   });
 })();

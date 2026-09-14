@@ -28,7 +28,7 @@
 <link rel="icon" href="assets/img/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="assets/css/style.css?v=bcd9c2f4">
+<link rel="stylesheet" href="assets/css/style.css?v=057fa566">
 </head>
 <body>
 <a class="salta-al-contenuto" href="#contenuto">Salta al contenuto</a>
@@ -44,6 +44,8 @@
       <li><a href="rosa.html">Rosa</a></li>
       <li><a href="statistiche.html">Statistiche</a></li>
       <li><a href="tornei.html">Tornei</a></li>
+      <li><a href="maglia.html">Maglia</a></li>
+      <li><a href="sponsor.html">Sponsor</a></li>
       <li><a href="storia.html">Storia</a></li>
       <li><a href="contatti.html">Contatti</a></li>
       </ul>
@@ -64,6 +66,8 @@
 
     <h2 style="margin-top:1.6rem">Classifica</h2>
     <div id="classifica"><p class="caricamento">Carico la classifica&hellip;</p></div>
+    <div data-sponsor="main" data-sponsor-stile="riga"
+         data-sponsor-et="La stagione la giochiamo con" hidden></div>
 
     <h2 style="margin-top:2.2rem">Calendario e risultati</h2>
     <div id="calendario" class="lista-risultati"><p class="caricamento">Carico il calendario&hellip;</p></div>
@@ -76,6 +80,11 @@
   </section>
 </main>
 <footer class="footer">
+  <div class="contenitore">
+    <!-- Riempita da main.js leggendo data/sponsor.json: se non ci sono sponsor
+         attivi resta hidden e il footer torna com'era. -->
+    <div data-sponsor="main,partner" data-sponsor-stile="footer" hidden></div>
+  </div>
   <div class="contenitore footer-in">
     <div>
       <a class="marchio" href="index.html">
@@ -96,6 +105,8 @@
         <li><a href="rosa.html">Rosa</a></li>
         <li><a href="statistiche.html">Statistiche</a></li>
         <li><a href="tornei.html">Tornei</a></li>
+        <li><a href="maglia.html">Maglia</a></li>
+        <li><a href="sponsor.html">Sponsor</a></li>
         <li><a href="storia.html">Storia</a></li>
         <li><a href="contatti.html">Contatti</a></li>
       </ul>
@@ -115,10 +126,15 @@
       &copy; <span data-config="anno"></span> Shakhtar Palese &mdash; squadra di calcio amatoriale, Palese (Bari).
       Campo di casa:
       <a data-config="campo-instagram" href="#" target="_blank" rel="noopener"></a>.
+      <a href="privacy.html">Privacy e cookie</a>.
+      <!-- Il piccone e' la targa dei fondatori: lo accende main.js se
+           data/storia.json ha "targa": { "attivo": true }. -->
+      <button class="targa-apri" type="button" data-azione="targa" hidden
+              aria-label="Targa dei fondatori" title="Targa dei fondatori">&#9874;</button>
     </p>
   </div>
 </footer>
-<script src="assets/js/main.js?v=e0be9336"></script>
+<script src="assets/js/main.js?v=e8108120"></script>
 <script src="assets/js/tornei.js?v=27e16474"></script>
 </body>
 </html>

@@ -5,10 +5,19 @@
   "sottotitolo": "Come una squadra di Palese ha deciso di chiamarsi come una squadra ucraina di minatori.",
   "foto_squadra": {
     "_nota": "La foto di gruppo in cima alla pagina Storia. Finche' 'file' e' vuoto il sito mostra un segnaposto. Metti l'immagine in assets/img/ e scrivi qui il suo percorso, es. \"assets/img/squadra-2026.jpg\".",
-    "file": "",
+    "file": "assets/img/foto-squadra.jpg",
     "alt": "La rosa dello Shakhtar Palese al completo",
     "didascalia": ""
   },
+  "targa": {
+    "_nota": "La targa dei fondatori: l'easter egg del sito. E' il piccone in fondo a ogni pagina, accanto alla riga del copyright. I nomi NON si scrivono qui: li legge da data/rosa.json, cosi' restano sempre quelli veri. Con \"solo_presentati\": true la targa mostra solo chi ha gia' la sua locandina pubblicata (utile se stai ancora presentando la squadra una al giorno e non vuoi anticipare i nomi); con false ci sono tutti. Metti \"attivo\": false per togliere il piccone dal footer.",
+    "attivo": true,
+    "occhiello": "Autunno 2026",
+    "titolo": "Quelli che c'erano all'inizio",
+    "testo": "Una squadra amatoriale non ha un atto costitutivo: ha diciassette persone che un giorno hanno detto di sì. Questi sono i nomi, scritti qui perché fra dieci anni nessuno se li ricorderà tutti.",
+    "solo_presentati": false
+  },
+
   "paragrafi": [
     "Shakhtar Palese nasce nell'autunno del 2026, in un bar di Palese, nel modo in cui nascono quasi tutte le squadre amatoriali: qualcuno dice «facciamo una squadra» e per una volta nessuno cambia discorso.",
     "Il gruppo di partenza è quello di sempre: amici cresciuti insieme, pineta, Santo Spirito e le partite 7vs7 messe insieme all'ultimo momento sul Gruppo Calcio. Mancava solo la parte formale: un nome, dei colori, e qualcuno disposto a tenere i conti delle multe.",

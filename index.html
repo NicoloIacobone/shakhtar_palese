@@ -28,7 +28,7 @@
 <link rel="icon" href="assets/img/icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="assets/css/style.css?v=bcd9c2f4">
+<link rel="stylesheet" href="assets/css/style.css?v=057fa566">
 </head>
 <body>
 <a class="salta-al-contenuto" href="#contenuto">Salta al contenuto</a>
@@ -44,6 +44,8 @@
       <li><a href="rosa.html">Rosa</a></li>
       <li><a href="statistiche.html">Statistiche</a></li>
       <li><a href="tornei.html">Tornei</a></li>
+      <li><a href="maglia.html">Maglia</a></li>
+      <li><a href="sponsor.html">Sponsor</a></li>
       <li><a href="storia.html">Storia</a></li>
       <li><a href="contatti.html">Contatti</a></li>
       </ul>
@@ -70,6 +72,8 @@ Ghepardi in campo, bevitori di birra fuori.</p>
 </section>
 
 <main id="contenuto">
+  <section class="sezione contenitore" data-sponsor="main" data-sponsor-stile="strip" hidden></section>
+
   <section class="sezione contenitore">
     <p class="occhiello">Prossima partita</p>
     <div id="prossima-partita"><p class="caricamento">Carico il calendario&hellip;</p></div>
@@ -85,7 +89,7 @@ Ghepardi in campo, bevitori di birra fuori.</p>
 
   <section class="sezione contenitore">
     <div class="sezione-titolo">
-      <div><h2>Ultimi presentati</h2><p class="sottotitolo" id="sottotitolo-presentati">Uno al giorno, finché non ci siamo tutti.</p></div>
+      <div><h2>Il nostro team</h2><p class="sottotitolo" id="sottotitolo-presentati">Uno al giorno, finché non ci siamo tutti.</p></div>
       <a href="rosa.html">Tutta la rosa &rarr;</a>
     </div>
     <div id="ultimi-presentati" class="griglia-rosa"><p class="caricamento">Carico&hellip;</p></div>
@@ -103,6 +107,11 @@ Ghepardi in campo, bevitori di birra fuori.</p>
   </section>
 </main>
 <footer class="footer">
+  <div class="contenitore">
+    <!-- Riempita da main.js leggendo data/sponsor.json: se non ci sono sponsor
+         attivi resta hidden e il footer torna com'era. -->
+    <div data-sponsor="main,partner" data-sponsor-stile="footer" hidden></div>
+  </div>
   <div class="contenitore footer-in">
     <div>
       <a class="marchio" href="index.html">
@@ -123,6 +132,8 @@ Ghepardi in campo, bevitori di birra fuori.</p>
         <li><a href="rosa.html">Rosa</a></li>
         <li><a href="statistiche.html">Statistiche</a></li>
         <li><a href="tornei.html">Tornei</a></li>
+        <li><a href="maglia.html">Maglia</a></li>
+        <li><a href="sponsor.html">Sponsor</a></li>
         <li><a href="storia.html">Storia</a></li>
         <li><a href="contatti.html">Contatti</a></li>
       </ul>
@@ -142,10 +153,15 @@ Ghepardi in campo, bevitori di birra fuori.</p>
       &copy; <span data-config="anno"></span> Shakhtar Palese &mdash; squadra di calcio amatoriale, Palese (Bari).
       Campo di casa:
       <a data-config="campo-instagram" href="#" target="_blank" rel="noopener"></a>.
+      <a href="privacy.html">Privacy e cookie</a>.
+      <!-- Il piccone e' la targa dei fondatori: lo accende main.js se
+           data/storia.json ha "targa": { "attivo": true }. -->
+      <button class="targa-apri" type="button" data-azione="targa" hidden
+              aria-label="Targa dei fondatori" title="Targa dei fondatori">&#9874;</button>
     </p>
   </div>
 </footer>
-<script src="assets/js/main.js?v=e0be9336"></script>
+<script src="assets/js/main.js?v=e8108120"></script>
 <script src="assets/js/home.js?v=ca51dc68"></script>
 </body>
 </html>

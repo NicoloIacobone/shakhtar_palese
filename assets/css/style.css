@@ -509,3 +509,171 @@ th.ordinabile[aria-sort="descending"]::after { content: "↓"; opacity: 1; color
   }
   .player-card:hover, .btn:hover { transform: none; }
 }
+
+/* =========================================================================
+   SPONSOR
+   Un logo non e' un'icona: non si puo' colorare con currentColor e non segue
+   il tema. Quindi ogni logo sta appoggiato su una piastrella del SUO colore
+   ("sfondo" in data/sponsor.json: scuro per i loghi chiari, chiaro per quelli
+   neri), uguale nel tema chiaro e in quello scuro. E' l'unico modo perche' si
+   veda sempre, ed e' anche come i loghi stanno sulla maglia.
+   ========================================================================= */
+:root { --sponsor-scuro: #17171c; --sponsor-chiaro: #f3f3f5; }
+
+.sponsor-loghi { display: flex; flex-wrap: wrap; gap: .6rem; align-items: stretch; }
+.sponsor-logo {
+  display: grid; place-items: center; padding: .7rem 1.1rem;
+  border: 1px solid var(--bordo); border-radius: var(--raggio-s);
+  transition: border-color .18s ease, transform .18s ease;
+}
+.sponsor-logo[data-sfondo="scuro"]  { background: var(--sponsor-scuro); }
+.sponsor-logo[data-sfondo="chiaro"] { background: var(--sponsor-chiaro); }
+.sponsor-logo img { width: auto; height: 34px; object-fit: contain; }
+a.sponsor-logo:hover { border-color: var(--arancio); transform: translateY(-2px); text-decoration: none; }
+
+/* Striscia in home e nelle pagine interne */
+.sponsor-strip { display: grid; gap: .7rem; }
+.sponsor-strip .sponsor-testa { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.sponsor-strip .sponsor-testa p { margin: 0; }
+.sponsor-strip .sponsor-testa a { font-size: .9rem; font-weight: 700; }
+
+/* Riga discreta (tornei, statistiche, rosa): una frase e i loghi piccoli */
+.sponsor-riga {
+  display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+  border: 1px solid var(--bordo); border-radius: var(--raggio);
+  background: var(--superficie); padding: .7rem .9rem; margin-block: 1.2rem 1.6rem;
+}
+.sponsor-riga .et {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .1em;
+  font-weight: 800; color: var(--testo-debole); margin: 0;
+}
+.sponsor-riga .sponsor-logo { padding: .45rem .7rem; }
+.sponsor-riga .sponsor-logo img { height: 24px; }
+.sponsor-riga .sponsor-riga-link { margin-left: auto; font-size: .82rem; font-weight: 700; }
+
+/* Striscia in fondo a ogni pagina, sopra le colonne del footer */
+.sponsor-footer {
+  display: flex; align-items: center; justify-content: center; gap: .6rem; flex-wrap: wrap;
+  padding-bottom: 1.6rem; margin-bottom: 1.6rem; border-bottom: 1px solid var(--bordo);
+}
+.sponsor-footer .et {
+  width: 100%; text-align: center; margin: 0 0 .2rem;
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .12em;
+  font-weight: 800; color: var(--testo-debole);
+}
+.sponsor-footer .sponsor-logo { padding: .55rem .95rem; }
+.sponsor-footer .sponsor-logo img { height: 34px; }
+
+/* Pagina sponsor: una card per sponsor */
+.sponsor-griglia { display: grid; gap: var(--gap); }
+@media (min-width: 720px) { .sponsor-griglia { grid-template-columns: repeat(2, 1fr); } }
+.sponsor-card { display: grid; gap: .8rem; align-content: start; }
+.sponsor-card .sponsor-logo { padding: 1.4rem; }
+.sponsor-card .sponsor-logo img { height: 56px; }
+.sponsor-card h3 { margin: 0; font-size: 1.15rem; }
+.sponsor-card .livello {
+  display: inline-block; font-size: .62rem; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--arancio);
+  border: 1px solid var(--arancio); border-radius: 999px; padding: .12rem .5rem;
+}
+.sponsor-card p { margin: 0; color: var(--testo-tenue); font-size: .95rem; }
+.sponsor-card .dove {
+  font-size: .8rem; color: var(--testo-debole); display: inline-flex; align-items: center; gap: .35rem;
+}
+.sponsor-card .dove svg { width: 15px; height: 15px; color: var(--arancio); }
+.sponsor-card .link-sponsor { display: flex; gap: .8rem; flex-wrap: wrap; font-size: .88rem; font-weight: 700; }
+
+/* =========================================================================
+   SIMULATORE 3D DELLA MAGLIA
+   Il simulatore e' una pagina a se' (assets/maglia/simulatore.html) dentro un
+   iframe: ha una sua grafica, un suo font e un suo canvas WebGL, e tenerlo
+   separato evita che i due fogli di stile si pestino i piedi.
+   ========================================================================= */
+.maglia-telaio {
+  position: relative; border: 1px solid var(--bordo); border-radius: var(--raggio);
+  overflow: hidden; background: var(--superficie-2);
+}
+.maglia-telaio iframe {
+  display: block; width: 100%; height: min(820px, calc(100dvh - 120px)); min-height: 560px; border: 0;
+}
+/* Su telefono il simulatore e' solo la maglia (niente pannello), quindi basta
+   molta meno altezza di quanta ne servisse con i cursori a fianco. */
+@media (max-width: 860px) { .maglia-telaio iframe { height: min(560px, 80dvh); min-height: 420px; } }
+.maglia-sotto {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  margin-top: .8rem; font-size: .84rem; color: var(--testo-debole);
+}
+
+/* =========================================================================
+   TARGA DEI FONDATORI
+   L'easter egg: il piccone in fondo a ogni pagina (Shakhtar, in ucraino,
+   vuol dire "minatore"). Apre una targa con chi c'era all'inizio.
+   ========================================================================= */
+.targa-apri {
+  background: none; border: 0; padding: 0 .15rem; cursor: pointer; line-height: 1;
+  color: var(--testo-debole); font-size: .95rem; opacity: .45;
+  transition: opacity .18s ease, color .18s ease;
+}
+.targa-apri:hover { opacity: 1; color: var(--arancio); }
+
+dialog.targa {
+  width: min(560px, 94vw); max-height: 88dvh; padding: 0; overflow: auto;
+  border: 1px solid var(--arancio); border-radius: var(--raggio);
+  background: var(--superficie); color: var(--testo);
+}
+dialog.targa::backdrop { background: rgba(0, 0, 0, .8); backdrop-filter: blur(3px); }
+.targa-in {
+  padding: 1.6rem 1.3rem 1.4rem; text-align: center;
+  background:
+    radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--arancio) 14%, transparent), transparent 70%),
+    var(--superficie);
+}
+.targa-in .occhiello { margin-bottom: .5rem; }
+.targa-in h2 { font-size: 1.35rem; margin-bottom: .4rem; }
+.targa-in .targa-testo { color: var(--testo-tenue); font-size: .92rem; max-width: 42ch; margin-inline: auto; }
+.targa-gruppo { margin-top: 1.3rem; }
+.targa-gruppo h3 {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .14em;
+  color: var(--testo-debole); margin-bottom: .6rem;
+}
+.targa-nomi {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: .3rem .7rem;
+}
+.targa-nomi li { font-weight: 700; font-size: .95rem; }
+.targa-nomi li span { font-family: var(--font-num); font-size: .8rem; color: var(--arancio); margin-right: .2rem; }
+.targa-nomi li small { display: block; font-size: .6rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--testo-debole); }
+.targa-mancanti { margin: .7rem 0 0; font-size: .82rem; color: var(--testo-debole); }
+.targa-piede { border-top: 1px solid var(--bordo); padding: .8rem 1.3rem 1rem; text-align: center; }
+.targa-piede .firma { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--testo-debole); margin: 0 0 .7rem; }
+
+/* =========================================================================
+   TESTI LEGALI (privacy e cookie)
+   ========================================================================= */
+.legale h2 { font-size: 1.25rem; margin-top: 2.2rem; scroll-margin-top: calc(var(--header-h) + 1rem); }
+.legale h3 { font-size: 1rem; margin-top: 1.5rem; }
+.legale p, .legale li { color: var(--testo-tenue); }
+.legale ul { padding-left: 1.15rem; display: grid; gap: .4rem; margin: 0 0 1em; }
+.legale li::marker { color: var(--arancio); }
+.legale .tabella-wrap { margin-bottom: 1.2rem; }
+.legale table.tab { min-width: 480px; font-size: .85rem; }
+.legale table.tab td { white-space: normal; }
+.legale .aggiornamento { font-size: .8rem; color: var(--testo-debole); }
+/* Piu' specifico di ".legale ul" qui sopra, che altrimenti vincerebbe con il
+   suo display:grid e impilerebbe le pastiglie dell'indice una per riga. */
+.legale ul.indice-legale {
+  list-style: none; margin: 1.2rem 0 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: .4rem;
+}
+.indice-legale a {
+  display: block; background: var(--superficie); border: 1px solid var(--bordo);
+  border-radius: 999px; padding: .35rem .8rem; font-size: .82rem; font-weight: 700;
+  color: var(--testo-tenue);
+}
+.indice-legale a:hover { border-color: var(--arancio); color: var(--arancio); text-decoration: none; }
+
+/* Fra 861 e 1040px la navigazione e' ancora orizzontale ma lo spazio e' poco:
+   stringo le voci invece di mandarle a capo sotto il logo. */
+@media (min-width: 861px) and (max-width: 1040px) {
+  .nav-lista a { padding: .5rem .45rem; font-size: .86rem; }
+}

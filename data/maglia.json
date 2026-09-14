@@ -1,0 +1,45 @@
+{
+  "_nota": "La maglia che si vede su maglia.html. Scritto dal pannello locale (http://localhost:8000/admin/, scheda Maglia) col bottone \"Scarica maglia.json\". Le misure sono in centimetri veri su una taglia M. 'zona': front, back, sleeveL, sleeveR. 'x' e' lo scostamento dal centro (negativo = a sinistra), 'y' quanto si scende dal colletto. Un logo funziona solo se il suo 'id' sta anche nella lista 'loghi' e il suo file esiste in assets/maglia/.",
+  "nome": "SHAKHTAR",
+  "numero": "26",
+  "loghi": [
+    {
+      "id": "goldbet",
+      "nome": "PAY GoldBet Palese",
+      "file": "goldbet.png"
+    },
+    {
+      "id": "ventidue",
+      "nome": "Ventidue",
+      "file": "ventidue.png"
+    },
+    {
+      "id": "dreambar",
+      "nome": "Dream Café Bar",
+      "file": "dreambar.png"
+    }
+  ],
+  "elementi": [
+    {
+      "logo": "goldbet",
+      "zona": "front",
+      "x": 0,
+      "y": 35.5,
+      "larghezza": 32
+    },
+    {
+      "logo": "ventidue",
+      "zona": "back",
+      "x": 0,
+      "y": 53,
+      "larghezza": 21
+    },
+    {
+      "logo": "dreambar",
+      "zona": "back",
+      "x": 0,
+      "y": 65.5,
+      "larghezza": 31
+    }
+  ]
+}
