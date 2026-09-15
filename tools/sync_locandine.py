@@ -552,6 +552,12 @@ def proponi_git(messaggio):
             return
     ok(f"commit creato: {messaggio}")
 
+    # Su GitHub i dati del torneo li aggiorna un'Action (sync-torneo.yml), che fa
+    # i suoi commit: senza riallinearsi prima, il push verrebbe rifiutato.
+    r = git("pull", "--rebase", "--autostash")
+    if r.returncode != 0:
+        err(f"git pull fallito:\n{r.stderr.strip()}\n  Il commit c'e' comunque: sistema e poi  git push")
+        return
     r = git("push")
     if r.returncode != 0:
         err(f"push fallito:\n{r.stderr.strip()}\n  Il commit c'e' comunque: riprova con  git push")

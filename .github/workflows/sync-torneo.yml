@@ -1,0 +1,49 @@
+# Copia classifica, calendario e numeri dal sito del torneo nei JSON del sito
+# (tools/sync_torneo.py) e, se e' cambiato qualcosa, fa commit e push: GitHub
+# Pages ripubblica da solo.
+#
+# Quando gira: ogni ora la sera, quando si gioca e gli arbitri caricano i
+# referti, piu' due passaggi di giorno. Gli orari di GitHub sono in UTC
+# (Italia = UTC+2 d'estate, UTC+1 d'inverno) e possono slittare di qualche minuto.
+# Per lanciarlo subito: GitHub > Actions > "Sync torneo" > Run workflow.
+name: Sync torneo
+
+on:
+  schedule:
+    - cron: "0 17-23 * * *"
+    - cron: "0 7,13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-torneo
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scarica i dati dal torneo
+        run: python3 tools/sync_torneo.py
+
+      # Se i dati scaricati non passano i controlli, non si pubblica niente.
+      - name: Controlla i JSON
+        run: python3 tools/check_data.py
+
+      - name: Commit e push, se e' cambiato qualcosa
+        run: |
+          git config user.name "sync-torneo[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/tornei.json data/statistiche.json
+          if git diff --cached --quiet; then
+            echo "Niente di nuovo."
+            exit 0
+          fi
+          git commit -m "Aggiornamento automatico dati torneo"
+          git pull --rebase
+          git push

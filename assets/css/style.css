@@ -528,7 +528,7 @@ th.ordinabile[aria-sort="descending"]::after { content: "↓"; opacity: 1; color
 }
 .sponsor-logo[data-sfondo="scuro"]  { background: var(--sponsor-scuro); }
 .sponsor-logo[data-sfondo="chiaro"] { background: var(--sponsor-chiaro); }
-.sponsor-logo img { width: auto; height: 34px; object-fit: contain; }
+.sponsor-logo img { width: auto; height: 40px; object-fit: contain; }
 a.sponsor-logo:hover { border-color: var(--arancio); transform: translateY(-2px); text-decoration: none; }
 
 /* Striscia in home e nelle pagine interne */
@@ -548,7 +548,7 @@ a.sponsor-logo:hover { border-color: var(--arancio); transform: translateY(-2px)
   font-weight: 800; color: var(--testo-debole); margin: 0;
 }
 .sponsor-riga .sponsor-logo { padding: .45rem .7rem; }
-.sponsor-riga .sponsor-logo img { height: 24px; }
+.sponsor-riga .sponsor-logo img { height: 30px; }
 .sponsor-riga .sponsor-riga-link { margin-left: auto; font-size: .82rem; font-weight: 700; }
 
 /* Striscia in fondo a ogni pagina, sopra le colonne del footer */
@@ -562,14 +562,14 @@ a.sponsor-logo:hover { border-color: var(--arancio); transform: translateY(-2px)
   font-weight: 800; color: var(--testo-debole);
 }
 .sponsor-footer .sponsor-logo { padding: .55rem .95rem; }
-.sponsor-footer .sponsor-logo img { height: 34px; }
+.sponsor-footer .sponsor-logo img { height: 40px; }
 
 /* Pagina sponsor: una card per sponsor */
 .sponsor-griglia { display: grid; gap: var(--gap); }
 @media (min-width: 720px) { .sponsor-griglia { grid-template-columns: repeat(2, 1fr); } }
 .sponsor-card { display: grid; gap: .8rem; align-content: start; }
 .sponsor-card .sponsor-logo { padding: 1.4rem; }
-.sponsor-card .sponsor-logo img { height: 56px; }
+.sponsor-card .sponsor-logo img { height: 66px; }
 .sponsor-card h3 { margin: 0; font-size: 1.15rem; }
 .sponsor-card .livello {
   display: inline-block; font-size: .62rem; font-weight: 800; letter-spacing: .1em;

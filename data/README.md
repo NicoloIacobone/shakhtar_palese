@@ -139,8 +139,11 @@ e i cinque valori delle caratteristiche sono segnaposto scritti da Claude:
 
 Una riga per giocatore, agganciata alla rosa tramite `numero`.
 
-**Adesso è tutto a zero**: la stagione non è ancora cominciata. Aggiorna dopo
-ogni partita, a mano o dal pannello.
+**`gol`, `ammonizioni`, `espulsioni` e `mvp` si aggiornano da soli** dal sito
+del torneo (vedi *Aggiornamento automatico dal torneo* più sotto): se li cambi a
+mano, al giro successivo vengono riscritti. Tutto il resto — presenze, minuti,
+assist e le statistiche nostre — il torneo non lo registra: quello resta a mano
+o dal pannello.
 
 `presenze`, `minuti`, `gol`, `assist`, `ammonizioni`, `espulsioni`, `mvp` sono
 le statistiche serie. `papere`, `gol_sbagliati`, `ritardi`, `multe_euro` sono le
@@ -156,16 +159,40 @@ Contiene **tutti** i tornei: quello in corso e l'archivio. Il campo `corrente`
 in cima dice quale mostrare per primo e da quale prendere la prossima partita.
 
 Adesso c'è solo il Torneo Birra Peroni: 6 squadre (noi, Borussia Enziteto,
-FC Vision, Jalapeños, La Breda, Midal FC) e le nostre 5 partite del 1º girone
-di andata. La classifica è tutta a zero e in ordine alfabetico — **non è una
-graduatoria**. Finché nessuno ha giocato, la pagina Tornei mostra comunque la
-tabella — serve a far vedere chi sono le avversarie — ma in ordine alfabetico e
-con un trattino al posto della posizione, così una fila di zeri numerata non
-sembra una graduatoria. Dalla prima giornata in poi comanda il campo `pos`, che
-riscrivi tu seguendo i punti.
+FC Vision, Jalapeños, La Breda, Midal FC) e le nostre 20 partite dei 4 gironi.
+**Classifica e calendario si aggiornano da soli** dal sito del torneo: vedi
+*Aggiornamento automatico dal torneo* qui sotto. Finché nessuno ha giocato, la
+pagina Tornei mostra la tabella in ordine alfabetico e con un trattino al posto
+della posizione; dalla prima giornata in poi comanda il campo `pos`.
 
 **Nel calendario ci sono solo le partite che giochiamo noi.** Le altre del
 girone non servono: la classifica arriva già fatta dagli organizzatori.
+
+### Aggiornamento automatico dal torneo
+
+Il torneo usa Quick Tournament (<https://qt.at4s.it>), che pubblica i dati
+tramite un'API pubblica. Lo script `tools/sync_torneo.py` li scarica e riscrive:
+
+| file | cosa | cosa resta tuo |
+|---|---|---|
+| `tornei.json` | `classifica` intera, `calendario` (date, avversari, risultati), `stato` da `in_programma` a `in_corso` | `campo` e `note` di ogni partita, `regolamento`, tutto il resto |
+| `statistiche.json` | `gol`, `ammonizioni`, `espulsioni`, `mvp` | tutti gli altri campi |
+
+Il collegamento si fa con il campo **`quick_tournament_id`** del torneo: è il
+codice lungo nell'indirizzo della pagina pubblica
+(`qt.at4s.it/public/standings/`**`08df0e8e-…`**). Un torneo senza quel campo
+non viene toccato: per un torneo nuovo basta aggiungerlo. I giocatori si
+collegano per nome e cognome, e se non torna per numero di maglia.
+
+**Gira da solo su GitHub** (`.github/workflows/sync-torneo.yml`): ogni ora la
+sera e due volte di giorno, e fa commit solo se qualcosa è cambiato. Prima di
+pubblicare lancia `check_data.py`: se i dati non tornano, non pubblica.
+Per aggiornare subito: GitHub → *Actions* → *Sync torneo* → *Run workflow*,
+oppure dal tuo computer `python3 tools/sync_torneo.py` (con `--check` dice
+solo cosa cambierebbe).
+
+Visto che anche GitHub fa i suoi commit, **prima di lavorare in locale fai
+`git pull`**. `sync.command` lo fa già da solo prima del push.
 
 Ogni torneo ha:
 
@@ -217,7 +244,8 @@ Ogni gruppo è una card, ogni voce un punto elenco. Se il torneo non ha il campo
 
 **La "prossima partita" della home non si scrive da nessuna parte**: è la prima
 partita `da_giocare` in ordine di data e ora. Il countdown si calcola da lì.
-Per registrare un risultato: metti i gol e cambia lo `stato` in `giocata`.
+I risultati li scrive lo script: a mano servirebbe solo per un torneo senza
+`quick_tournament_id` (gol nei due campi e `stato` a `giocata`).
 
 ## `locandine.json` — le card di presentazione
 
