@@ -9,6 +9,7 @@
   const elSotto    = document.getElementById('sottotitolo-torneo');
   const elRegole   = document.getElementById('regolamento-torneo');
   const bloccoReg  = document.getElementById('blocco-regolamento');
+  const elPercorso = document.getElementById('percorso-torneo');
 
   let tutti = [], attivo = null;
 
@@ -50,6 +51,29 @@
     // dirlo, invece di lasciare pensare che siamo messi malissimo.
     const nonIniziato = (attivo.classifica || []).every((r) => !r.g);
     const daAnnunciare = (attivo.classifica || []).filter((r) => r.squadra === 'TBA').length;
+
+    /* ------------------------------------------------- il nostro percorso --- */
+    // Un colpo d'occhio su come stiamo andando, senza dover cercare la nostra
+    // riga in classifica: posizione, bilancio, differenza reti, partite giocate.
+    const nostra = (attivo.classifica || []).find((r) => r.squadra === noi);
+    const totPartite = (attivo.calendario || []).length;
+    const nostreGiocate = (attivo.calendario || []).filter((m) => m.stato === 'giocata').length;
+    if (nostra && !nonIniziato) {
+      elPercorso.hidden = false;
+      elPercorso.innerHTML = [
+        { et: 'Posizione', vl: `${nostra.pos}&ordm;`, ds: `su ${attivo.classifica.length} squadre` },
+        { et: 'Bilancio', vl: `${nostra.v}-${nostra.n}-${nostra.p}`, ds: 'vittorie-pareggi-sconfitte' },
+        { et: 'Differenza reti', vl: `${nostra.dr > 0 ? '+' : ''}${nostra.dr}`, ds: `${nostra.gf} fatti, ${nostra.gs} subiti` },
+        { et: 'Partite giocate', vl: `${nostreGiocate}/${totPartite}`, ds: 'nel nostro calendario' },
+      ].map((c) => `<div class="leader">
+        <span class="et">${SP.esc(c.et)}</span>
+        <span class="vl">${c.vl}</span>
+        <span class="ds">${SP.esc(c.ds)}</span>
+      </div>`).join('');
+    } else {
+      elPercorso.hidden = true;
+      elPercorso.innerHTML = '';
+    }
 
     if (!attivo.classifica || !attivo.classifica.length) {
       elClass.innerHTML = '<p class="vuoto">Questo torneo non ha una classifica.</p>';

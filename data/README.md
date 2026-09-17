@@ -139,16 +139,12 @@ e i cinque valori delle caratteristiche sono segnaposto scritti da Claude:
 
 Una riga per giocatore, agganciata alla rosa tramite `numero`.
 
-**`gol`, `ammonizioni`, `espulsioni` e `mvp` si aggiornano da soli** dal sito
-del torneo (vedi *Aggiornamento automatico dal torneo* più sotto): se li cambi a
-mano, al giro successivo vengono riscritti. Tutto il resto — presenze, minuti,
-assist e le statistiche nostre — il torneo non lo registra: quello resta a mano
-o dal pannello.
+**Si aggiornano tutti da soli** dal sito del torneo (vedi *Aggiornamento
+automatico dal torneo* più sotto): se li cambi a mano, al giro successivo
+vengono riscritti.
 
-`presenze`, `minuti`, `gol`, `assist`, `ammonizioni`, `espulsioni`, `mvp` sono
-le statistiche serie. `papere`, `gol_sbagliati`, `ritardi`, `multe_euro` sono le
-nostre. Sono tutti numeri interi, mai negativi, mai fra virgolette:
-`"gol": 4` va bene, `"gol": "4"` no.
+`gol`, `ammonizioni`, `espulsioni`, `mvp` sono tutti numeri interi, mai
+negativi, mai fra virgolette: `"gol": 4` va bene, `"gol": "4"` no.
 
 Se aggiungi un giocatore alla rosa, aggiungi anche la sua riga qui (all'inizio
 tutta a zero): `check_data.py` te lo ricorda.

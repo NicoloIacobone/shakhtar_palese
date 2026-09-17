@@ -348,10 +348,8 @@
       ${st ? `<div class="scheda-sezione">
         <h3>Statistiche</h3>
         <div class="scheda-stat">
-          ${stat('presenze', st.presenze)}${stat('minuti', st.minuti)}${stat('gol', st.gol)}
-          ${stat('assist', st.assist)}${stat('gialli', st.ammonizioni)}${stat('rossi', st.espulsioni)}
-          ${stat('MVP', st.mvp)}${stat('papere', st.papere)}${stat('gol sbagliati', st.gol_sbagliati)}
-          ${stat('ritardi', st.ritardi)}${stat('multe €', st.multe_euro)}
+          ${stat('gol', st.gol)}${stat('gialli', st.ammonizioni)}${stat('rossi', st.espulsioni)}
+          ${stat('MVP', st.mvp)}
         </div>
         <p style="margin-top:1rem"><a href="statistiche.html">Confrontalo con gli altri &rarr;</a></p>
       </div>` : ''}`;

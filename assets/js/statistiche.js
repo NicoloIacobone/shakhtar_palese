@@ -14,17 +14,10 @@
     { k: 'numero',        et: '#',    lungo: 'Numero di maglia' },
     { k: 'giocatore',     et: 'Giocatore', lungo: 'Giocatore', testo: true, sx: true },
     { k: 'ruolo_sigla',   et: 'Ruolo', lungo: 'Ruolo', testo: true, sx: true },
-    { k: 'presenze',      et: 'PG',   lungo: 'Partite giocate' },
-    { k: 'minuti',        et: 'Min',  lungo: 'Minuti giocati' },
     { k: 'gol',           et: 'Gol',  lungo: 'Gol' },
-    { k: 'assist',        et: 'Ass',  lungo: 'Assist' },
     { k: 'ammonizioni',   et: 'Gialli', lungo: 'Ammonizioni' },
     { k: 'espulsioni',    et: 'Rossi', lungo: 'Espulsioni' },
     { k: 'mvp',           et: 'MVP',  lungo: 'Migliore in campo' },
-    { k: 'papere',        et: 'Papere', lungo: 'Papere' },
-    { k: 'gol_sbagliati', et: 'Sbagliati', lungo: 'Gol sbagliati' },
-    { k: 'ritardi',       et: 'Ritardi', lungo: 'Ritardi agli allenamenti' },
-    { k: 'multe_euro',    et: 'Multe €', lungo: 'Multe in euro' },
   ];
 
   let righe = [], ruoloAttivo = 'tutti';
@@ -56,8 +49,7 @@
       capelli: g.caratteristiche?.lunghezza_capelli,
       ruolo: g.ruolo,
       ruolo_sigla: g.ruolo_sigla || g.ruolo,
-      presenze: 0, minuti: 0, gol: 0, assist: 0, ammonizioni: 0, espulsioni: 0,
-      mvp: 0, papere: 0, gol_sbagliati: 0, ritardi: 0, multe_euro: 0,
+      gol: 0, ammonizioni: 0, espulsioni: 0, mvp: 0,
       ...(stat[g.numero] || {}),
     }));
 
@@ -99,15 +91,13 @@
     elLeader.innerHTML = `<div class="card">
       <h3 style="margin-bottom:.3rem">Si comincia da zero</h3>
       <p class="sottotitolo" style="margin:0">La stagione non è ancora entrata nel vivo.
-      Capocannoniere, re degli assist e re delle papere si assegnano dalla prima partita.</p>
+      Capocannoniere e miglior in campo si assegnano dalla prima partita.</p>
     </div>`;
   } else {
     elLeader.innerHTML = [
       leader('Capocannoniere', 'gol', 'gol segnati'),
-      leader('Re degli assist', 'assist', 'assist serviti'),
       leader('Uomo dei cartellini', 'ammonizioni', 'ammonizioni rimediate'),
-      leader('Re delle papere', 'papere', 'papere, a giudizio insindacabile'),
-      leader('Cassa comune', 'multe_euro', 'euro di multe versate'),
+      leader('Migliore in campo', 'mvp', 'volte MVP'),
     ].join('');
   }
 
@@ -193,17 +183,10 @@
           <span class="rl">${SP.esc(x.ruolo_sigla)}</span>
         </div>
         <div class="stat-griglia">
-          <div><b>${SP.esc(x.presenze)}</b><small>PG</small></div>
-          <div><b>${SP.esc(x.minuti)}</b><small>min</small></div>
           <div><b>${SP.esc(x.gol)}</b><small>gol</small></div>
-          <div><b>${SP.esc(x.assist)}</b><small>assist</small></div>
           <div><b>${SP.esc(x.ammonizioni)}</b><small>gialli</small></div>
           <div><b>${SP.esc(x.espulsioni)}</b><small>rossi</small></div>
           <div><b>${SP.esc(x.mvp)}</b><small>MVP</small></div>
-          <div><b>${SP.esc(x.papere)}</b><small>papere</small></div>
-          <div><b>${SP.esc(x.gol_sbagliati)}</b><small>sbagliati</small></div>
-          <div><b>${SP.esc(x.ritardi)}</b><small>ritardi</small></div>
-          <div><b>${SP.esc(x.multe_euro)}</b><small>multe €</small></div>
         </div>
       </article>`).join('') : '<p class="vuoto">Nessun giocatore con questo filtro.</p>';
   }

@@ -235,8 +235,7 @@ def controlla_rosa():
 
 
 # ----------------------------------------------------------- statistiche ---
-CAMPI_STAT = ["presenze", "minuti", "gol", "assist", "ammonizioni", "espulsioni",
-              "mvp", "papere", "gol_sbagliati", "ritardi", "multe_euro"]
+CAMPI_STAT = ["gol", "ammonizioni", "espulsioni", "mvp"]
 
 
 def controlla_statistiche(numeri_rosa):
@@ -264,9 +263,6 @@ def controlla_statistiche(numeri_rosa):
         for c in CAMPI_STAT:
             if isinstance(r.get(c), int) and r[c] < 0:
                 errore("statistiche.json", f"{et}'{c}' non puo' essere negativo ({r[c]})")
-        if isinstance(r.get("presenze"), int) and isinstance(r.get("minuti"), int):
-            if r["presenze"] == 0 and r["minuti"] > 0:
-                avviso("statistiche.json", f"{et}0 presenze ma {r['minuti']} minuti giocati")
     mancanti = sorted(set(numeri_rosa) - visti)
     if mancanti:
         avviso("statistiche.json", "giocatori senza riga statistiche: "

@@ -151,24 +151,15 @@
     },
     {
       id: 'statistiche', titolo: 'Statistiche', file: 'statistiche.json',
-      aiuto: 'Una riga per giocatore. Il numero deve esistere nella rosa, altrimenti check_data.py protesta. ' +
-             'Papere, gol sbagliati, ritardi e multe sono le categorie ironiche: restano numeri veri.',
+      aiuto: 'Una riga per giocatore. Il numero deve esistere nella rosa, altrimenti check_data.py protesta.',
       lista: (d) => d.giocatori,
-      nuova: () => ({ numero: 0, presenze: 0, minuti: 0, gol: 0, assist: 0, ammonizioni: 0,
-                      espulsioni: 0, mvp: 0, papere: 0, gol_sbagliati: 0, ritardi: 0, multe_euro: 0 }),
+      nuova: () => ({ numero: 0, gol: 0, ammonizioni: 0, espulsioni: 0, mvp: 0 }),
       campi: [
         { k: 'numero', et: '#', tipo: 'int', obbl: true },
-        { k: 'presenze', et: 'Presenze', tipo: 'int' },
-        { k: 'minuti', et: 'Minuti', tipo: 'int' },
         { k: 'gol', et: 'Gol', tipo: 'int' },
-        { k: 'assist', et: 'Assist', tipo: 'int' },
         { k: 'ammonizioni', et: 'Gialli', tipo: 'int' },
         { k: 'espulsioni', et: 'Rossi', tipo: 'int' },
         { k: 'mvp', et: 'MVP', tipo: 'int' },
-        { k: 'papere', et: 'Papere', tipo: 'int' },
-        { k: 'gol_sbagliati', et: 'Sbagliati', tipo: 'int' },
-        { k: 'ritardi', et: 'Ritardi', tipo: 'int' },
-        { k: 'multe_euro', et: 'Multe €', tipo: 'int' },
       ],
       /* mostra il nome accanto al numero, cosi' non si edita alla cieca */
       etichettaRiga: (r) => {

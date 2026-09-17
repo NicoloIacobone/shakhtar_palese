@@ -28,8 +28,7 @@ Cosa scrive
   data/statistiche.json   (solo per il torneo 'corrente')
     · gol, ammonizioni, espulsioni  contati dai referti delle nostre partite
     · mvp                           dalla classifica "migliori giocatori"
-    Tutti gli altri campi (presenze, minuti, assist, papere, ritardi, multe...)
-    non li tocca: il torneo non li registra, restano a mano.
+    Sono gli unici campi che ha: niente altro resta da aggiornare a mano.
 
 Se l'API non risponde o risponde qualcosa di strano, lo script si ferma SENZA
 scrivere niente: meglio dati vecchi di un giorno che una classifica cancellata.
