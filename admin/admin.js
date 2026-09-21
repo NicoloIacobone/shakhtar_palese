@@ -89,7 +89,7 @@
                       rito_post_allenamento: '', skill_fuori_campo: '' }),
       campi: [
         { k: 'codice', et: 'Sigla', tipo: 'select', obbl: true,
-          opzioni: ['ALL', 'PRS', 'SMM', 'DS', 'PREP', 'MAG'] },
+          opzioni: ['ALL', 'PRS', 'SMM', 'PH', 'DS', 'PREP', 'MAG'] },
         { k: 'nome', et: 'Nome', obbl: true },
         { k: 'cognome', et: 'Cognome', obbl: true },
         { k: 'ruolo', et: 'Ruolo per esteso', obbl: true, lungo: true },

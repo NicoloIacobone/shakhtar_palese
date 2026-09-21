@@ -108,7 +108,7 @@ Stessi campi, ma senza `numero` (quindi anche senza `piede` e senza
 
 | campo | note |
 |---|---|
-| `codice` | la sigla: `ALL` allenatore, `PRS` presidente, `SMM` social media manager (ammesse anche `DS`, `PREP`, `MAG`) |
+| `codice` | la sigla: `ALL` allenatore, `PRS` presidente, `SMM` social media manager, `PH` fotografa (ammesse anche `DS`, `PREP`, `MAG`) |
 | `ruolo` | il ruolo per esteso, che compare nella scheda |
 
 Lo staff non ha statistiche e non compare nella pagina Statistiche. La sua

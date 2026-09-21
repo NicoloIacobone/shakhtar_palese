@@ -387,6 +387,21 @@
       "rito_post_allenamento": "Pensare alla sua ex fino a mettersi a piangere",
       "skill_fuori_campo": "Rimorchiare le minorenni",
       "_placeholder": true
+    },
+    {
+      "codice": "PH",
+      "nome": "Giorgia",
+      "cognome": "Mannarini",
+      "ruolo": "Fotografa",
+      "ruolo_sigla": "Fotografa penosa",
+      "soprannome": "Giò",
+      "provenienza": "CEP",
+      "classe": 2002,
+      "posizione_preferita": "Stesa a prendere il sole",
+      "frase_preferita": "Sto prendendo un Moment",
+      "superstizione": "10 Terea di fila",
+      "rito_post_allenamento": "Rivedersi una puntata di Off-Campus",
+      "skill_fuori_campo": "Torta Pan di Stelle sublime"
     }
   ],
   "tifosi": []

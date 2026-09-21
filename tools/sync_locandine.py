@@ -77,7 +77,7 @@ RE_NOME = re.compile(
 # aggiungi una qui, il file COGNOME_SIGLA.ext viene riconosciuto e collegato alla
 # lista corrispondente di data/rosa.json (aggiungila anche in tools/check_data.py
 # e in admin/admin.js).
-SIGLE_STAFF = {"ALL", "PRS", "SMM", "DS", "PREP", "MAG"}
+SIGLE_STAFF = {"ALL", "PRS", "SMM", "PH", "DS", "PREP", "MAG"}
 SIGLE_TIFOSI = {"TIF", "ULT"}
 SIGLE = SIGLE_STAFF | SIGLE_TIFOSI
 

@@ -105,7 +105,7 @@ def controlla_config():
 CAMPI_PERSONALI = ["soprannome", "provenienza", "classe", "posizione_preferita",
                    "frase_preferita", "superstizione", "rito_post_allenamento",
                    "skill_fuori_campo"]
-SIGLE_STAFF = {"ALL", "PRS", "SMM", "DS", "PREP", "MAG"}
+SIGLE_STAFF = {"ALL", "PRS", "SMM", "PH", "DS", "PREP", "MAG"}
 # I tifosi funzionano come lo staff: niente numero di maglia, locandina agganciata
 # al cognome. Se aggiungi una sigla qui, mettila anche in tools/sync_locandine.py
 # (che riconosce il nome del file) e in admin/admin.js (la tendina del pannello).
