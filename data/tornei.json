@@ -60,26 +60,26 @@
         {
           "pos": 2,
           "squadra": "Shakhtar Palese",
-          "punti": 3,
-          "g": 1,
-          "v": 1,
+          "punti": 6,
+          "g": 2,
+          "v": 2,
           "n": 0,
           "p": 0,
-          "gf": 7,
-          "gs": 3,
-          "dr": 4
+          "gf": 17,
+          "gs": 5,
+          "dr": 12
         },
         {
           "pos": 3,
           "squadra": "FC Vision",
           "punti": 3,
-          "g": 1,
+          "g": 2,
           "v": 1,
           "n": 0,
-          "p": 0,
-          "gf": 5,
-          "gs": 4,
-          "dr": 1
+          "p": 1,
+          "gf": 7,
+          "gs": 14,
+          "dr": -7
         },
         {
           "pos": 4,
@@ -143,9 +143,9 @@
           "ora": "22:00",
           "casa": "Shakhtar Palese",
           "ospite": "FC Vision",
-          "gol_casa": null,
-          "gol_ospite": null,
-          "stato": "da_giocare",
+          "gol_casa": 10,
+          "gol_ospite": 2,
+          "stato": "giocata",
           "campo": "De Palo Sporting Center",
           "note": ""
         },
