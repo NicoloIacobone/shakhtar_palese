@@ -84,14 +84,14 @@
         {
           "pos": 4,
           "squadra": "Borussia Enziteto",
-          "punti": 0,
-          "g": 1,
-          "v": 0,
+          "punti": 3,
+          "g": 2,
+          "v": 1,
           "n": 0,
           "p": 1,
-          "gf": 4,
-          "gs": 5,
-          "dr": -1
+          "gf": 10,
+          "gs": 9,
+          "dr": 1
         },
         {
           "pos": 5,
@@ -109,13 +109,13 @@
           "pos": 6,
           "squadra": "Jalapeños",
           "punti": 0,
-          "g": 1,
+          "g": 2,
           "v": 0,
           "n": 0,
-          "p": 1,
-          "gf": 0,
-          "gs": 12,
-          "dr": -12
+          "p": 2,
+          "gf": 4,
+          "gs": 18,
+          "dr": -14
         }
       ],
       "_nota_classifica": "Classifica e calendario si aggiornano da soli da Quick Tournament (tools/sync_torneo.py, lanciato ogni sera da GitHub): non modificarli a mano, verrebbero riscritti. 'campo' e 'note' delle partite invece restano tuoi.",
@@ -154,7 +154,7 @@
           "girone": "1º girone di andata",
           "giornata": 3,
           "data": "2026-09-28",
-          "ora": "20:00",
+          "ora": "21:00",
           "casa": "Shakhtar Palese",
           "ospite": "La Breda",
           "gol_casa": null,
