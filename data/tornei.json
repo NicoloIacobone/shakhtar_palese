@@ -71,6 +71,18 @@
         },
         {
           "pos": 3,
+          "squadra": "Midal FC",
+          "punti": 3,
+          "g": 3,
+          "v": 1,
+          "n": 0,
+          "p": 2,
+          "gf": 13,
+          "gs": 20,
+          "dr": -7
+        },
+        {
+          "pos": 4,
           "squadra": "FC Vision",
           "punti": 3,
           "g": 2,
@@ -82,28 +94,16 @@
           "dr": -7
         },
         {
-          "pos": 4,
+          "pos": 5,
           "squadra": "Borussia Enziteto",
           "punti": 3,
-          "g": 2,
+          "g": 3,
           "v": 1,
           "n": 0,
-          "p": 1,
-          "gf": 10,
-          "gs": 9,
-          "dr": 1
-        },
-        {
-          "pos": 5,
-          "squadra": "Midal FC",
-          "punti": 0,
-          "g": 2,
-          "v": 0,
-          "n": 0,
           "p": 2,
-          "gf": 5,
-          "gs": 16,
-          "dr": -11
+          "gf": 14,
+          "gs": 17,
+          "dr": -3
         },
         {
           "pos": 6,
