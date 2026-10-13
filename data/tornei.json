@@ -60,14 +60,14 @@
         {
           "pos": 2,
           "squadra": "Shakhtar Palese",
-          "punti": 9,
-          "g": 4,
-          "v": 3,
+          "punti": 12,
+          "g": 5,
+          "v": 4,
           "n": 0,
           "p": 1,
-          "gf": 27,
-          "gs": 15,
-          "dr": 12
+          "gf": 39,
+          "gs": 17,
+          "dr": 22
         },
         {
           "pos": 3,
@@ -109,13 +109,13 @@
           "pos": 6,
           "squadra": "Jalapeños",
           "punti": 1,
-          "g": 3,
+          "g": 4,
           "v": 0,
           "n": 1,
-          "p": 2,
-          "gf": 8,
-          "gs": 22,
-          "dr": -14
+          "p": 3,
+          "gf": 10,
+          "gs": 34,
+          "dr": -24
         }
       ],
       "_nota_classifica": "Classifica e calendario si aggiornano da soli da Quick Tournament (tools/sync_torneo.py, lanciato ogni sera da GitHub): non modificarli a mano, verrebbero riscritti. 'campo' e 'note' delle partite invece restano tuoi.",
@@ -185,9 +185,9 @@
           "ora": "21:30",
           "casa": "Shakhtar Palese",
           "ospite": "Jalapeños",
-          "gol_casa": null,
-          "gol_ospite": null,
-          "stato": "da_giocare",
+          "gol_casa": 12,
+          "gol_ospite": 2,
+          "stato": "giocata",
           "campo": "De Palo Sporting Center",
           "note": ""
         },
