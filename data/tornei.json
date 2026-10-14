@@ -71,27 +71,27 @@
         },
         {
           "pos": 3,
-          "squadra": "FC Vision",
-          "punti": 4,
+          "squadra": "Midal FC",
+          "punti": 6,
           "g": 4,
-          "v": 1,
-          "n": 1,
+          "v": 2,
+          "n": 0,
           "p": 2,
-          "gf": 12,
-          "gs": 27,
-          "dr": -15
+          "gf": 18,
+          "gs": 20,
+          "dr": -2
         },
         {
           "pos": 4,
-          "squadra": "Midal FC",
-          "punti": 3,
-          "g": 3,
+          "squadra": "FC Vision",
+          "punti": 4,
+          "g": 5,
           "v": 1,
-          "n": 0,
-          "p": 2,
-          "gf": 13,
-          "gs": 20,
-          "dr": -7
+          "n": 1,
+          "p": 3,
+          "gf": 12,
+          "gs": 32,
+          "dr": -20
         },
         {
           "pos": 5,
