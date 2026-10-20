@@ -48,26 +48,26 @@
         {
           "pos": 1,
           "squadra": "La Breda",
-          "punti": 18,
-          "g": 6,
-          "v": 6,
+          "punti": 15,
+          "g": 5,
+          "v": 5,
           "n": 0,
           "p": 0,
-          "gf": 50,
-          "gs": 14,
-          "dr": 36
+          "gf": 45,
+          "gs": 12,
+          "dr": 33
         },
         {
           "pos": 2,
           "squadra": "Shakhtar Palese",
           "punti": 12,
-          "g": 6,
+          "g": 5,
           "v": 4,
           "n": 0,
-          "p": 2,
-          "gf": 41,
-          "gs": 22,
-          "dr": 19
+          "p": 1,
+          "gf": 39,
+          "gs": 17,
+          "dr": 22
         },
         {
           "pos": 3,
@@ -199,9 +199,9 @@
           "ora": "21:00",
           "casa": "La Breda",
           "ospite": "Shakhtar Palese",
-          "gol_casa": 5,
-          "gol_ospite": 2,
-          "stato": "giocata",
+          "gol_casa": null,
+          "gol_ospite": null,
+          "stato": "da_giocare",
           "campo": "De Palo Sporting Center",
           "note": ""
         },
