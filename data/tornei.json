@@ -48,26 +48,26 @@
         {
           "pos": 1,
           "squadra": "La Breda",
-          "punti": 18,
-          "g": 6,
-          "v": 6,
+          "punti": 21,
+          "g": 7,
+          "v": 7,
           "n": 0,
           "p": 0,
-          "gf": 50,
-          "gs": 14,
-          "dr": 36
+          "gf": 54,
+          "gs": 15,
+          "dr": 39
         },
         {
           "pos": 2,
           "squadra": "Shakhtar Palese",
-          "punti": 12,
-          "g": 6,
-          "v": 4,
+          "punti": 15,
+          "g": 7,
+          "v": 5,
           "n": 0,
           "p": 2,
-          "gf": 41,
-          "gs": 22,
-          "dr": 19
+          "gf": 48,
+          "gs": 26,
+          "dr": 22
         },
         {
           "pos": 3,
@@ -85,13 +85,13 @@
           "pos": 4,
           "squadra": "Borussia Enziteto",
           "punti": 6,
-          "g": 6,
+          "g": 7,
           "v": 2,
           "n": 0,
-          "p": 4,
-          "gf": 27,
-          "gs": 34,
-          "dr": -7
+          "p": 5,
+          "gf": 31,
+          "gs": 41,
+          "dr": -10
         },
         {
           "pos": 5,
@@ -109,13 +109,13 @@
           "pos": 6,
           "squadra": "FC Vision",
           "punti": 4,
-          "g": 6,
+          "g": 7,
           "v": 1,
           "n": 1,
-          "p": 4,
-          "gf": 14,
-          "gs": 38,
-          "dr": -24
+          "p": 5,
+          "gf": 15,
+          "gs": 42,
+          "dr": -27
         }
       ],
       "_nota_classifica": "Classifica e calendario si aggiornano da soli da Quick Tournament (tools/sync_torneo.py, lanciato ogni sera da GitHub): non modificarli a mano, verrebbero riscritti. 'campo' e 'note' delle partite invece restano tuoi.",
@@ -213,9 +213,9 @@
           "ora": "21:00",
           "casa": "Borussia Enziteto",
           "ospite": "Shakhtar Palese",
-          "gol_casa": null,
-          "gol_ospite": null,
-          "stato": "da_giocare",
+          "gol_casa": 4,
+          "gol_ospite": 7,
+          "stato": "giocata",
           "campo": "De Palo Sporting Center",
           "note": ""
         },
