@@ -71,18 +71,30 @@
         },
         {
           "pos": 3,
-          "squadra": "Midal FC",
-          "punti": 6,
-          "g": 5,
+          "squadra": "Jalapeños",
+          "punti": 7,
+          "g": 6,
           "v": 2,
-          "n": 0,
+          "n": 1,
           "p": 3,
-          "gf": 23,
-          "gs": 27,
-          "dr": -4
+          "gf": 22,
+          "gs": 39,
+          "dr": -17
         },
         {
           "pos": 4,
+          "squadra": "Midal FC",
+          "punti": 6,
+          "g": 6,
+          "v": 2,
+          "n": 0,
+          "p": 4,
+          "gf": 26,
+          "gs": 33,
+          "dr": -7
+        },
+        {
+          "pos": 5,
           "squadra": "Borussia Enziteto",
           "punti": 6,
           "g": 7,
@@ -92,18 +104,6 @@
           "gf": 31,
           "gs": 41,
           "dr": -10
-        },
-        {
-          "pos": 5,
-          "squadra": "Jalapeños",
-          "punti": 4,
-          "g": 5,
-          "v": 1,
-          "n": 1,
-          "p": 3,
-          "gf": 16,
-          "gs": 36,
-          "dr": -20
         },
         {
           "pos": 6,
