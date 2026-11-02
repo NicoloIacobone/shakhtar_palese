@@ -220,20 +220,6 @@
           "note": ""
         },
         {
-          "id": "bp26-r1g3",
-          "girone": "1º girone di ritorno",
-          "giornata": 3,
-          "data": "2026-11-02",
-          "ora": "21:30",
-          "casa": "Shakhtar Palese",
-          "ospite": "Jalapeños",
-          "gol_casa": null,
-          "gol_ospite": null,
-          "stato": "da_giocare",
-          "campo": "De Palo Sporting Center",
-          "note": ""
-        },
-        {
           "id": "bp26-r1g4",
           "girone": "1º girone di ritorno",
           "giornata": 4,
@@ -311,6 +297,20 @@
           "ora": "20:00",
           "casa": "Shakhtar Palese",
           "ospite": "Borussia Enziteto",
+          "gol_casa": null,
+          "gol_ospite": null,
+          "stato": "da_giocare",
+          "campo": "De Palo Sporting Center",
+          "note": ""
+        },
+        {
+          "id": "bp26-r1g3",
+          "girone": "1º girone di ritorno",
+          "giornata": 3,
+          "data": "2026-12-28",
+          "ora": "21:30",
+          "casa": "Shakhtar Palese",
+          "ospite": "Jalapeños",
           "gol_casa": null,
           "gol_ospite": null,
           "stato": "da_giocare",
