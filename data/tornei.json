@@ -71,6 +71,18 @@
         },
         {
           "pos": 3,
+          "squadra": "Midal FC",
+          "punti": 9,
+          "g": 7,
+          "v": 3,
+          "n": 0,
+          "p": 4,
+          "gf": 32,
+          "gs": 38,
+          "dr": -6
+        },
+        {
+          "pos": 4,
           "squadra": "Jalapeños",
           "punti": 7,
           "g": 6,
@@ -80,18 +92,6 @@
           "gf": 22,
           "gs": 39,
           "dr": -17
-        },
-        {
-          "pos": 4,
-          "squadra": "Midal FC",
-          "punti": 6,
-          "g": 6,
-          "v": 2,
-          "n": 0,
-          "p": 4,
-          "gf": 26,
-          "gs": 33,
-          "dr": -7
         },
         {
           "pos": 5,
@@ -109,13 +109,13 @@
           "pos": 6,
           "squadra": "FC Vision",
           "punti": 4,
-          "g": 7,
+          "g": 8,
           "v": 1,
           "n": 1,
-          "p": 5,
-          "gf": 15,
-          "gs": 42,
-          "dr": -27
+          "p": 6,
+          "gf": 20,
+          "gs": 48,
+          "dr": -28
         }
       ],
       "_nota_classifica": "Classifica e calendario si aggiornano da soli da Quick Tournament (tools/sync_torneo.py, lanciato ogni sera da GitHub): non modificarli a mano, verrebbero riscritti. 'campo' e 'note' delle partite invece restano tuoi.",
