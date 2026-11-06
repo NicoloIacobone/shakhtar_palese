@@ -3,24 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shakhtar Palese — calcio amatoriale a Palese, Bari</title>
-<meta name="description" content="Sito ufficiale dello Shakhtar Palese: la rosa presentata giorno per giorno, statistiche, classifica del Torneo Birra Peroni e prossima partita al De Palo Sporting Center.">
-<link rel="canonical" href="https://www.shakhtarpalese.it/">
+<title>Rosa — Shakhtar Palese</title>
+<meta name="description" content="La rosa dello Shakhtar Palese, presentata una persona al giorno: numero di maglia, ruolo, soprannome e la carta d'identita' completa di ognuno.">
+<link rel="canonical" href="https://www.shakhtarpalese.it/rosa.html">
 
 <!-- Open Graph / Twitter: qui le URL DEVONO essere assolute, altrove sempre relative -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Shakhtar Palese">
 <meta property="og:locale" content="it_IT">
-<meta property="og:title" content="Shakhtar Palese — calcio amatoriale a Palese, Bari">
-<meta property="og:description" content="Sito ufficiale dello Shakhtar Palese: la rosa presentata giorno per giorno, statistiche, classifica del Torneo Birra Peroni e prossima partita al De Palo Sporting Center.">
-<meta property="og:url" content="https://www.shakhtarpalese.it/">
+<meta property="og:title" content="Rosa — Shakhtar Palese">
+<meta property="og:description" content="La rosa dello Shakhtar Palese, presentata una persona al giorno: numero di maglia, ruolo, soprannome e la carta d'identita' completa di ognuno.">
+<meta property="og:url" content="https://www.shakhtarpalese.it/rosa.html">
 <meta property="og:image" content="https://www.shakhtarpalese.it/assets/img/og-cover.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Stemma dello Shakhtar Palese">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Shakhtar Palese — calcio amatoriale a Palese, Bari">
-<meta name="twitter:description" content="Sito ufficiale dello Shakhtar Palese: la rosa presentata giorno per giorno, statistiche, classifica del Torneo Birra Peroni e prossima partita al De Palo Sporting Center.">
+<meta name="twitter:title" content="Rosa — Shakhtar Palese">
+<meta name="twitter:description" content="La rosa dello Shakhtar Palese, presentata una persona al giorno: numero di maglia, ruolo, soprannome e la carta d'identita' completa di ognuno.">
 <meta name="twitter:image" content="https://www.shakhtarpalese.it/assets/img/og-cover.png">
 
 <meta name="theme-color" content="#0b0b0d">
@@ -57,55 +57,35 @@
     </div>
   </div>
 </header>
-<section class="hero">
-  <div class="contenitore hero-in">
-    <img class="hero-logo" src="assets/img/logo-grande.png" alt="Stemma Shakhtar Palese" width="140" height="140">
-    <p class="occhiello">Palese &middot; Bari</p>
-    <h1 data-config="sito-nome">Shakhtar Palese</h1>
-    <p class="sottotitolo" data-config="sito-tagline">Calcio amatoriale a Palese, Bari.
-Ghepardi in campo, bevitori di birra fuori.</p>
-    <div class="gruppo-btn">
-      <a class="btn btn-primario" data-config="instagram" data-solo-href href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg> Seguici su Instagram</a>
-      <a class="btn btn-fantasma" href="rosa.html">Guarda la rosa</a>
-    </div>
-  </div>
-</section>
-
 <main id="contenuto">
-  <section class="sezione contenitore" data-sponsor="main" data-sponsor-stile="strip" hidden></section>
-
   <section class="sezione contenitore">
-    <p class="occhiello">Prossima partita</p>
-    <div id="prossima-partita"><p class="caricamento">Carico il calendario&hellip;</p></div>
-  </section>
+    <p class="occhiello">Stagione in corso</p>
+    <h1>La rosa</h1>
+    <p class="sottotitolo" id="intro-rosa">Ci sono tutti. Clicca su una card per aprire la scheda completa.</p>
+    <p class="avanzamento" id="avanzamento-rosa" aria-live="polite"></p>
+    <div data-sponsor="main" data-sponsor-stile="riga"
+         data-sponsor-et="Sulla maglia 2026" hidden></div>
+    <div class="filtri" id="filtri-ruolo" role="group" aria-label="Filtra la rosa"></div>
+    <p class="sottotitolo" id="nota-filtro" aria-live="polite" hidden></p>
+    <div class="griglia-rosa" id="griglia-rosa"><p class="caricamento">Carico la rosa&hellip;</p></div>
 
-  <section class="sezione contenitore">
-    <div class="sezione-titolo">
-      <div><h2>Ultimi risultati</h2><p class="sottotitolo">Come è andata finora.</p></div>
-      <a href="tornei.html">Tutto il calendario &rarr;</a>
+    <div id="blocco-staff" hidden>
+      <h2 style="margin-top:2.4rem">Staff</h2>
+      <p class="sottotitolo">Chi tiene in piedi la baracca fuori dal campo.</p>
+      <div class="griglia-rosa" id="griglia-staff"></div>
     </div>
-    <div id="ultimi-risultati" class="lista-risultati"><p class="caricamento">Carico i risultati&hellip;</p></div>
-  </section>
 
-  <section class="sezione contenitore">
-    <div class="sezione-titolo">
-      <div><h2>Il nostro team</h2><p class="sottotitolo" id="sottotitolo-presentati">Uno al giorno, finché non ci siamo tutti.</p></div>
-      <a href="rosa.html">Tutta la rosa &rarr;</a>
-    </div>
-    <div id="ultimi-presentati" class="griglia-rosa"><p class="caricamento">Carico&hellip;</p></div>
-  </section>
-
-  <section class="sezione contenitore">
-    <div class="card" style="text-align:center">
-      <h2>Vuoi sfidarci in amichevole?</h2>
-      <p class="sottotitolo">Campo di casa, orario da concordare, terzo tempo obbligatorio.</p>
-      <div class="gruppo-btn" style="justify-content:center;margin-top:1rem">
-        <a class="btn btn-primario" data-config="email" data-solo-href href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg> Scrivici</a>
-        <a class="btn btn-fantasma" href="contatti.html">Dove giochiamo</a>
-      </div>
+    <div id="blocco-tifosi" hidden>
+      <h2 style="margin-top:2.4rem">Tifosi</h2>
+      <p class="sottotitolo">Chi non gioca e non allena, ma non salta una partita.</p>
+      <div class="griglia-rosa" id="griglia-tifosi"></div>
     </div>
   </section>
 </main>
+
+<dialog class="modale" id="scheda-giocatore" aria-label="Scheda giocatore">
+  <div id="scheda-contenuto"></div>
+</dialog>
 <footer class="footer">
   <div class="contenitore">
     <!-- Riempita da main.js leggendo data/sponsor.json: se non ci sono sponsor
@@ -161,7 +141,7 @@ Ghepardi in campo, bevitori di birra fuori.</p>
     </p>
   </div>
 </footer>
-<script src="assets/js/main.js?v=e8108120"></script>
-<script src="assets/js/home.js?v=ca51dc68"></script>
+<script src="assets/js/main.js?v=40b896b9"></script>
+<script src="assets/js/rosa.js?v=42204176"></script>
 </body>
 </html>

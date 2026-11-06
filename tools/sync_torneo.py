@@ -50,7 +50,7 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "data"
+DATA = ROOT / "docs" / "data"
 API = "https://qt-api.at4s.it/api/public/championships/"
 
 # Tipi di evento nei referti (MatchEventType nel codice del sito del torneo).

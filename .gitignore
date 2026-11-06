@@ -15,6 +15,10 @@ venv/
 .idea/
 
 # Cartella sorgente delle card giocatore: le immagini pubblicate
-# finiscono in assets/locandine/ tramite tools/sync_locandine.py.
+# finiscono in docs/assets/locandine/ tramite tools/sync_locandine.py.
 # Se vuoi versionare anche gli originali, togli la riga qui sotto.
 foto_presentazione/
+
+# Documenti di lavoro, solo in locale
+piano_editoriale.md
+prompt-sito-shakhtar-palese.md

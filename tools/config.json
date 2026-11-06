@@ -1,5 +1,5 @@
 {
-  "_nota": "Configurazione di tools/sync_locandine.py. Tutti i percorsi sono relativi alla radice del progetto.",
+  "_nota": "Configurazione di tools/sync_locandine.py. 'sorgente' e' relativa alla radice del progetto, tutti gli altri percorsi a docs/ (la radice del sito).",
   "sorgente": "foto_presentazione",
   "destinazione": "assets/locandine",
   "miniature": "assets/locandine/thumbs",

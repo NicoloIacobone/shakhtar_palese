@@ -60,7 +60,7 @@ const SP = (() => {
     if (!el) return;
     el.innerHTML = `<div class="avviso errore"><b>Contenuto non caricato.</b> ${esc(msg)}<br>
       <small>Se stai aprendo il file con doppio click, usa invece un server locale:
-      <code>./.venv/bin/python -m http.server</code></small></div>`;
+      <code>./.venv/bin/python -m http.server --directory docs</code></small></div>`;
   }
 
   const slug = (s) => String(s).toLowerCase().normalize('NFD')

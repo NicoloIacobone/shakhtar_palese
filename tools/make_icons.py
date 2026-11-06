@@ -30,7 +30,7 @@ except ImportError:
     sys.exit("Manca Pillow. Installalo con:  ./.venv/bin/pip install Pillow")
 
 ROOT = Path(__file__).resolve().parent.parent
-IMG = ROOT / "assets" / "img"
+IMG = ROOT / "docs" / "assets" / "img"
 SORGENTE = IMG / "logo-originale.png"
 
 SFONDO = (11, 11, 13)        # --nero della palette

@@ -242,7 +242,7 @@
         <b>Non riesco a caricare i dati.</b> ${esc(e.message)}
         <p style="margin:.6rem 0 0">Questo pannello va aperto tramite un server locale, non con doppio click sul file.
         Dalla cartella del progetto:</p>
-        <p><code>./.venv/bin/python -m http.server</code> &rarr; poi apri
+        <p><code>./.venv/bin/python -m http.server --directory docs</code> &rarr; poi apri
         <code>http://localhost:8000/admin/</code></p></div>`;
     }
   })();

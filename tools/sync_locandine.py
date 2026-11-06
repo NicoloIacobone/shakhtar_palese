@@ -57,6 +57,7 @@ except ImportError:
     )
 
 ROOT = Path(__file__).resolve().parent.parent
+SITO = ROOT / "docs"      # la radice del sito: e' cio' che GitHub Pages pubblica
 CONFIG = Path(__file__).resolve().parent / "config.json"
 
 # COGNOME_NUMERO.ext, con eventuale data davanti: 2026-09-03_ESPOSITO_29.jpg
@@ -222,11 +223,11 @@ def main(argv):
 
     cfg = carica_config()
     sorgente = ROOT / cfg["sorgente"]
-    dest = ROOT / cfg["destinazione"]
-    thumbs = ROOT / cfg["miniature"]
-    web = ROOT / cfg["versione_web"]
+    dest = SITO / cfg["destinazione"]
+    thumbs = SITO / cfg["miniature"]
+    web = SITO / cfg["versione_web"]
     est_ammesse = {e.lower() for e in cfg["estensioni"]}
-    json_loc = ROOT / cfg["json_locandine"]
+    json_loc = SITO / cfg["json_locandine"]
 
     print(f"\n{'=' * 62}\n  SYNC LOCANDINE — Shakhtar Palese\n{'=' * 62}")
     if dry:
@@ -437,7 +438,7 @@ def main(argv):
     # --- 7. incrocio con la rosa: chi ha la foto e chi no --------------------
     # Chi e' gia' stato presentato e chi manca ancora all'appello.
     # I giocatori si agganciano col numero di maglia, staff e tifosi col cognome.
-    rosa_doc = leggi_json(ROOT / cfg["json_rosa"], {})
+    rosa_doc = leggi_json(SITO / cfg["json_rosa"], {})
     rosa = rosa_doc.get("giocatori", [])
     # Staff e tifosi si agganciano tutti col cognome: per il conteggio "chi e'
     # gia' uscito" sono la stessa cosa, li tengo in una lista sola.

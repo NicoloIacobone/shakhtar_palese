@@ -3,24 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Statistiche — Shakhtar Palese</title>
-<meta name="description" content="Gol, cartellini e MVP dello Shakhtar Palese, aggiornati dopo ogni partita del torneo.">
-<link rel="canonical" href="https://www.shakhtarpalese.it/statistiche.html">
+<title>Sponsor — Shakhtar Palese</title>
+<meta name="description" content="Chi sostiene lo Shakhtar Palese: gli sponsor sulla maglia 2026 e come finire anche tu su una maglia che gira per il De Palo ogni settimana.">
+<link rel="canonical" href="https://www.shakhtarpalese.it/sponsor.html">
 
 <!-- Open Graph / Twitter: qui le URL DEVONO essere assolute, altrove sempre relative -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Shakhtar Palese">
 <meta property="og:locale" content="it_IT">
-<meta property="og:title" content="Statistiche — Shakhtar Palese">
-<meta property="og:description" content="Gol, cartellini e MVP dello Shakhtar Palese, aggiornati dopo ogni partita del torneo.">
-<meta property="og:url" content="https://www.shakhtarpalese.it/statistiche.html">
+<meta property="og:title" content="Sponsor — Shakhtar Palese">
+<meta property="og:description" content="Chi sostiene lo Shakhtar Palese: gli sponsor sulla maglia 2026 e come finire anche tu su una maglia che gira per il De Palo ogni settimana.">
+<meta property="og:url" content="https://www.shakhtarpalese.it/sponsor.html">
 <meta property="og:image" content="https://www.shakhtarpalese.it/assets/img/og-cover.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Stemma dello Shakhtar Palese">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Statistiche — Shakhtar Palese">
-<meta name="twitter:description" content="Gol, cartellini e MVP dello Shakhtar Palese, aggiornati dopo ogni partita del torneo.">
+<meta name="twitter:title" content="Sponsor — Shakhtar Palese">
+<meta name="twitter:description" content="Chi sostiene lo Shakhtar Palese: gli sponsor sulla maglia 2026 e come finire anche tu su una maglia che gira per il De Palo ogni settimana.">
 <meta name="twitter:image" content="https://www.shakhtarpalese.it/assets/img/og-cover.png">
 
 <meta name="theme-color" content="#0b0b0d">
@@ -59,28 +59,34 @@
 </header>
 <main id="contenuto">
   <section class="sezione contenitore">
-    <p class="occhiello">Numeri alla mano</p>
-    <h1>Statistiche</h1>
-    <p class="sottotitolo">Tutto quello che e' successo in campo, comprese le cose che preferiremmo dimenticare.</p>
+    <p class="occhiello">Chi ci sostiene</p>
+    <h1>Sponsor</h1>
+    <p class="sottotitolo">Una squadra amatoriale sta in piedi con il campo pagato, le maglie stampate
+      e qualcuno che ci mette il nome sopra. Questi sono quelli che ce l'hanno messo.</p>
 
-    <div class="leader-griglia" id="leader"></div>
-    <div data-sponsor="main" data-sponsor-stile="riga"
-         data-sponsor-et="I numeri ve li porta" style="margin-top:1.8rem" hidden></div>
-
-    <div class="filtri" id="filtri-ruolo" role="group" aria-label="Filtra per ruolo"></div>
-
-    <!-- Da 761px in su: tabella ordinabile. Sotto: lista di card. Stesso dato, due forme. -->
-    <div class="tabella-wrap solo-desktop">
-      <table class="tab" id="tabella-stat">
-        <caption class="sr-only">Statistiche dei giocatori, ordinabile cliccando sulle intestazioni</caption>
-        <thead><tr id="intestazioni-stat"></tr></thead>
-        <tbody id="corpo-stat"></tbody>
-      </table>
+    <div id="sponsor-principali" class="sponsor-griglia" style="margin-top:1.6rem">
+      <p class="caricamento">Carico gli sponsor&hellip;</p>
     </div>
-    <div class="lista-stat solo-mobile" id="lista-stat"><p class="caricamento">Carico le statistiche&hellip;</p></div>
-    <p class="sottotitolo" style="margin-top:1rem;font-size:.82rem">
-      MVP = migliore in campo.
-    </p>
+
+    <div id="blocco-tecnico" hidden>
+      <h2 style="margin-top:2.4rem">Chi fa la maglia</h2>
+      <p class="sottotitolo">Il marchio tecnico: non compra uno spazio, la maglia la produce.</p>
+      <div id="sponsor-tecnici" class="sponsor-griglia" style="margin-top:1rem"></div>
+    </div>
+
+    <div class="card" style="margin-top:2.4rem">
+      <p class="occhiello">Prima di firmare</p>
+      <h2>Guarda dove finisce il tuo logo</h2>
+      <p class="sottotitolo">La maglia 2026 &egrave; su questo sito in 3D: puoi girarla, spostare i loghi
+        e scaricare la foto di fronte, retro e tre quarti. Le misure sono in centimetri veri su una taglia M,
+        quindi quello che vedi &egrave; quello che esce dalla stampa.</p>
+      <div class="gruppo-btn" style="margin-top:1rem">
+        <a class="btn btn-primario" href="maglia.html">Apri la maglia in 3D &rarr;</a>
+        <a class="btn btn-fantasma" href="rosa.html">Chi la indossa</a>
+      </div>
+    </div>
+
+    <div id="diventa-sponsor" hidden></div>
   </section>
 </main>
 <footer class="footer">
@@ -138,7 +144,7 @@
     </p>
   </div>
 </footer>
-<script src="assets/js/main.js?v=e8108120"></script>
-<script src="assets/js/statistiche.js?v=b2ebafed"></script>
+<script src="assets/js/main.js?v=40b896b9"></script>
+<script src="assets/js/sponsor.js?v=5155fcd3"></script>
 </body>
 </html>

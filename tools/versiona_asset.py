@@ -36,7 +36,8 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+# La radice del sito: tutto cio' che GitHub Pages pubblica sta in docs/.
+ROOT = Path(__file__).resolve().parent.parent / "docs"
 
 # Le pagine da riscrivere: quelle nella radice del sito piu' il pannello locale.
 PAGINE = sorted(ROOT.glob("*.html")) + sorted((ROOT / "admin").glob("*.html"))

@@ -39,7 +39,7 @@ jobs:
         run: |
           git config user.name "sync-torneo[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/tornei.json data/statistiche.json
+          git add docs/data/tornei.json docs/data/statistiche.json
           if git diff --cached --quiet; then
             echo "Niente di nuovo."
             exit 0

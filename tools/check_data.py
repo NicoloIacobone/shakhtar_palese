@@ -23,7 +23,8 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+# La radice del sito: tutto cio' che GitHub Pages pubblica sta in docs/.
+ROOT = Path(__file__).resolve().parent.parent / "docs"
 DATA = ROOT / "data"
 
 VERDE, GIALLO, ROSSO, GRIGIO, FINE = "\033[32m", "\033[33m", "\033[31m", "\033[90m", "\033[0m"

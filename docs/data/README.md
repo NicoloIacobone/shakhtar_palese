@@ -1,5 +1,7 @@
 # I file dati del sito — guida per il me stesso di fra tre mesi
 
+> I percorsi in questa guida (`data/`, `assets/`, `admin/`) partono da `docs/`, la cartella che contiene il sito.
+
 Tutto quello che vedi sul sito viene da questi file. Il sito è statico: non c'è
 un database, non c'è un pannello online. Si modifica un file qui, si fa push,
 e dopo circa un minuto il sito è aggiornato.
@@ -18,7 +20,7 @@ e dopo circa un minuto il sito è aggiornato.
    Ti dice esattamente cosa è rotto e in quale riga. Se non dice niente, sei a posto.
 
 Se non ti va di scrivere JSON a mano c'è il **pannello locale**: fai partire il
-server (`./.venv/bin/python -m http.server`), apri
+server (`./.venv/bin/python -m http.server --directory docs`), apri
 <http://localhost:8000/admin/>, modifica nei form, scarica il file aggiornato e
 mettilo qui al posto del vecchio.
 
