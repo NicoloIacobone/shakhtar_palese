@@ -11,14 +11,14 @@
     },
     {
       "numero": 12,
-      "gol": 0,
+      "gol": 1,
       "ammonizioni": 2,
       "espulsioni": 0,
       "mvp": 0
     },
     {
       "numero": 29,
-      "gol": 1,
+      "gol": 2,
       "ammonizioni": 2,
       "espulsioni": 0,
       "mvp": 0
@@ -32,7 +32,7 @@
     },
     {
       "numero": 6,
-      "gol": 0,
+      "gol": 2,
       "ammonizioni": 0,
       "espulsioni": 0,
       "mvp": 0
@@ -67,24 +67,24 @@
     },
     {
       "numero": 20,
-      "gol": 9,
+      "gol": 11,
       "ammonizioni": 2,
       "espulsioni": 0,
       "mvp": 2
     },
     {
       "numero": 45,
-      "gol": 4,
-      "ammonizioni": 0,
+      "gol": 6,
+      "ammonizioni": 1,
       "espulsioni": 0,
       "mvp": 0
     },
     {
       "numero": 8,
-      "gol": 11,
-      "ammonizioni": 0,
+      "gol": 14,
+      "ammonizioni": 1,
       "espulsioni": 0,
-      "mvp": 2
+      "mvp": 3
     },
     {
       "numero": 7,
@@ -95,7 +95,7 @@
     },
     {
       "numero": 9,
-      "gol": 8,
+      "gol": 9,
       "ammonizioni": 0,
       "espulsioni": 0,
       "mvp": 0
