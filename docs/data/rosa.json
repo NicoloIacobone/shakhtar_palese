@@ -123,6 +123,30 @@
       "_placeholder": true
     },
     {
+      "numero": 4,
+      "nome": "Gaetano",
+      "cognome": "Ferrareis",
+      "ruolo": "Difensore",
+      "ruolo_sigla": "Jolly",
+      "soprannome": "Ferrari",
+      "piede": "Quello con lo smalto bianco",
+      "provenienza": "San Pio",
+      "classe": 2007,
+      "posizione_preferita": "Gioco dove mi mettono, basta che gioco",
+      "frase_preferita": "A merd g ma fa",
+      "superstizione": "Scrivere a quelle dei paesotti",
+      "rito_post_allenamento": "Serata a Bitonto",
+      "skill_fuori_campo": "Coppia letale con Papapicco in disco",
+      "caratteristiche": {
+        "lunghezza_capelli": 7,
+        "lunghezza_pene": 7,
+        "fame_gol": 8,
+        "fiducia_presidente": 1,
+        "fiducia_allenatore": 3
+      },
+      "_placeholder": false
+    },
+    {
       "numero": 3,
       "nome": "Carlo",
       "cognome": "Laricchia",
