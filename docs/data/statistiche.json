@@ -4,7 +4,7 @@
   "giocatori": [
     {
       "numero": 77,
-      "gol": 9,
+      "gol": 10,
       "ammonizioni": 1,
       "espulsioni": 0,
       "mvp": 2
@@ -39,7 +39,7 @@
     },
     {
       "numero": 5,
-      "gol": 4,
+      "gol": 5,
       "ammonizioni": 0,
       "espulsioni": 0,
       "mvp": 0
@@ -74,15 +74,15 @@
     },
     {
       "numero": 20,
-      "gol": 11,
+      "gol": 12,
       "ammonizioni": 2,
       "espulsioni": 0,
       "mvp": 2
     },
     {
       "numero": 45,
-      "gol": 6,
-      "ammonizioni": 1,
+      "gol": 8,
+      "ammonizioni": 2,
       "espulsioni": 0,
       "mvp": 0
     },
@@ -91,7 +91,7 @@
       "gol": 14,
       "ammonizioni": 1,
       "espulsioni": 0,
-      "mvp": 3
+      "mvp": 4
     },
     {
       "numero": 7,
