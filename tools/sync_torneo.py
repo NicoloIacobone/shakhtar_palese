@@ -26,35 +26,40 @@ Cosa scrive
                           'campo' e 'note' scritti a mano restano
     · stato               da 'in_programma' passa a 'in_corso' alla prima
                           partita giocata (a 'concluso' lo metti tu)
+  data/dettagli.json      L'ARCHIVIO delle nostre partite giocate, una per una:
+    · marcatori, ammoniti, espulsi, miglior giocatore (MVP) e voto dei
+      portieri, letti dal dettaglio della partita (una richiesta per partita,
+      con una pausa breve tra l'una e l'altra)
+    · una partita si rilegge solo nei 3 giorni dopo la sua data (gli arbitri
+      caricano e correggono i referti) o con --rileggi; poi resta com'e'.
+      Motivo: quando un giocatore viene tolto dalla rosa del torneo, l'app
+      cancella i suoi gol anche dalle partite vecchie (Laricchia, nov. 2026)
   data/statistiche.json   (solo per il torneo 'corrente')
-    · gol, ammonizioni, espulsioni  contati dai referti delle nostre partite
-    · mvp                           dalla classifica "migliori giocatori"
-    · voti_portiere                 {"somma", "partite"}: i voti presi da portiere,
-                                    dal dettaglio di ogni partita (homeGoalkeeper /
-                                    awayGoalkeeper); controllati con la classifica
-                                    "portieri" del torneo
+    · gol, ammonizioni, espulsioni, mvp e voti_portiere {"somma", "partite"}
+      contati dall'archivio, partita per partita; i voti sono controllati con
+      la classifica "portieri" del torneo
     Sono gli unici campi che ha: niente altro resta da aggiornare a mano.
-  data/dettagli.json      (tutti i tornei sincronizzati)
-    · per ogni nostra partita giocata: marcatori, ammoniti, espulsi, miglior
-      giocatore (MVP) e voto dei portieri, letti dal dettaglio della partita
-      (una richiesta per partita, con una pausa breve tra l'una e l'altra)
 
 Se l'API non risponde o risponde qualcosa di strano, lo script si ferma SENZA
 scrivere niente: meglio dati vecchi di un giorno che una classifica cancellata.
-Se a non rispondere e' il dettaglio di una partita, classifica e calendario si
-aggiornano lo stesso, mentre dettagli.json e i voti_portiere restano come
-erano (un AVVISO lo dice): niente dati a meta'.
+Se a non rispondere e' il dettaglio di una partita, quella partita resta
+com'era in archivio (o arriva al giro dopo) e un AVVISO lo dice: niente dati
+a meta'; il resto si aggiorna lo stesso.
 
 Si lancia con:   python3 tools/sync_torneo.py
 Opzioni:
   --check     scarica e dice cosa cambierebbe, senza scrivere
               (esce con codice 1 se c'e' qualcosa da aggiornare)
+  --rileggi <id partita>   rilegge dal torneo anche una partita vecchia
+              (es. bp26-a1g5; "tutte" = tutte). Attenzione: sovrascrive le
+              correzioni fatte a mano in dettagli.json per quella partita
 Solo libreria standard: niente da installare.
 """
 from __future__ import annotations
 
 import json
 import re
+from datetime import date
 import sys
 import time
 import unicodedata
@@ -71,6 +76,15 @@ API = "https://qt-api.at4s.it/api/public/championships/"
 # Al 26 nov 2026 nei dati si sono visti solo 1 e 2: 3 e 4 vengono dal codice.
 GOL, GIALLO, ROSSO, DOPPIO_GIALLO = 1, 2, 3, 4
 PAUSA = 0.5   # secondi tra una richiesta di dettaglio e l'altra
+GIORNI_CORREZIONI = 3   # per quanti giorni dopo la partita se ne rilegge il dettaglio
+
+NOTA_DETTAGLI = (
+    "L'archivio delle nostre partite giocate, scritto da tools/sync_torneo.py dal dettaglio di ogni partita "
+    "sul sito del torneo: gol, ammoniti, espulsi, mvp e portieri; 'casa' dice da che parte sta la persona "
+    "(true = squadra di casa); i nostri hanno nome e numero di rosa.json. Una partita si rilegge dal torneo "
+    "solo nei 3 giorni dopo la sua data (o con --rileggi <id>): dopo resta com'e', e da qui si contano gol, "
+    "cartellini, MVP e voti di statistiche.json. Le partite vecchie si possono correggere a mano (es. un gol "
+    "che il torneo ha cancellato togliendo un giocatore dalla rosa); quelle dei 3 giorni verrebbero riscritte.")
 
 # Sigle che nei nomi squadra restano maiuscole ("FC VISION" -> "FC Vision").
 SIGLE = {"FC", "AC", "AS", "ASD", "SSD", "US", "SC", "CF", "SS"}
@@ -204,57 +218,57 @@ def calendario(api: dict, torneo: dict, nomi: Nomi, id_noi: str) -> list[dict]:
 
 
 # ------------------------------------------------------------ statistiche ---
-def statistiche(stat: dict, rosa: dict, api: dict, partite: list[dict], noi: str) -> list[str]:
-    """Aggiorna stat sul posto. Ritorna gli avvisi da stampare."""
-    avvisi = []
+def statistiche(stat: dict, archivio: dict, ids: list[str], avvisi: list[str]) -> dict:
+    """Aggiorna stat sul posto contando dall'ARCHIVIO delle partite
+    (dettagli.json), solo le partite in `ids` (quelle giocate del torneo
+    corrente), e ritorna i voti da portiere per numero di maglia.
+    Non si contano piu' dall'elenco di oggi dell'app: se un giocatore viene
+    tolto dalla rosa del torneo, l'app cancella i suoi gol anche dalle partite
+    vecchie (e' successo con Laricchia, sostituito da Ferrareis), mentre
+    l'archivio li tiene. I nostri sono quelli con "numero" (lo mette dettagli())."""
     per_numero = {r["numero"]: r for r in stat.get("giocatori") or []}
-    nostri = per_nome(rosa)
+    conti = {n: {"gol": 0, "ammonizioni": 0, "espulsioni": 0, "mvp": 0} for n in per_numero}
+    voti = {}
 
-    def numero_di(nome, maglia):
-        # Prima il nome (sul torneo e' "Cognome Nome"), poi il numero di maglia:
-        # se qualcuno cambia numero a meta' stagione, il nome resta giusto.
-        n = (nostri.get(chiave(nome)) or {}).get("numero", maglia)
-        if n not in per_numero:
-            avvisi.append(f"{nome} (#{maglia}) non ha una riga in statistiche.json: lo salto")
+    def nostro(r: dict, dove: str):
+        n = r.get("numero")
+        if n is None:
+            return None
+        if n not in conti:
+            avvisi.append(f"{dove}: {r.get('nome')} (#{n}) non ha una riga in statistiche.json: lo salto")
             return None
         return n
 
-    conti = {n: {"gol": 0, "ammonizioni": 0, "espulsioni": 0} for n in per_numero}
-    for p in partite:
-        if p["stato"] != "giocata":
-            continue
-        in_casa = chiave(p["casa"]) == chiave(noi)
-        for e in p["_referto"].get("events") or []:
-            if e.get("isHome") != in_casa:
-                continue
-            n = numero_di(e.get("playerName"), e.get("shirtNumber"))
-            if n is None:
-                continue
-            quanti = e.get("count") or 1
-            if e.get("type") == GOL:
-                conti[n]["gol"] += quanti
-            elif e.get("type") == GIALLO:
-                conti[n]["ammonizioni"] += quanti
-            elif e.get("type") == ROSSO:
-                conti[n]["espulsioni"] += quanti
-            elif e.get("type") == DOPPIO_GIALLO:
-                # Il secondo giallo e' comunque un giallo (conta per la diffida).
-                conti[n]["ammonizioni"] += quanti
-                conti[n]["espulsioni"] += quanti
-
-    for n, c in conti.items():
-        per_numero[n].update(c)
-
-    # MVP: nei referti non c'e', solo nella classifica "migliori giocatori", che
-    # il torneo taglia ai primi 10. Chi esce dai primi 10 tiene l'ultimo valore
-    # visto: il numero di MVP puo' solo salire.
-    for r in (api.get("rankings") or {}).get("bestPlayers") or []:
-        if chiave(r.get("teamName")) != chiave(noi):
-            continue
-        n = numero_di(r.get("playerName"), r.get("shirtNumber"))
+    for id_partita in ids:
+        det = archivio.get(id_partita) or {}
+        for voce, campo in (("gol", "gol"), ("ammoniti", "ammonizioni"), ("espulsi", "espulsioni")):
+            for r in det.get(voce) or []:
+                n = nostro(r, id_partita)
+                if n is None:
+                    continue
+                quanti = r.get("quanti") or 1
+                conti[n][campo] += quanti
+                if voce == "espulsi" and r.get("doppio_giallo"):
+                    # Il secondo giallo e' comunque un giallo (conta per la diffida).
+                    conti[n]["ammonizioni"] += quanti
+        n = nostro(det.get("mvp") or {}, id_partita)
         if n is not None:
-            per_numero[n]["mvp"] = max(per_numero[n].get("mvp") or 0, r.get("value") or 0)
-    return avvisi
+            conti[n]["mvp"] += 1
+        for r in (det.get("portieri") or {}).values():
+            n = nostro(r, id_partita)
+            voto = r.get("voto")
+            if n is not None and isinstance(voto, (int, float)) and not isinstance(voto, bool):
+                v = voti.setdefault(n, {"somma": 0, "partite": 0})
+                v["somma"] += voto
+                v["partite"] += 1
+
+    for n, r in per_numero.items():
+        r.update(conti[n])
+        if n in voti:
+            r["voti_portiere"] = voti[n]
+        else:
+            r.pop("voti_portiere", None)
+    return voti
 
 
 # --------------------------------------------------------------- dettagli ---
@@ -271,17 +285,34 @@ def leggibile(nome: str | None, cognome: str | None) -> str:
     return " ".join(pezzi)
 
 
-def dettagli(qt: str, partite: list[dict], rosa: dict, noi: str):
-    """Scarica il dettaglio di ogni nostra partita giocata. Ritorna
-    (dettagli per id partita, voti da portiere per numero di maglia, avvisi).
-    Se una richiesta fallisce solleva l'eccezione: chi chiama non scrive niente."""
-    avvisi, uscita, voti = [], {}, {}
+def da_rileggere(p: dict, archivio: dict, oggi: date, rileggi: set[str]) -> bool:
+    """Una partita gia' in archivio si rilegge solo nei GIORNI_CORREZIONI giorni
+    dopo la sua data (gli arbitri caricano e correggono i referti) o se chiesta
+    con --rileggi; dopo resta com'e'."""
+    if p["id"] not in archivio or "tutte" in rileggi or p["id"] in rileggi:
+        return True
+    try:
+        giocata = date.fromisoformat(p["data"])
+    except (TypeError, ValueError):
+        return True
+    return (oggi - giocata).days <= GIORNI_CORREZIONI
+
+
+def dettagli(qt: str, partite: list[dict], rosa: dict, noi: str, archivio: dict,
+             oggi: date, rileggi: set[str]):
+    """Scarica il dettaglio delle nostre partite giocate che vanno lette (vedi
+    da_rileggere). Ritorna (dettagli per id partita, avvisi). Ogni partita sta
+    in piedi da sola: se la sua richiesta fallisce resta com'era in archivio (o
+    non c'e' ancora) e lo dice un avviso; le altre si aggiornano lo stesso.
+    I nostri hanno anche "numero" (di rosa.json): serve a contare le statistiche."""
+    avvisi, uscita = [], {}
     nostri = per_nome(rosa)
     per_maglia = {g["numero"]: g for g in rosa.get("giocatori") or []}
 
     def persona(x: dict, nostro: bool):
-        """{nome, casa} oppure None. I nostri come in rosa.json: prima il nome
-        completo (ci sono tre De Tullio), poi il numero di maglia."""
+        """{nome, numero} per i nostri, {nome} per gli avversari, oppure None.
+        I nostri come in rosa.json: prima il nome completo (ci sono tre De
+        Tullio), poi il numero di maglia."""
         if not x or not (x.get("lastName") or x.get("firstName")):
             return None
         if nostro:
@@ -293,13 +324,18 @@ def dettagli(qt: str, partite: list[dict], rosa: dict, noi: str):
                           "non e' in rosa.json: lo scrivo come arriva dal torneo")
         return {"nome": leggibile(x.get("firstName"), x.get("lastName"))}
 
-    giocate = [p for p in partite if p["stato"] == "giocata" and p["_referto"].get("id")]
+    giocate = [p for p in partite if p["stato"] == "giocata" and p["_referto"].get("id")
+               and da_rileggere(p, archivio, oggi, rileggi)]
     for i, p in enumerate(giocate):
         if i:
             time.sleep(PAUSA)
-        d = scarica(f"{API}{qt}/matches/{p['_referto']['id']}")
-        if not isinstance(d, dict) or "events" not in d:
-            raise ValueError(f"dettaglio di {p['id']} senza 'events'")
+        try:
+            d = scarica(f"{API}{qt}/matches/{p['_referto']['id']}")
+            if not isinstance(d, dict) or "events" not in d:
+                raise ValueError("risposta senza 'events'")
+        except Exception as e:     # questa partita resta com'era: niente a meta'
+            avvisi.append(f"dettaglio di {p['id']} non letto ({e}): resta com'era")
+            continue
         noi_in_casa = chiave(p["casa"]) == chiave(noi)
 
         def chi(x: dict):
@@ -316,15 +352,17 @@ def dettagli(qt: str, partite: list[dict], rosa: dict, noi: str):
                 continue
             if e.get("staffRole"):
                 r["staff"] = True
+                r.pop("numero", None)     # dalla panchina: non conta nelle statistiche
+            quanti = e.get("count") or 1
             if tipo == GOL:
-                r["quanti"] = e.get("count") or 1
+                r["quanti"] = quanti
                 det["gol"].append(r)
-            elif tipo == GIALLO:
-                det["ammoniti"].append(r)
-            elif tipo in (ROSSO, DOPPIO_GIALLO):
+            elif tipo in (GIALLO, ROSSO, DOPPIO_GIALLO):
+                if quanti > 1:
+                    r["quanti"] = quanti
                 if tipo == DOPPIO_GIALLO:
                     r["doppio_giallo"] = True
-                det["espulsi"].append(r)
+                det["ammoniti" if tipo == GIALLO else "espulsi"].append(r)
             else:
                 avvisi.append(f"{p['id']}: evento di tipo {tipo!r} che non conosco, lo salto")
         det["gol"].sort(key=lambda r: -r["quanti"])
@@ -344,17 +382,10 @@ def dettagli(qt: str, partite: list[dict], rosa: dict, noi: str):
             voto = g.get("rating")
             r["voto"] = voto if isinstance(voto, (int, float)) and not isinstance(voto, bool) else None
             portieri[lato] = r
-            if (lato == "casa") == noi_in_casa and r.get("numero") is not None and r["voto"] is not None:
-                v = voti.setdefault(r["numero"], {"somma": 0, "partite": 0})
-                v["somma"] += r["voto"]
-                v["partite"] += 1
         if portieri:
             det["portieri"] = portieri
-        for r in [*det.get("gol", []), *det.get("ammoniti", []), *det.get("espulsi", []),
-                  det.get("mvp") or {}, *portieri.values()]:
-            r.pop("numero", None)
         uscita[p["id"]] = det
-    return uscita, voti, avvisi
+    return uscita, avvisi
 
 
 def controlla_voti(voti: dict, api: dict, rosa: dict, noi: str) -> list[str]:
@@ -376,16 +407,16 @@ def controlla_voti(voti: dict, api: dict, rosa: dict, noi: str) -> list[str]:
 # ------------------------------------------------------------------- main ---
 def main(argv: list[str]) -> int:
     solo_check = "--check" in argv
+    rileggi = {argv[i + 1] for i, x in enumerate(argv[:-1]) if x == "--rileggi"}
+    oggi = date.today()
     tornei_d, stat_d, rosa_d = carica("tornei.json"), carica("statistiche.json"), carica("rosa.json")
     det_d = carica("dettagli.json") if (DATA / "dettagli.json").exists() else {
-        "_nota": "Scritto da tools/sync_torneo.py dal dettaglio di ogni partita sul sito del torneo: non "
-                 "modificarlo a mano, al prossimo giro verrebbe riscritto. Per ogni partita giocata (id di "
-                 "tornei.json): gol, ammoniti, espulsi, mvp e portieri; 'casa' dice da che parte sta la persona "
-                 "(true = squadra di casa). I nostri hanno il nome di rosa.json. Una voce manca se il torneo "
-                 "non la da'.",
+        "_nota": NOTA_DETTAGLI,
         "partite": {}}
     prima = {"tornei.json": serializza(tornei_d), "statistiche.json": serializza(stat_d),
              "dettagli.json": serializza(det_d) if (DATA / "dettagli.json").exists() else ""}
+    det_d.setdefault("partite", {})
+    det_d["_nota"] = NOTA_DETTAGLI
     avvisi = []
 
     da_sincronizzare = [t for t in tornei_d.get("tornei") or [] if t.get("quick_tournament_id")]
@@ -416,23 +447,16 @@ def main(argv: list[str]) -> int:
                 and torneo.get("stato") == "in_programma":
             torneo["stato"] = "in_corso"
 
+        nuovi, a = dettagli(qt, partite, rosa_d, noi, det_d["partite"], oggi, rileggi)
+        avvisi += a
+        det_d["partite"].update(nuovi)
+        giocate_id = [p["id"] for p in partite if p["stato"] == "giocata"]
+        for i in giocate_id:
+            if i not in det_d["partite"]:
+                avvisi.append(f"{i}: il dettaglio non e' ancora in archivio, i suoi numeri mancano")
         if torneo["id"] == tornei_d.get("corrente"):
-            avvisi += statistiche(stat_d, rosa_d, api, partite, noi)
-        try:
-            nuovi, voti, a = dettagli(qt, partite, rosa_d, noi)
-        except Exception as e:     # niente a meta': restano i dettagli e i voti di prima
-            avvisi.append(f"dettaglio delle partite di {torneo['nome']} non letto ({e}): "
-                          "dettagli.json e voti_portiere restano come erano")
-        else:
-            avvisi += a
-            det_d["partite"].update(nuovi)
-            if torneo["id"] == tornei_d.get("corrente"):
-                avvisi += controlla_voti(voti, api, rosa_d, noi)
-                for r in stat_d.get("giocatori") or []:
-                    if r["numero"] in voti:
-                        r["voti_portiere"] = voti[r["numero"]]
-                    else:
-                        r.pop("voti_portiere", None)
+            voti = statistiche(stat_d, det_d["partite"], giocate_id, avvisi)
+            avvisi += controlla_voti(voti, api, rosa_d, noi)
         for p in partite:
             del p["_referto"]
         torneo["calendario"] = partite

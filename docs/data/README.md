@@ -141,9 +141,10 @@ e i cinque valori delle caratteristiche sono segnaposto scritti da Claude:
 
 Una riga per giocatore, agganciata alla rosa tramite `numero`.
 
-**Si aggiornano tutti da soli** dal sito del torneo (vedi *Aggiornamento
-automatico dal torneo* più sotto): se li cambi a mano, al giro successivo
-vengono riscritti.
+**Si aggiornano tutti da soli**: `tools/sync_torneo.py` li conta partita per
+partita dall'archivio `dettagli.json` (più sotto). Se li cambi a mano, al giro
+successivo vengono riscritti: un numero sbagliato si corregge nella partita
+giusta di `dettagli.json`.
 
 `gol`, `ammonizioni`, `espulsioni`, `mvp` sono tutti numeri interi, mai
 negativi, mai fra virgolette: `"gol": 4` va bene, `"gol": "4"` no.
@@ -185,8 +186,8 @@ tramite un'API pubblica. Lo script `tools/sync_torneo.py` li scarica e riscrive:
 | file | cosa | cosa resta tuo |
 |---|---|---|
 | `tornei.json` | `classifica` intera, `calendario` (date, avversari, risultati), `stato` da `in_programma` a `in_corso` | `campo` e `note` di ogni partita, `regolamento`, tutto il resto |
-| `statistiche.json` | `gol`, `ammonizioni`, `espulsioni`, `mvp`, `voti_portiere` | tutti gli altri campi |
-| `dettagli.json` | gol, ammoniti, espulsi, miglior giocatore e voto dei portieri di ogni nostra partita giocata | niente: è tutto suo |
+| `dettagli.json` | l'archivio delle nostre partite giocate: le aggiunge, e le rilegge solo nei 3 giorni dopo la partita | le partite più vecchie, che puoi correggere a mano |
+| `statistiche.json` | `gol`, `ammonizioni`, `espulsioni`, `mvp`, `voti_portiere`, contati da `dettagli.json` | tutti gli altri campi |
 
 Il collegamento si fa con il campo **`quick_tournament_id`** del torneo: è il
 codice lungo nell'indirizzo della pagina pubblica
@@ -306,48 +307,66 @@ sul sito restano i link di prima e il resto del workflow va avanti.
 `drive.google.com` (altrimenti non si pubblica) e avvisa se un `id` non è nel
 calendario.
 
-## `dettagli.json` — marcatori, cartellini, MVP e portieri di ogni partita
+## `dettagli.json` — l'archivio delle partite (marcatori, cartellini, MVP, portieri)
 
-⚠️ **Questo file lo scrive `tools/sync_torneo.py`.** Non modificarlo a mano: al
-giro dopo verrebbe riscritto.
+Lo scrive `tools/sync_torneo.py`, ma **è un archivio**: per ogni nostra partita
+giocata (l'`id` del calendario) tiene quello che il sito del torneo diceva nei
+giorni della partita, e da qui si contano **tutti** i numeri di
+`statistiche.json` (gol, cartellini, MVP, voti del portiere).
 
-Per ogni nostra partita giocata (l'`id` del calendario) lo script legge il
-dettaglio della partita sul sito del torneo (una richiesta per partita, con
-mezzo secondo di pausa tra l'una e l'altra) e ne copia:
+**Perché un archivio.** Quando un giocatore viene tolto dalla rosa del torneo,
+l'app cancella i suoi gol anche dalle partite vecchie: è successo con Laricchia,
+sostituito da Ferrareis, il cui gol del 12 ottobre 2026 (`bp26-a1g5`) era
+sparito. Per questo:
+
+- una partita si **rilegge dal torneo solo nei 3 giorni dopo la sua data**
+  (gli arbitri caricano e correggono i referti); poi resta com'è;
+- per rileggere apposta una partita vecchia:
+  `python3 tools/sync_torneo.py --rileggi bp26-a1g5` (o `--rileggi tutte`).
+  **Attenzione:** sovrascrive le correzioni a mano di quella partita;
+- **le partite vecchie si possono correggere a mano** (aggiungere un gol
+  cancellato, un autogol che l'app non segna): al giro dopo le statistiche si
+  ricalcolano da sole. Nei 3 giorni dopo la partita una correzione a mano
+  verrebbe riscritta: aspetta che passino.
 
 ```json
-"bp26-a1g1": {
-  "gol": [{"nome": "Gianluca Tesser", "casa": false, "quanti": 3}],
-  "ammoniti": [{"nome": "Umberto Esposito", "casa": false}],
+"bp26-a1g5": {
+  "gol": [{"nome": "Ivan De Tullio", "numero": 9, "casa": true, "quanti": 3},
+          {"nome": "Carlo Laricchia", "numero": 3, "casa": true, "quanti": 1},
+          {"nome": "Autogol", "casa": true, "quanti": 1, "autogol": true},
+          {"nome": "Giorgio Murdaca", "casa": false, "quanti": 1}],
+  "ammoniti": [{"nome": "Umberto Esposito", "numero": 29, "casa": false}],
   "espulsi": [{"nome": "…", "casa": true, "doppio_giallo": true}],
-  "mvp": {"nome": "Gianluca Tesser", "casa": false},
-  "portieri": {"casa": {"nome": "Fabio Carbonara", "voto": 7},
-               "ospite": {"nome": "Savio Spadaro", "voto": 7}}
+  "mvp": {"nome": "Gianluca Tesser", "numero": 8, "casa": true},
+  "portieri": {"casa": {"nome": "Michele De Tullio", "numero": 10, "voto": 8},
+               "ospite": {"nome": "Luca Colangiuli", "voto": 7}}
 }
 ```
 
 - `casa`: `true` se la persona gioca nella squadra di casa (sul sito sta nella
   colonna di sinistra, come il punteggio).
-- **I nomi:** i nostri come in `rosa.json` ("Gianluca Tesser"), riconosciuti per
-  nome e cognome e poi per numero di maglia (ci sono tre De Tullio); gli
-  avversari "Nome Cognome", con le iniziali maiuscole se il torneo li scrive
-  tutti maiuscoli. Chi viene dalla panchina ha `"staff": true`.
+- `numero`: **solo i nostri**, il numero di maglia di `rosa.json`. È quello che
+  fa contare la riga nelle statistiche: un gol senza `numero` (un avversario,
+  un autogol) si vede nei dettagli ma non va a nessuno.
+- `quanti`: quanti gol (o cartellini) in quella partita; se manca vale 1.
+- **I nomi:** i nostri come in `rosa.json`, riconosciuti per nome e cognome e
+  poi per numero di maglia (ci sono tre De Tullio); gli avversari "Nome
+  Cognome", con le iniziali maiuscole se il torneo li scrive tutti maiuscoli.
+  Chi viene dalla panchina ha `"staff": true` e non conta nelle statistiche.
 - **Le espulsioni:** il codice del sito del torneo dice rosso diretto = tipo 3,
-  doppio giallo = tipo 4 (`"doppio_giallo": true`). Al 26 novembre 2026 nel
-  torneo non ce n'è ancora stata nessuna, quindi non è mai stato visto con dati
-  veri. Un tipo di evento sconosciuto viene saltato con un AVVISO.
-- **Una voce senza dati non c'è** (niente ammoniti = niente `ammoniti`), e sul
-  sito la sua sezione non compare; una partita senza nessun dato non ha il
-  pulsante "Dettagli".
+  doppio giallo = tipo 4 (`"doppio_giallo": true`, che conta anche come
+  ammonizione). Al 26 novembre 2026 nel torneo non ce n'è ancora stata
+  nessuna. Un tipo di evento sconosciuto viene saltato con un AVVISO.
+- **Una voce senza dati non c'è**, e sul sito la sua sezione non compare; una
+  partita senza nessun dato non ha il pulsante "Dettagli".
 
 Sul sito: nella pagina Partite il pulsante **Dettagli** sotto ogni risultato
 allunga la scheda; in home apre una finestra con la scheda e i dettagli.
 
-Se il dettaglio di una partita non risponde, classifica, calendario e numeri si
-aggiornano lo stesso, mentre `dettagli.json` e i `voti_portiere` restano quelli
-di prima (lo script lo dice con un AVVISO): niente dati a metà.
-`check_data.py` controlla la forma del file e avvisa se un `id` non è nel
-calendario.
+Se il dettaglio di una partita non risponde, quella partita resta com'era in
+archivio (o arriva al giro dopo, con un AVVISO); il resto si aggiorna lo
+stesso. `check_data.py` controlla la forma del file, che i `numero` esistano in
+`rosa.json` e avvisa se un `id` non è nel calendario.
 
 ## `locandine.json` — le card di presentazione
 

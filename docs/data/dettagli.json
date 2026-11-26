@@ -1,10 +1,11 @@
 {
-  "_nota": "Scritto da tools/sync_torneo.py dal dettaglio di ogni partita sul sito del torneo: non modificarlo a mano, al prossimo giro verrebbe riscritto. Per ogni partita giocata (id di tornei.json): gol, ammoniti, espulsi, mvp e portieri; 'casa' dice da che parte sta la persona (true = squadra di casa). I nostri hanno il nome di rosa.json. Una voce manca se il torneo non la da'.",
+  "_nota": "L'archivio delle nostre partite giocate, scritto da tools/sync_torneo.py dal dettaglio di ogni partita sul sito del torneo: gol, ammoniti, espulsi, mvp e portieri; 'casa' dice da che parte sta la persona (true = squadra di casa); i nostri hanno nome e numero di rosa.json. Una partita si rilegge dal torneo solo nei 3 giorni dopo la sua data (o con --rileggi <id>): dopo resta com'e', e da qui si contano gol, cartellini, MVP e voti di statistiche.json. Le partite vecchie si possono correggere a mano (es. un gol che il torneo ha cancellato togliendo un giocatore dalla rosa); quelle dei 3 giorni verrebbero riscritte.",
   "partite": {
     "bp26-a1g1": {
       "gol": [
         {
           "nome": "Gianluca Tesser",
+          "numero": 8,
           "casa": false,
           "quanti": 3
         },
@@ -15,6 +16,7 @@
         },
         {
           "nome": "Ivan De Tullio",
+          "numero": 9,
           "casa": false,
           "quanti": 2
         },
@@ -25,11 +27,13 @@
         },
         {
           "nome": "Nicola Marzulli",
+          "numero": 45,
           "casa": false,
           "quanti": 1
         },
         {
           "nome": "Ivan Schino",
+          "numero": 77,
           "casa": false,
           "quanti": 1
         }
@@ -37,11 +41,13 @@
       "ammoniti": [
         {
           "nome": "Umberto Esposito",
+          "numero": 29,
           "casa": false
         }
       ],
       "mvp": {
         "nome": "Gianluca Tesser",
+        "numero": 8,
         "casa": false
       },
       "portieri": {
@@ -51,6 +57,7 @@
         },
         "ospite": {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "voto": 7
         }
       }
@@ -59,26 +66,31 @@
       "gol": [
         {
           "nome": "Gianluca Tesser",
+          "numero": 8,
           "casa": true,
           "quanti": 3
         },
         {
           "nome": "Cristian De Tullio",
+          "numero": 20,
           "casa": true,
           "quanti": 2
         },
         {
           "nome": "Ivan De Tullio",
+          "numero": 9,
           "casa": true,
           "quanti": 2
         },
         {
           "nome": "Nicola Marzulli",
+          "numero": 45,
           "casa": true,
           "quanti": 2
         },
         {
           "nome": "Ivan Schino",
+          "numero": 77,
           "casa": true,
           "quanti": 1
         },
@@ -90,11 +102,13 @@
       ],
       "mvp": {
         "nome": "Cristian De Tullio",
+        "numero": 20,
         "casa": true
       },
       "portieri": {
         "casa": {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "voto": 9
         },
         "ospite": {
@@ -112,6 +126,7 @@
         },
         {
           "nome": "Cristian De Tullio",
+          "numero": 20,
           "casa": true,
           "quanti": 3
         },
@@ -122,11 +137,13 @@
         },
         {
           "nome": "Umberto Esposito",
+          "numero": 29,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Ivan Schino",
+          "numero": 77,
           "casa": true,
           "quanti": 1
         },
@@ -144,10 +161,12 @@
       "ammoniti": [
         {
           "nome": "Michele De Tullio",
+          "numero": 10,
           "casa": true
         },
         {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "casa": true
         },
         {
@@ -162,6 +181,7 @@
       "portieri": {
         "casa": {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "voto": 8
         },
         "ospite": {
@@ -174,21 +194,25 @@
       "gol": [
         {
           "nome": "Ivan Schino",
+          "numero": 77,
           "casa": true,
           "quanti": 2
         },
         {
           "nome": "Cristian De Tullio",
+          "numero": 20,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Michele De Tullio",
+          "numero": 10,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Giuseppe Petruzzelli",
+          "numero": 5,
           "casa": true,
           "quanti": 1
         },
@@ -206,20 +230,24 @@
       "ammoniti": [
         {
           "nome": "Umberto Esposito",
+          "numero": 29,
           "casa": true
         },
         {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "casa": true
         }
       ],
       "mvp": {
         "nome": "Ivan Schino",
+        "numero": 77,
         "casa": true
       },
       "portieri": {
         "casa": {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "voto": 8
         },
         "ospite": {
@@ -232,36 +260,43 @@
       "gol": [
         {
           "nome": "Ivan De Tullio",
+          "numero": 9,
           "casa": true,
           "quanti": 3
         },
         {
           "nome": "Gianluca Tesser",
+          "numero": 8,
           "casa": true,
           "quanti": 2
         },
         {
           "nome": "Cristian De Tullio",
+          "numero": 20,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Michele De Tullio",
+          "numero": 10,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Riccardo Mele",
+          "numero": 22,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Ivan Schino",
+          "numero": 77,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Daniele Tedesco",
+          "numero": 11,
           "casa": true,
           "quanti": 1
         },
@@ -274,15 +309,29 @@
           "nome": "Fabio Podda",
           "casa": false,
           "quanti": 1
+        },
+        {
+          "nome": "Carlo Laricchia",
+          "numero": 3,
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Autogol",
+          "casa": true,
+          "quanti": 1,
+          "autogol": true
         }
       ],
       "mvp": {
         "nome": "Gianluca Tesser",
+        "numero": 8,
         "casa": true
       },
       "portieri": {
         "casa": {
           "nome": "Michele De Tullio",
+          "numero": 10,
           "voto": 8
         },
         "ospite": {
@@ -300,6 +349,7 @@
         },
         {
           "nome": "Gianluca Tesser",
+          "numero": 8,
           "casa": false,
           "quanti": 2
         },
@@ -322,10 +372,12 @@
       "ammoniti": [
         {
           "nome": "Cristian De Tullio",
+          "numero": 20,
           "casa": false
         },
         {
           "nome": "Ivan Schino",
+          "numero": 77,
           "casa": false
         }
       ],
@@ -340,6 +392,7 @@
         },
         "ospite": {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "voto": 6
         }
       }
@@ -348,11 +401,13 @@
       "gol": [
         {
           "nome": "Giuseppe Petruzzelli",
+          "numero": 5,
           "casa": false,
           "quanti": 3
         },
         {
           "nome": "Ivan Schino",
+          "numero": 77,
           "casa": false,
           "quanti": 2
         },
@@ -378,17 +433,20 @@
         },
         {
           "nome": "Ivan De Tullio",
+          "numero": 9,
           "casa": false,
           "quanti": 1
         },
         {
           "nome": "Nicola Marzulli",
+          "numero": 45,
           "casa": false,
           "quanti": 1
         }
       ],
       "mvp": {
         "nome": "Ivan Schino",
+        "numero": 77,
         "casa": false
       },
       "portieri": {
@@ -398,6 +456,7 @@
         },
         "ospite": {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "voto": 8
         }
       }
@@ -406,16 +465,19 @@
       "gol": [
         {
           "nome": "Cristian De Tullio",
+          "numero": 20,
           "casa": false,
           "quanti": 2
         },
         {
           "nome": "Ivan Schino",
+          "numero": 77,
           "casa": false,
           "quanti": 1
         },
         {
           "nome": "Gianluca Tesser",
+          "numero": 8,
           "casa": false,
           "quanti": 1
         }
@@ -427,11 +489,13 @@
         },
         {
           "nome": "Cristian De Tullio",
+          "numero": 20,
           "casa": false
         }
       ],
       "mvp": {
         "nome": "Cristian De Tullio",
+        "numero": 20,
         "casa": false
       },
       "portieri": {
@@ -441,6 +505,7 @@
         },
         "ospite": {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "voto": 10
         }
       }
@@ -454,36 +519,43 @@
         },
         {
           "nome": "Gianluca Tesser",
+          "numero": 8,
           "casa": true,
           "quanti": 3
         },
         {
           "nome": "Cristian De Tullio",
+          "numero": 20,
           "casa": true,
           "quanti": 2
         },
         {
           "nome": "Nicola Marzulli",
+          "numero": 45,
           "casa": true,
           "quanti": 2
         },
         {
           "nome": "Antonio Papapicco",
+          "numero": 6,
           "casa": true,
           "quanti": 2
         },
         {
           "nome": "Ivan De Tullio",
+          "numero": 9,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Umberto Esposito",
+          "numero": 29,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "casa": true,
           "quanti": 1
         },
@@ -496,20 +568,24 @@
       "ammoniti": [
         {
           "nome": "Nicola Marzulli",
+          "numero": 45,
           "casa": true
         },
         {
           "nome": "Gianluca Tesser",
+          "numero": 8,
           "casa": true
         }
       ],
       "mvp": {
         "nome": "Gianluca Tesser",
+        "numero": 8,
         "casa": true
       },
       "portieri": {
         "casa": {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "voto": 9
         },
         "ospite": {
@@ -522,21 +598,25 @@
       "gol": [
         {
           "nome": "Nicola Marzulli",
+          "numero": 45,
           "casa": true,
           "quanti": 2
         },
         {
           "nome": "Cristian De Tullio",
+          "numero": 20,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Giuseppe Petruzzelli",
+          "numero": 5,
           "casa": true,
           "quanti": 1
         },
         {
           "nome": "Ivan Schino",
+          "numero": 77,
           "casa": true,
           "quanti": 1
         },
@@ -554,16 +634,19 @@
       "ammoniti": [
         {
           "nome": "Nicola Marzulli",
+          "numero": 45,
           "casa": true
         }
       ],
       "mvp": {
         "nome": "Gianluca Tesser",
+        "numero": 8,
         "casa": true
       },
       "portieri": {
         "casa": {
           "nome": "Savio Spadaro",
+          "numero": 12,
           "voto": 8
         },
         "ospite": {

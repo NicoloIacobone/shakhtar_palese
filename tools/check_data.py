@@ -638,8 +638,9 @@ def controlla_maglia():
 # -------------------------------------------------------------- dettagli ---
 def controlla_dettagli():
     """
-    data/dettagli.json: gol, ammoniti, espulsi, miglior giocatore e voto dei
-    portieri di ogni partita giocata. Lo scrive tools/sync_torneo.py. Controllo
+    data/dettagli.json: l'archivio delle partite giocate (gol, ammoniti, espulsi,
+    miglior giocatore, voto dei portieri), da cui si contano le statistiche.
+    Lo scrive tools/sync_torneo.py; le partite vecchie si correggono a mano. Controllo
     leggero, come per media.json: il file puo' mancare (le schede restano senza
     "Dettagli") e un id fuori calendario e' solo un avviso; una forma sbagliata e'
     un errore, perche' la scheda mostrerebbe dati rotti.
@@ -658,12 +659,20 @@ def controlla_dettagli():
     tornei = carica("tornei.json") or {}
     ids = {m.get("id") for t in tornei.get("tornei") or [] for m in t.get("calendario") or []}
 
+    rosa = carica("rosa.json") or {}
+    numeri = {g.get("numero") for g in rosa.get("giocatori") or []}
+
     def persona(dove, r, lato_obbligatorio=True):
         if not isinstance(r, dict) or not isinstance(r.get("nome"), str) or not r["nome"].strip():
             errore("dettagli.json", f"{dove}: manca il nome")
             return
         if lato_obbligatorio and not isinstance(r.get("casa"), bool):
             errore("dettagli.json", f"{dove}: 'casa' deve essere true o false")
+        # "numero" ce l'hanno solo i nostri: da li' si contano le statistiche
+        if "numero" in r and (not isinstance(r["numero"], int) or isinstance(r["numero"], bool)):
+            errore("dettagli.json", f"{dove}: 'numero' deve essere un numero di maglia")
+        elif "numero" in r and r["numero"] not in numeri:
+            avviso("dettagli.json", f"{dove}: il numero {r['numero']} non e' in rosa.json, non conta nelle statistiche")
 
     for id_partita, v in partite.items():
         if id_partita not in ids:
