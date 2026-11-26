@@ -18,7 +18,12 @@ venv/
 # finiscono in docs/assets/locandine/ tramite tools/sync_locandine.py.
 # Se vuoi versionare anche gli originali, togli la riga qui sotto.
 foto_presentazione/
+foto_matchday/
 
 # Documenti di lavoro, solo in locale
 piano_editoriale.md
 prompt-sito-shakhtar-palese.md
+
+# Plugin marketing personalizzato, solo in locale
+plugin-marketing/
+marketing.plugin
