@@ -65,7 +65,7 @@
       '</span></div>';
   }
 
-  SP.carica(['config', 'sponsor', 'storia', 'maglia']).then(function (d) {
+  SP.pagina(['maglia'], function (d) {
     var larghezze = {};
     ((d.maglia && d.maglia.elementi) || []).forEach(function (e) {
       if (e && e.logo && !(e.logo in larghezze)) { larghezze[e.logo] = e.larghezza; }
@@ -74,11 +74,5 @@
     $('dove').outerHTML = attivi.length ?
       '<section class="sp-sezione"><div class="sp-titolo-sezione"><h2 class="sp-tenda">Dove stanno gli sponsor</h2></div>' +
       '<div class="sp-vetro sp-pannello sp-su">' + attivi.map(function (s) { return riga(s, larghezze[s.id]); }).join('') + '</div></section>' : '';
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

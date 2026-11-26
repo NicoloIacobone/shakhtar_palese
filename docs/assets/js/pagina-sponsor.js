@@ -15,7 +15,7 @@
       (s.descrizione ? '<p class="sp-sponsor__battuta">' + SP.esc(s.descrizione) + '</p>' : '') + '</article>';
   }
 
-  SP.carica(['config', 'sponsor', 'storia']).then(function (d) {
+  SP.pagina([], function (d) {
     var attivi = ((d.sponsor && d.sponsor.sponsor) || []).filter(function (s) { return s.attivo !== false && s.nome; });
     $('sponsor').outerHTML = attivi.length ?
       '<div class="sp-sezione sp-sezione--stretta"><div class="sp-pila sp-griglia-3">' + attivi.map(scheda).join('') + '</div></div>' : '';
@@ -24,11 +24,5 @@
       '<section class="sp-sezione"><div class="sp-invito sp-vetro sp-su"><h2>' + SP.esc(inv.titolo) + '</h2>' +
         (inv.testo ? '<p>' + SP.esc(inv.testo) + '</p>' : '') +
         (email ? '<a class="sp-bottone" href="mailto:' + SP.esc(email) + '">Scrivici</a>' : '') + '</div></section>' : '';
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

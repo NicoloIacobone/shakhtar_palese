@@ -15,7 +15,7 @@
       '<span class="sp-contatto__testo"><span class="sp-tenue">' + etichetta + '</span><span class="sp-contatto__valore">' + SP.esc(valore) + '</span></span>' + AVANTI + '</a>';
   }
 
-  SP.carica(['config', 'sponsor', 'storia']).then(function (d) {
+  SP.pagina([], function (d) {
     var so = (d.config && d.config.social) || {}, c = (d.config && d.config.campo) || {};
     var righe = '';
     if (so.email) { righe += contatto('mailto:' + so.email, false, 'busta', 'Email', so.email); }
@@ -32,11 +32,5 @@
       (so.email ? '<a class="sp-bottone" href="mailto:' + SP.esc(so.email) + '">' + SP.simbolo('busta', 22) + 'Scrivici</a>' : '') + '</div>';
     $('sotto').outerHTML = '<div class="sp-due sp-contatti-due">' + campo + amichevole + '</div>';
 
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

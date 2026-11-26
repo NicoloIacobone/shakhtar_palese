@@ -8,6 +8,7 @@ Il sito del torneo e' un'app che legge i dati da un'API pubblica, senza login:
 
     https://qt-api.at4s.it/api/public/championships/<id>/
     https://qt-api.at4s.it/api/public/championships/<id>/teams/<id squadra>/
+    https://qt-api.at4s.it/api/public/championships/<id>/matches/<id partita>
 
 Il browser di chi visita shakhtarpalese.it NON puo' chiamarla direttamente
 (l'API non manda gli header CORS, quindi la richiesta verrebbe bloccata): per
@@ -28,10 +29,21 @@ Cosa scrive
   data/statistiche.json   (solo per il torneo 'corrente')
     · gol, ammonizioni, espulsioni  contati dai referti delle nostre partite
     · mvp                           dalla classifica "migliori giocatori"
+    · voti_portiere                 {"somma", "partite"}: i voti presi da portiere,
+                                    dal dettaglio di ogni partita (homeGoalkeeper /
+                                    awayGoalkeeper); controllati con la classifica
+                                    "portieri" del torneo
     Sono gli unici campi che ha: niente altro resta da aggiornare a mano.
+  data/dettagli.json      (tutti i tornei sincronizzati)
+    · per ogni nostra partita giocata: marcatori, ammoniti, espulsi, miglior
+      giocatore (MVP) e voto dei portieri, letti dal dettaglio della partita
+      (una richiesta per partita, con una pausa breve tra l'una e l'altra)
 
 Se l'API non risponde o risponde qualcosa di strano, lo script si ferma SENZA
 scrivere niente: meglio dati vecchi di un giorno che una classifica cancellata.
+Se a non rispondere e' il dettaglio di una partita, classifica e calendario si
+aggiornano lo stesso, mentre dettagli.json e i voti_portiere restano come
+erano (un AVVISO lo dice): niente dati a meta'.
 
 Si lancia con:   python3 tools/sync_torneo.py
 Opzioni:
@@ -44,6 +56,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import time
 import unicodedata
 import urllib.request
 from collections import Counter
@@ -53,8 +66,11 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "docs" / "data"
 API = "https://qt-api.at4s.it/api/public/championships/"
 
-# Tipi di evento nei referti (MatchEventType nel codice del sito del torneo).
+# Tipi di evento nei referti (MatchEventType nel codice del sito del torneo:
+# Goal=1, YellowCard=2, RedCard=3, SecondYellowRed=4; letto il 26 nov 2026).
+# Al 26 nov 2026 nei dati si sono visti solo 1 e 2: 3 e 4 vengono dal codice.
 GOL, GIALLO, ROSSO, DOPPIO_GIALLO = 1, 2, 3, 4
+PAUSA = 0.5   # secondi tra una richiesta di dettaglio e l'altra
 
 # Sigle che nei nomi squadra restano maiuscole ("FC VISION" -> "FC Vision").
 SIGLE = {"FC", "AC", "AS", "ASD", "SSD", "US", "SC", "CF", "SS"}
@@ -75,6 +91,12 @@ def chiave(nome: str) -> str:
     s = unicodedata.normalize("NFKD", str(nome or ""))
     s = "".join(c for c in s if not unicodedata.combining(c))
     return " ".join(s.casefold().split())
+
+
+def per_nome(rosa: dict) -> dict:
+    """I giocatori della rosa per nome come lo scrive il torneo ("Cognome Nome",
+    confrontato con chiave()): serve a statistiche, dettagli e voti."""
+    return {chiave(f"{g['cognome']} {g['nome']}"): g for g in rosa.get("giocatori") or []}
 
 
 def carica(nome: str):
@@ -186,12 +208,12 @@ def statistiche(stat: dict, rosa: dict, api: dict, partite: list[dict], noi: str
     """Aggiorna stat sul posto. Ritorna gli avvisi da stampare."""
     avvisi = []
     per_numero = {r["numero"]: r for r in stat.get("giocatori") or []}
-    per_nome = {chiave(f"{g['cognome']} {g['nome']}"): g["numero"] for g in rosa.get("giocatori") or []}
+    nostri = per_nome(rosa)
 
     def numero_di(nome, maglia):
         # Prima il nome (sul torneo e' "Cognome Nome"), poi il numero di maglia:
         # se qualcuno cambia numero a meta' stagione, il nome resta giusto.
-        n = per_nome.get(chiave(nome), maglia)
+        n = (nostri.get(chiave(nome)) or {}).get("numero", maglia)
         if n not in per_numero:
             avvisi.append(f"{nome} (#{maglia}) non ha una riga in statistiche.json: lo salto")
             return None
@@ -235,11 +257,135 @@ def statistiche(stat: dict, rosa: dict, api: dict, partite: list[dict], noi: str
     return avvisi
 
 
+# --------------------------------------------------------------- dettagli ---
+def leggibile(nome: str | None, cognome: str | None) -> str:
+    """Nome di un avversario come si legge: "Nome Cognome", con le iniziali
+    maiuscole se il torneo lo scrive tutto maiuscolo o tutto minuscolo
+    ("D'AMICO" -> "D'Amico", "DE TULLIO" -> "De Tullio"). Se e' gia' scritto
+    con maiuscole e minuscole resta com'e'."""
+    def parola(p: str) -> str:
+        if p.isupper() or p.islower():
+            return re.sub(r"[^\W\d_]+", lambda m: m.group(0).capitalize(), p)
+        return p
+    pezzi = [" ".join(parola(x) for x in str(s).split()) for s in (nome, cognome) if s and str(s).strip()]
+    return " ".join(pezzi)
+
+
+def dettagli(qt: str, partite: list[dict], rosa: dict, noi: str):
+    """Scarica il dettaglio di ogni nostra partita giocata. Ritorna
+    (dettagli per id partita, voti da portiere per numero di maglia, avvisi).
+    Se una richiesta fallisce solleva l'eccezione: chi chiama non scrive niente."""
+    avvisi, uscita, voti = [], {}, {}
+    nostri = per_nome(rosa)
+    per_maglia = {g["numero"]: g for g in rosa.get("giocatori") or []}
+
+    def persona(x: dict, nostro: bool):
+        """{nome, casa} oppure None. I nostri come in rosa.json: prima il nome
+        completo (ci sono tre De Tullio), poi il numero di maglia."""
+        if not x or not (x.get("lastName") or x.get("firstName")):
+            return None
+        if nostro:
+            g = nostri.get(chiave(f"{x.get('lastName') or ''} {x.get('firstName') or ''}")) \
+                or per_maglia.get(x.get("shirtNumber"))
+            if g:
+                return {"nome": f"{g['nome']} {g['cognome']}", "numero": g["numero"]}
+            avvisi.append(f"{x.get('lastName')} {x.get('firstName')} (#{x.get('shirtNumber')}) "
+                          "non e' in rosa.json: lo scrivo come arriva dal torneo")
+        return {"nome": leggibile(x.get("firstName"), x.get("lastName"))}
+
+    giocate = [p for p in partite if p["stato"] == "giocata" and p["_referto"].get("id")]
+    for i, p in enumerate(giocate):
+        if i:
+            time.sleep(PAUSA)
+        d = scarica(f"{API}{qt}/matches/{p['_referto']['id']}")
+        if not isinstance(d, dict) or "events" not in d:
+            raise ValueError(f"dettaglio di {p['id']} senza 'events'")
+        noi_in_casa = chiave(p["casa"]) == chiave(noi)
+
+        def chi(x: dict):
+            casa = bool(x.get("isHome"))
+            r = persona(x, casa == noi_in_casa)
+            if r:
+                r["casa"] = casa
+            return r
+
+        det = {"gol": [], "ammoniti": [], "espulsi": []}
+        for e in d.get("events") or []:
+            tipo, r = e.get("type"), chi(e)
+            if r is None:
+                continue
+            if e.get("staffRole"):
+                r["staff"] = True
+            if tipo == GOL:
+                r["quanti"] = e.get("count") or 1
+                det["gol"].append(r)
+            elif tipo == GIALLO:
+                det["ammoniti"].append(r)
+            elif tipo in (ROSSO, DOPPIO_GIALLO):
+                if tipo == DOPPIO_GIALLO:
+                    r["doppio_giallo"] = True
+                det["espulsi"].append(r)
+            else:
+                avvisi.append(f"{p['id']}: evento di tipo {tipo!r} che non conosco, lo salto")
+        det["gol"].sort(key=lambda r: -r["quanti"])
+        for k in ("gol", "ammoniti", "espulsi"):
+            if not det[k]:
+                del det[k]
+
+        mvp = chi(d.get("bestPlayer") or {})
+        if mvp:
+            det["mvp"] = mvp
+        portieri = {}
+        for lato, campo in (("casa", "homeGoalkeeper"), ("ospite", "awayGoalkeeper")):
+            g = d.get(campo) or {}
+            r = persona(g, (lato == "casa") == noi_in_casa)
+            if not r:
+                continue
+            voto = g.get("rating")
+            r["voto"] = voto if isinstance(voto, (int, float)) and not isinstance(voto, bool) else None
+            portieri[lato] = r
+            if (lato == "casa") == noi_in_casa and r.get("numero") is not None and r["voto"] is not None:
+                v = voti.setdefault(r["numero"], {"somma": 0, "partite": 0})
+                v["somma"] += r["voto"]
+                v["partite"] += 1
+        if portieri:
+            det["portieri"] = portieri
+        for r in [*det.get("gol", []), *det.get("ammoniti", []), *det.get("espulsi", []),
+                  det.get("mvp") or {}, *portieri.values()]:
+            r.pop("numero", None)
+        uscita[p["id"]] = det
+    return uscita, voti, avvisi
+
+
+def controlla_voti(voti: dict, api: dict, rosa: dict, noi: str) -> list[str]:
+    """La classifica "portieri" del torneo (somma dei voti e partite) deve dare
+    gli stessi numeri contati partita per partita."""
+    avvisi = []
+    nostri = per_nome(rosa)
+    for r in (api.get("rankings") or {}).get("goalkeepers") or []:
+        if chiave(r.get("teamName")) != chiave(noi):
+            continue
+        n = (nostri.get(chiave(r.get("playerName"))) or {}).get("numero", r.get("shirtNumber"))
+        mio = voti.get(n) or {"somma": 0, "partite": 0}
+        if (mio["somma"], mio["partite"]) != (r.get("value"), r.get("count")):
+            avvisi.append(f"voti di {r.get('playerName')}: dalle partite {mio['somma']} in {mio['partite']}, "
+                          f"dalla classifica portieri {r.get('value')} in {r.get('count')}")
+    return avvisi
+
+
 # ------------------------------------------------------------------- main ---
 def main(argv: list[str]) -> int:
     solo_check = "--check" in argv
     tornei_d, stat_d, rosa_d = carica("tornei.json"), carica("statistiche.json"), carica("rosa.json")
-    prima = {"tornei.json": serializza(tornei_d), "statistiche.json": serializza(stat_d)}
+    det_d = carica("dettagli.json") if (DATA / "dettagli.json").exists() else {
+        "_nota": "Scritto da tools/sync_torneo.py dal dettaglio di ogni partita sul sito del torneo: non "
+                 "modificarlo a mano, al prossimo giro verrebbe riscritto. Per ogni partita giocata (id di "
+                 "tornei.json): gol, ammoniti, espulsi, mvp e portieri; 'casa' dice da che parte sta la persona "
+                 "(true = squadra di casa). I nostri hanno il nome di rosa.json. Una voce manca se il torneo "
+                 "non la da'.",
+        "partite": {}}
+    prima = {"tornei.json": serializza(tornei_d), "statistiche.json": serializza(stat_d),
+             "dettagli.json": serializza(det_d) if (DATA / "dettagli.json").exists() else ""}
     avvisi = []
 
     da_sincronizzare = [t for t in tornei_d.get("tornei") or [] if t.get("quick_tournament_id")]
@@ -272,6 +418,21 @@ def main(argv: list[str]) -> int:
 
         if torneo["id"] == tornei_d.get("corrente"):
             avvisi += statistiche(stat_d, rosa_d, api, partite, noi)
+        try:
+            nuovi, voti, a = dettagli(qt, partite, rosa_d, noi)
+        except Exception as e:     # niente a meta': restano i dettagli e i voti di prima
+            avvisi.append(f"dettaglio delle partite di {torneo['nome']} non letto ({e}): "
+                          "dettagli.json e voti_portiere restano come erano")
+        else:
+            avvisi += a
+            det_d["partite"].update(nuovi)
+            if torneo["id"] == tornei_d.get("corrente"):
+                avvisi += controlla_voti(voti, api, rosa_d, noi)
+                for r in stat_d.get("giocatori") or []:
+                    if r["numero"] in voti:
+                        r["voti_portiere"] = voti[r["numero"]]
+                    else:
+                        r.pop("voti_portiere", None)
         for p in partite:
             del p["_referto"]
         torneo["calendario"] = partite
@@ -279,7 +440,8 @@ def main(argv: list[str]) -> int:
         print(f"  · {torneo['nome']}: {len(torneo['classifica'])} squadre, "
               f"{len(partite)} nostre partite ({giocate} giocate)")
 
-    dopo = {"tornei.json": serializza(tornei_d), "statistiche.json": serializza(stat_d)}
+    dopo = {"tornei.json": serializza(tornei_d), "statistiche.json": serializza(stat_d),
+            "dettagli.json": serializza(det_d)}
     cambiati = [f for f in dopo if dopo[f] != prima[f]]
     for a in dict.fromkeys(avvisi):
         print(f"  AVVISO: {a}")

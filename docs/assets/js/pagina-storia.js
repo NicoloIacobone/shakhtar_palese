@@ -17,7 +17,7 @@
       '<button type="button" class="sp-tondo sp-carosello__pausa" aria-label="Metti in pausa lo scorrimento delle foto">' + PAUSA + '</button></div>';
   }
 
-  SP.carica(['config', 'sponsor', 'storia']).then(function (d) {
+  SP.pagina([], function (d) {
     var s = d.storia || {};
     if (s.titolo) { $('titolo').textContent = s.titolo; }
     if (s.sottotitolo) { $('attacco').textContent = s.sottotitolo; } else { $('attacco').remove(); }
@@ -25,11 +25,5 @@
     var paragrafi = (s.paragrafi || []).filter(function (p) { return p && String(p).trim(); });
     $('storia').innerHTML = carosello(foto) +
       (paragrafi.length ? '<div class="sp-vetro sp-prosa sp-su">' + paragrafi.map(function (p) { return '<p>' + SP.esc(p) + '</p>'; }).join('') + '</div>' : '');
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

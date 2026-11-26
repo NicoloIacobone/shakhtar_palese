@@ -5,16 +5,10 @@
 (function () {
   'use strict';
   var SP = window.SP, $ = function (id) { return document.getElementById(id); };
-  SP.carica(['config', 'sponsor', 'storia']).then(function (d) {
+  SP.pagina([], function (d) {
     var email = d.config && d.config.social && d.config.social.email;
     Array.prototype.forEach.call(document.querySelectorAll('[data-email]'), function (a) {
       if (email) { a.href = 'mailto:' + email; a.textContent = email; }
     });
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

@@ -62,12 +62,12 @@
     var corpo = giocatori.slice().sort(per('gol')).map(function (x) {
       var foto = x.card ? '<img src="' + SP.esc(x.card.thumb) + '" alt="" width="32" height="32" loading="lazy">' : '';
       return '<tr><td><a class="sp-statistiche__nome" href="' + SP.esc(x.link) + '">' + foto + SP.esc(x.nome) + '</a></td>' +
-        '<td class="sp-ordinata">' + x.s.gol + '</td><td>' + x.s.mvp + '</td><td>' + x.s.ammonizioni + '</td><td>' + x.s.espulsioni + '</td></tr>';
+        '<td class="sp-ordinata">' + x.s.gol + '</td><td>' + (x.s.voto ? '<span class="sp-voto"><span>voto</span> ' + x.s.voto + '</span>' : x.s.mvp) + '</td><td>' + x.s.ammonizioni + '</td><td>' + x.s.espulsioni + '</td></tr>';
     }).join('');
     return '<div class="sp-vetro sp-pannello sp-statistiche sp-su"><table data-nota="nota-ord">' + testa + '<tbody>' + corpo + '</tbody></table></div>';
   }
 
-  SP.carica(['config', 'tornei', 'rosa', 'locandine', 'statistiche', 'sponsor', 'storia']).then(function (d) {
+  SP.pagina(['tornei', 'rosa', 'locandine', 'statistiche'], function (d) {
     var torneo = SP.torneo(d.tornei) || {};
     if (torneo.nostra_squadra) { SP.nostraSquadra = torneo.nostra_squadra; }
     $('sottotitolo').textContent = [torneo.nome, torneo.stagione].filter(Boolean).join(' ');
@@ -77,6 +77,9 @@
     var giocatori = SP.persone(d.rosa, d.locandine, d.config).filter(function (x) { return !x.staff; }).map(function (x) {
       var s = righe[x.p.numero] || {};
       x.s = { gol: Number(s.gol) || 0, mvp: Number(s.mvp) || 0, ammonizioni: Number(s.ammonizioni) || 0, espulsioni: Number(s.espulsioni) || 0 };
+      /* Il portiere non puo' essere MVP: nella colonna MVP ha il voto medio e per l'ordine conta come 0 MVP, come fa
+         Shakhtar.ordina() del bundle, che legge "voto 8,1" come 0. */
+      if (SP.portiere(x.p)) { x.s.voto = SP.voto(s.voti_portiere) || '–'; x.s.mvp = 0; }
       return x;
     });
 
@@ -93,11 +96,5 @@
       $('tabella').outerHTML = giocatori.length ? tabella(giocatori) : VUOTO;
       if (!giocatori.length) { $('nota-ord').remove(); }
     }
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

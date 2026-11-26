@@ -41,6 +41,29 @@
   SP.facoltativo = function (nome) {
     return SP.json(nome).catch(function (e) { if (window.console) { console.warn(e); } return null; });
   };
+  /* Montaggio comune di ogni pagina: carica config, sponsor e storia piu' i file chiesti ("?media" = facoltativo:
+     se manca la pagina va avanti), chiama monta(d), poi striscia degli sponsor, footer e stemmi mancanti; alla fine,
+     anche se qualcosa e' andato storto, Shakhtar.avvia() e dopo(). Se monta restituisce false la pagina si ferma li'
+     (la scheda giocatore che rimanda alla Rosa). media.json e dettagli.json finiscono in SP.media e SP.dettagli. */
+  SP.pagina = function (nomi, monta, dopo) {
+    var tutti = ['config', 'sponsor', 'storia'].concat(nomi.filter(function (n) { return ['config', 'sponsor', 'storia'].indexOf(n) < 0; }));
+    return Promise.all(tutti.map(function (n) { return n.charAt(0) === '?' ? SP.facoltativo(n.slice(1)) : SP.json(n); })).then(function (lista) {
+      var d = {};
+      tutti.forEach(function (n, i) { d[n.replace('?', '')] = lista[i]; });
+      SP.media = (d.media && d.media.partite) || {};
+      SP.dettagli = (d.dettagli && d.dettagli.partite) || {};
+      if (monta && monta(d) === false) { return; }
+      var s = document.getElementById('striscia');
+      if (s) { s.outerHTML = SP.striscia(d.sponsor); }
+      SP.footer(document.getElementById('sp-footer'), d.config, d.storia);
+      SP.stemmiMancanti();
+    }).catch(function (e) {
+      if (window.console) { console.error(e); }
+    }).then(function () {
+      window.Shakhtar.avvia();
+      if (dopo) { dopo(); }
+    });
+  };
   SP.torneo = function (tornei) {
     var lista = (tornei && tornei.tornei) || [];
     return lista.filter(function (t) { return t.id === tornei.corrente; })[0] || lista[0] || null;
@@ -141,14 +164,92 @@
     });
     return link.length ? '<p class="sp-risultato__media">' + link.join('') + '</p>' : '';
   }
+  /* Dettagli di una partita giocata, da data/dettagli.json (lo scrive tools/sync_torneo.py): gol, ammoniti, espulsi,
+     miglior giocatore e voto dei portieri, su due colonne come il punteggio (casa a sinistra). Regola di Nicolo' del
+     26 novembre 2026: una voce senza dati non compare; una partita senza nessun dato non ha il pulsante. */
+  SP.dettagli = {};
+  function vociDettagli(d) {
+    if (!d) { return []; }
+    var gol = function (r) { return r.quanti > 1 ? ' (' + r.quanti + ')' : ''; };
+    var rosso = function (r) { return r.doppio_giallo ? ' (doppio giallo)' : ''; };
+    var voto = function (r) { return r.voto != null ? ' <b>' + SP.esc(String(r.voto).replace('.', ',')) + '</b>' : ''; };
+    var portieri = ['casa', 'ospite'].map(function (lato) { var r = d.portieri && d.portieri[lato]; return r && r.voto != null ? { nome: r.nome, voto: r.voto, casa: lato === 'casa' } : null; }).filter(Boolean);
+    return [
+      ['Gol', d.gol || [], gol],
+      ['Ammoniti', d.ammoniti || [], null],
+      ['Espulsi', d.espulsi || [], rosso],
+      ['Miglior giocatore', d.mvp ? [d.mvp] : [], null],
+      ['Voto dei portieri', portieri, voto]
+    ].filter(function (v) { return v[1].length; });
+  }
+  function pannelloDettagli(m, id) {
+    var lato = function (lista, casa, dopo) {
+      var mie = lista.filter(function (r) { return !!r.casa === casa; });
+      return '<ul aria-label="' + SP.esc(casa ? m.casa : m.ospite) + '">' + mie.map(function (r) {
+        return '<li>' + SP.esc(r.nome) + (r.staff ? ' (staff)' : '') + (dopo ? dopo(r) : '') + '</li>';
+      }).join('') + '</ul>';
+    };
+    return '<div class="sp-dettagli"' + (id ? ' id="' + id + '"' : '') + '><div class="sp-dettagli__in">' + vociDettagli(SP.dettagli[m.id]).map(function (v) {
+      return '<div class="sp-dettagli__voce"><p class="sp-dettagli__titolo">' + v[0] + '</p><div class="sp-dettagli__due">' +
+        lato(v[1], true, v[2]) + lato(v[1], false, v[2]) + '</div></div>';
+    }).join('') + '</div></div>';
+  }
+  var FRECCIA = '<svg aria-hidden="true" width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 2l6 6-6 6"/></svg>';
+  /* modo: 'apri' (pagina Partite: la scheda si allunga) o 'finestra' (home: i dettagli in un dialog, scelta di Nicolo'
+     del 26 novembre 2026; nelle schede strette della home allungarle non funziona) */
+  function dettagliRisultato(m, modo) {
+    if (!modo || !m.id || !vociDettagli(SP.dettagli[m.id]).length) { return ''; }
+    var partita = SP.esc(m.casa + ' v ' + m.ospite), id = 'dettagli-' + SP.esc(m.id);
+    var bottone = '<button type="button" class="sp-dettagli__bottone" data-dettagli="' + SP.esc(m.id) + '"' +
+      (modo === 'apri' ? ' aria-expanded="false" aria-controls="' + id + '"' : ' aria-haspopup="dialog"') + '><span>Dettagli' + FRECCIA + '</span><span class="sp-nascosto"> di ' + partita +
+      '</span></button>';
+    return '<div class="sp-risultato__dettagli">' + bottone + (modo === 'apri' ? pannelloDettagli(m, id) : '') + '</div>';
+  }
   /* Scheda del risultato: data ed esito in alto, stemmi ai lati del punteggio, casa a sinistra. */
-  SP.risultato = function (m, classi) {
+  SP.risultato = function (m, classi, modo) {
     var e = SP.esito(m);
     return '<article class="sp-risultato sp-vetro sp-su' + (classi ? ' ' + classi : '') + '"><div class="sp-risultato__testa"><span class="sp-tenue">' + SP.esc(SP.dataMedia(m.data)) +
       '</span><span class="sp-esito sp-esito--' + e + '">' + SP.parolaEsito[e] + '</span></div>' +
       '<div class="sp-risultato__punti">' + SP.stemma(m.casa, true) + '<span class="sp-risultato__gol">' + SP.punteggio(m) + '</span>' + SP.stemma(m.ospite, true) + '</div>' +
-      '<p class="sp-risultato__squadre">' + SP.esc(m.casa + ' v ' + m.ospite) + '</p>' + linkMedia(m) + '</article>';
+      '<p class="sp-risultato__squadre">' + SP.esc(m.casa + ' v ' + m.ospite) + '</p>' + linkMedia(m) + dettagliRisultato(m, modo) + '</article>';
   };
+  /* Apre o chiude i dettagli di una scheda. La scheda si allunga verso il basso (sito.css 17); finita l'animazione
+     si ricalcolano le finestre sul tessuto (la nostra riga in classifica, sotto, si e' spostata). */
+  SP.apriDettagli = function (bottone, apri) {
+    var scheda = bottone.closest('.sp-risultato'), pannello = document.getElementById(bottone.getAttribute('aria-controls'));
+    if (!scheda || !pannello) { return; }
+    if (apri == null) { apri = bottone.getAttribute('aria-expanded') !== 'true'; }
+    bottone.setAttribute('aria-expanded', apri ? 'true' : 'false');
+    scheda.classList.toggle('sp-dettagli-aperti', apri);
+    var dopo = function () { if (window.Shakhtar) { window.Shakhtar.finestre(); } };
+    pannello.addEventListener('transitionend', dopo, { once: true });
+    setTimeout(dopo, 400);
+  };
+  /* Home: i dettagli in un dialog con la scheda del risultato; la X, Esc o un tocco fuori chiudono e il focus torna
+     al pulsante. */
+  var finestre = {};
+  SP.finestraDettagli = function (m, bottone) {
+    var dlg = finestre[m.id];
+    if (!dlg) {
+      dlg = document.createElement('dialog');
+      dlg.className = 'sp-dettagli-finestra';
+      dlg.setAttribute('aria-label', 'Dettagli di ' + m.casa + ' v ' + m.ospite);
+      dlg.innerHTML = '<div class="sp-dettagli-finestra__chiudi"><button type="button" class="sp-tondo" aria-label="Chiudi i dettagli" data-chiudi>' + SP.simbolo('chiudi') + '</button></div>' +
+        SP.risultato(m, 'sp-dettagli-aperti').replace(' sp-su', '').replace('</article>', pannelloDettagli(m) + '</article>');
+      dlg.addEventListener('click', function (e) { if (e.target === dlg || e.target.closest('[data-chiudi]')) { dlg.close(); } });
+      document.body.appendChild(dlg);
+      SP.stemmiMancanti(dlg);
+      finestre[m.id] = dlg;
+    }
+    dlg.onclose = function () { bottone.focus(); };
+    dlg.showModal();
+  };
+  SP.partite = {};
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-dettagli]');
+    if (!b) { return; }
+    if (b.hasAttribute('aria-controls')) { SP.apriDettagli(b); } else if (SP.partite[b.getAttribute('data-dettagli')]) { SP.finestraDettagli(SP.partite[b.getAttribute('data-dettagli')], b); }
+  });
   SP.ordinaPerData = function (a, b) { return ((a.data || '9999') + (a.ora || '')).localeCompare((b.data || '9999') + (b.ora || '')); };
 
   /* ---------- persone ---------- */
@@ -183,6 +284,15 @@
   SP.miniatura = function (x, lato) {
     if (!x.card) { return ''; }
     return '<img class="sp-persona__foto" src="' + SP.esc(x.card.thumb) + '" alt="" width="' + lato + '" height="' + lato + '" loading="lazy">';
+  };
+
+  /* Il portiere, per regolamento, non puo' essere MVP: al posto degli MVP si mostra il voto medio da portiere
+     (somma dei voti / partite in porta, da statistiche.json "voti_portiere", lo scrive sync_torneo.py).
+     Chi e' il portiere lo dice rosa.json ("ruolo": "Portiere"). Il voto ha un decimale e la virgola: 73/9 -> "8,1". */
+  SP.portiere = function (p) { return !!p && p.ruolo === 'Portiere'; };
+  SP.voto = function (v) {
+    if (!v || !(v.partite > 0)) { return ''; }
+    return (Math.round(v.somma / v.partite * 10) / 10).toFixed(1).replace('.', ',');
   };
 
   /* ---------- simboli ---------- */
@@ -231,7 +341,10 @@
 
   /* ---------- targa dei fondatori: approvata da Nicolo' il 23 novembre 2026 ----------
      Si apre dal piccone del footer. Testi da storia.json ("targa") e dal sito di oggi; i nomi da rosa.json.
-     Con "solo_presentati": true mostra solo chi ha gia' la card pubblicata. */
+     Con "solo_presentati": true mostra solo chi ha gia' la card pubblicata. "escludi": numeri di maglia della rosa
+     che non vanno in targa (restano ovunque altrove). "menzione": un gruppo in piu' ({titolo, persone: [{nome,
+     cognome, ruolo}]}) che compare solo qui. Nel testo {persone} diventa quanti nomi ha la targa, {fondatori}
+     quanti senza la menzione, {menzioni} quanti nella menzione. */
   var targaAperta = null;
   function rigaTarga(p) {
     var numero = p.numero != null;
@@ -253,9 +366,14 @@
         if (l.pubblicato) { usciti[l.numero != null ? 'n' + l.numero : 's' + SP.slug(l.cognome)] = true; }
       });
       var filtra = function (lista, chiave) { return t.solo_presentati ? lista.filter(function (p) { return usciti[chiave(p)]; }) : lista.slice(); };
-      var giocatori = filtra(d.rosa.giocatori || [], function (p) { return 'n' + p.numero; }).sort(function (a, b) { return a.numero - b.numero; });
+      var escludi = (t.escludi || []).map(Number);
+      var rosaTarga = (d.rosa.giocatori || []).filter(function (p) { return escludi.indexOf(Number(p.numero)) < 0; });
+      var giocatori = filtra(rosaTarga, function (p) { return 'n' + p.numero; }).sort(function (a, b) { return a.numero - b.numero; });
       var staff = filtra(d.rosa.staff || [], function (p) { return 's' + SP.slug(p.cognome); });
-      var nascosti = (d.rosa.giocatori || []).length + (d.rosa.staff || []).length - giocatori.length - staff.length;
+      var menzione = (t.menzione && t.menzione.persone) || [];
+      var nascosti = rosaTarga.length + (d.rosa.staff || []).length - giocatori.length - staff.length;
+      var testo = String(t.testo || '').replace(/\{persone\}/g, giocatori.length + staff.length + menzione.length)
+        .replace(/\{fondatori\}/g, giocatori.length + staff.length).replace(/\{menzioni\}/g, menzione.length);
       var dlg = document.createElement('dialog');
       dlg.className = 'sp-targa';
       dlg.setAttribute('aria-labelledby', 'sp-targa-titolo');
@@ -264,10 +382,10 @@
         '<div class="sp-titolo-pagina sp-su" style="padding-top:0"><div>' +
           (t.occhiello ? '<p class="sp-targa__occhiello">' + SP.esc(t.occhiello) + '</p>' : '') +
           '<h2 class="sp-h1" id="sp-targa-titolo">' + SP.esc(t.titolo || 'Targa dei fondatori') + '</h2>' +
-          (t.testo ? '<p class="sp-titolo-pagina__attacco">' + SP.esc(t.testo) + '</p>' : '') +
+          (testo ? '<p class="sp-titolo-pagina__attacco">' + SP.esc(testo) + '</p>' : '') +
         '</div></div>' +
         '<div class="sp-due sp-due--pari">' + gruppoTarga('In campo', giocatori) +
-          '<div class="sp-colonna">' + gruppoTarga('Fuori dal campo', staff) +
+          '<div class="sp-colonna">' + gruppoTarga('Fuori dal campo', staff) + gruppoTarga(SP.esc(t.menzione && t.menzione.titolo || 'Menzione d’onore'), menzione) +
           (nascosti > 0 ? '<p class="sp-tenue">e altri ' + nascosti + ', che escono una locandina alla volta.</p>' : '') + '</div></div>' +
         '<p class="sp-targa__firma">Shakhtar · in ucraino, minatore</p>' +
         '<a class="sp-bottone sp-bottone--vetro sp-su" href="storia.html">Com’è andata</a>' +

@@ -47,7 +47,7 @@
     ].filter(Boolean).join(', ');
     /* su telefono i primi quattro, su schermo largo i primi sei; poi il bottone */
     $('ris').outerHTML = '<div class="sp-pila sp-griglia-2" id="ris">' + lista.map(function (m, i) {
-      return SP.risultato(m, i >= 6 ? 'sp-oltre-sempre' : i >= 4 ? 'sp-oltre' : '');
+      return SP.risultato(m, i >= 6 ? 'sp-oltre-sempre' : i >= 4 ? 'sp-oltre' : '', 'apri');
     }).join('') + '</div>' +
       (lista.length > 4 ? '<a class="sp-bottone sp-bottone--vetro sp-mostra' + (lista.length > 6 ? '' : ' sp-mostra--tel') +
         ' sp-su" href="#risultati" role="button" aria-controls="ris">Mostra tutti e ' + lista.length + '</a>' : '');
@@ -77,9 +77,7 @@
     }).join('') + '</div>';
   }
 
-  Promise.all([SP.carica(['config', 'tornei', 'sponsor', 'storia']), SP.facoltativo('media')]).then(function (r) {
-    var d = r[0];
-    SP.media = (r[1] && r[1].partite) || {};
+  SP.pagina(['tornei', '?media', '?dettagli'], function (d) {
     var torneo = SP.torneo(d.tornei);
     if (torneo) {
       if (torneo.nostra_squadra) { SP.nostraSquadra = torneo.nostra_squadra; }
@@ -89,13 +87,7 @@
       classifica(torneo);
       regolamento(torneo);
     }
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-    SP.stemmiMancanti();
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
+  }, function () {
     /* arrivando da un link con l'ancora (#classifica dalla home) la sezione va raggiunta dopo che il contenuto c'e' */
     if (location.hash) { var a = document.getElementById(location.hash.slice(1)); if (a) { a.scrollIntoView(); } }
   });

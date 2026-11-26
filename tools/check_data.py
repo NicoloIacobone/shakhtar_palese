@@ -264,6 +264,17 @@ def controlla_statistiche(numeri_rosa):
         for c in CAMPI_STAT:
             if isinstance(r.get(c), int) and r[c] < 0:
                 errore("statistiche.json", f"{et}'{c}' non puo' essere negativo ({r[c]})")
+        # voti presi da portiere (li scrive sync_torneo.py): il sito mostra la media
+        if "voti_portiere" in r:
+            v = r["voti_portiere"]
+            if not isinstance(v, dict):
+                errore("statistiche.json", f"{et}'voti_portiere' deve essere {{\"somma\": .., \"partite\": ..}}")
+            else:
+                interi("statistiche.json", v, ["partite"], f"{et}voti_portiere → ")
+                if not isinstance(v.get("somma"), (int, float)) or isinstance(v.get("somma"), bool) or v["somma"] < 0:
+                    errore("statistiche.json", f"{et}voti_portiere → 'somma' deve essere un numero non negativo")
+                if isinstance(v.get("partite"), int) and v["partite"] < 1:
+                    errore("statistiche.json", f"{et}voti_portiere → 'partite' deve essere almeno 1")
     mancanti = sorted(set(numeri_rosa) - visti)
     if mancanti:
         avviso("statistiche.json", "giocatori senza riga statistiche: "
@@ -479,6 +490,24 @@ def controlla_storia():
         obbligatori("storia.json", t, ["titolo"], "targa → ")
         if t.get("solo_presentati") not in (True, False, None):
             errore("storia.json", "targa → 'solo_presentati' deve essere true o false")
+        # chi non va in targa (numeri di maglia della rosa) e la menzione d'onore
+        rosa = carica("rosa.json") or {}
+        numeri = {g.get("numero") for g in rosa.get("giocatori") or []}
+        escludi = t.get("escludi", [])
+        if not isinstance(escludi, list) or not all(isinstance(n, int) and not isinstance(n, bool) for n in escludi):
+            errore("storia.json", "targa → 'escludi' deve essere una lista di numeri di maglia, es. [4]")
+        else:
+            for n in escludi:
+                if n not in numeri:
+                    avviso("storia.json", f"targa → 'escludi': il numero {n} non e' in rosa.json")
+        menzione = t.get("menzione")
+        if menzione is not None:
+            persone = menzione.get("persone") if isinstance(menzione, dict) else None
+            if not isinstance(persone, list):
+                errore("storia.json", "targa → 'menzione' deve avere 'titolo' e una lista 'persone'")
+            else:
+                for i, p in enumerate(persone):
+                    obbligatori("storia.json", p, ["nome", "cognome"], f"targa → menzione → persona {i + 1} → ")
 
     if d.get("_da_rivedere"):
         segnaposto.append("data/storia.json — testo di bozza, da riscrivere "
@@ -606,6 +635,63 @@ def controlla_maglia():
     print(f"{GRIGIO}  ·{FINE} maglia: {len(elementi)} loghi stampati su {len(noti)} disponibili")
 
 
+# -------------------------------------------------------------- dettagli ---
+def controlla_dettagli():
+    """
+    data/dettagli.json: gol, ammoniti, espulsi, miglior giocatore e voto dei
+    portieri di ogni partita giocata. Lo scrive tools/sync_torneo.py. Controllo
+    leggero, come per media.json: il file puo' mancare (le schede restano senza
+    "Dettagli") e un id fuori calendario e' solo un avviso; una forma sbagliata e'
+    un errore, perche' la scheda mostrerebbe dati rotti.
+    """
+    if not (DATA / "dettagli.json").exists():
+        avviso("dettagli.json", "il file non c'e': le schede risultato restano senza Dettagli "
+                                "(lo crea tools/sync_torneo.py)")
+        return
+    d = carica("dettagli.json")
+    if d is None:
+        return
+    partite = d.get("partite")
+    if not isinstance(partite, dict):
+        errore("dettagli.json", "manca l'elenco 'partite' (un oggetto: id partita -> dettagli)")
+        return
+    tornei = carica("tornei.json") or {}
+    ids = {m.get("id") for t in tornei.get("tornei") or [] for m in t.get("calendario") or []}
+
+    def persona(dove, r, lato_obbligatorio=True):
+        if not isinstance(r, dict) or not isinstance(r.get("nome"), str) or not r["nome"].strip():
+            errore("dettagli.json", f"{dove}: manca il nome")
+            return
+        if lato_obbligatorio and not isinstance(r.get("casa"), bool):
+            errore("dettagli.json", f"{dove}: 'casa' deve essere true o false")
+
+    for id_partita, v in partite.items():
+        if id_partita not in ids:
+            avviso("dettagli.json", f"'{id_partita}' non e' nel calendario di tornei.json: i suoi dettagli non compaiono")
+        if not isinstance(v, dict):
+            errore("dettagli.json", f"'{id_partita}': mi aspettavo un oggetto")
+            continue
+        for k in ("gol", "ammoniti", "espulsi"):
+            lista = v.get(k, [])
+            if not isinstance(lista, list):
+                errore("dettagli.json", f"'{id_partita}' → '{k}' deve essere una lista")
+                continue
+            for i, r in enumerate(lista):
+                persona(f"'{id_partita}' → {k} {i + 1}", r)
+                if k == "gol" and isinstance(r, dict) and not (isinstance(r.get("quanti"), int) and r["quanti"] > 0):
+                    errore("dettagli.json", f"'{id_partita}' → gol {i + 1}: 'quanti' deve essere un intero positivo")
+        if "mvp" in v:
+            persona(f"'{id_partita}' → mvp", v["mvp"])
+        for lato, r in (v.get("portieri") or {}).items():
+            if lato not in ("casa", "ospite"):
+                errore("dettagli.json", f"'{id_partita}' → portieri: lato '{lato}' sconosciuto (casa o ospite)")
+            persona(f"'{id_partita}' → portiere {lato}", r, lato_obbligatorio=False)
+            voto = r.get("voto") if isinstance(r, dict) else None
+            if voto is not None and (not isinstance(voto, (int, float)) or isinstance(voto, bool) or not 0 <= voto <= 10):
+                errore("dettagli.json", f"'{id_partita}' → portiere {lato}: voto {voto!r} fuori da 0-10")
+    print(f"{GRIGIO}  ·{FINE} dettagli: {len(partite)} partite")
+
+
 # ----------------------------------------------------------------- media ---
 DRIVE_CARTELLA = re.compile(r"https://drive\.google\.com/drive/folders/[\w-]+")
 
@@ -666,7 +752,7 @@ def controlla_file_sito():
         "assets/img/stemma-colori-512.png", "assets/img/drappo-pesca-azzurro.webp",
         "assets/fonts/big-shoulders-display-latin.woff2",
         # il pannello locale (admin/) usa ancora il foglio di stile e lo script del sito di prima
-        "assets/css/style.css", "assets/js/main.js",
+        "assets/css/style.css",
         # il simulatore 3D della maglia e le sue texture
         "assets/maglia/simulatore.html", "assets/maglia/crest.png",
         "assets/maglia/mj.png",
@@ -730,6 +816,7 @@ def main():
     controlla_sponsor()
     controlla_maglia()
     controlla_media()
+    controlla_dettagli()
     controlla_file_sito()
     controlla_versioni_asset()
 

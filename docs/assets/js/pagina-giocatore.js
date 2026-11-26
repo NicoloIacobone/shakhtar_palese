@@ -34,8 +34,10 @@
     var numeri = '', radar = '';
     if (giocatore) {
       var s = ((statistiche && statistiche.giocatori) || []).filter(function (g) { return g.numero === p.numero; })[0] || {};
-      numeri = '<dl class="sp-numeri sp-su">' + [['gol', s.gol], ['MVP', s.mvp], ['gialli', s.ammonizioni], ['rossi', s.espulsioni]].map(function (n) {
-        return '<div class="sp-vetro"><dt>' + n[0] + '</dt><dd>' + (Number(n[1]) || 0) + '</dd></div>';
+      /* il portiere ha il voto medio al posto degli MVP ("–" finche' non ha voti) */
+      var secondo = SP.portiere(p) ? ['voto', SP.voto(s.voti_portiere) || '–'] : ['MVP', Number(s.mvp) || 0];
+      numeri = '<dl class="sp-numeri sp-su">' + [['gol', Number(s.gol) || 0], secondo, ['gialli', Number(s.ammonizioni) || 0], ['rossi', Number(s.espulsioni) || 0]].map(function (n) {
+        return '<div class="sp-vetro"><dt>' + n[0] + '</dt><dd>' + n[1] + '</dd></div>';
       }).join('') + '</dl>';
       if (p.caratteristiche) {
         radar = '<section class="sp-sezione"><div class="sp-titolo-sezione"><h2 class="sp-tenda">Caratteristiche</h2><span class="sp-tenue">da 1 a 10</span></div>' +
@@ -56,19 +58,13 @@
   }
 
   var id = new URLSearchParams(location.search).get('id');
-  SP.carica(['config', 'rosa', 'locandine', 'statistiche', 'sponsor', 'storia']).then(function (d) {
+  SP.pagina(['rosa', 'locandine', 'statistiche'], function (d) {
     var x = SP.persone(d.rosa, d.locandine, d.config).filter(function (y) { return y.card && y.card.id === id; })[0];
     if (!x) {
       /* indirizzo sbagliato o persona non ancora presentata: si torna alla Rosa */
       location.replace('rosa.html');
-      return;
+      return false;
     }
     scheda(x, d.statistiche);
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

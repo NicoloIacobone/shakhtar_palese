@@ -1,0 +1,576 @@
+{
+  "_nota": "Scritto da tools/sync_torneo.py dal dettaglio di ogni partita sul sito del torneo: non modificarlo a mano, al prossimo giro verrebbe riscritto. Per ogni partita giocata (id di tornei.json): gol, ammoniti, espulsi, mvp e portieri; 'casa' dice da che parte sta la persona (true = squadra di casa). I nostri hanno il nome di rosa.json. Una voce manca se il torneo non la da'.",
+  "partite": {
+    "bp26-a1g1": {
+      "gol": [
+        {
+          "nome": "Gianluca Tesser",
+          "casa": false,
+          "quanti": 3
+        },
+        {
+          "nome": "Paolo Lepore",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Ivan De Tullio",
+          "casa": false,
+          "quanti": 2
+        },
+        {
+          "nome": "Alessandro Ambruosi",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Nicola Marzulli",
+          "casa": false,
+          "quanti": 1
+        },
+        {
+          "nome": "Ivan Schino",
+          "casa": false,
+          "quanti": 1
+        }
+      ],
+      "ammoniti": [
+        {
+          "nome": "Umberto Esposito",
+          "casa": false
+        }
+      ],
+      "mvp": {
+        "nome": "Gianluca Tesser",
+        "casa": false
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Fabio Carbonara",
+          "voto": 7
+        },
+        "ospite": {
+          "nome": "Savio Spadaro",
+          "voto": 7
+        }
+      }
+    },
+    "bp26-a1g2": {
+      "gol": [
+        {
+          "nome": "Gianluca Tesser",
+          "casa": true,
+          "quanti": 3
+        },
+        {
+          "nome": "Cristian De Tullio",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Ivan De Tullio",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Nicola Marzulli",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Ivan Schino",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Luciano Di Tano",
+          "casa": false,
+          "quanti": 1
+        }
+      ],
+      "mvp": {
+        "nome": "Cristian De Tullio",
+        "casa": true
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Savio Spadaro",
+          "voto": 9
+        },
+        "ospite": {
+          "nome": "Giuseppe Marinelli",
+          "voto": 7
+        }
+      }
+    },
+    "bp26-a1g3": {
+      "gol": [
+        {
+          "nome": "Michele De Mola",
+          "casa": false,
+          "quanti": 4
+        },
+        {
+          "nome": "Cristian De Tullio",
+          "casa": true,
+          "quanti": 3
+        },
+        {
+          "nome": "Nicola Amoruso",
+          "casa": false,
+          "quanti": 2
+        },
+        {
+          "nome": "Umberto Esposito",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Ivan Schino",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Andrea Fascicolo",
+          "casa": false,
+          "quanti": 1
+        },
+        {
+          "nome": "Michele Sterlaccio",
+          "casa": false,
+          "quanti": 1
+        }
+      ],
+      "ammoniti": [
+        {
+          "nome": "Michele De Tullio",
+          "casa": true
+        },
+        {
+          "nome": "Savio Spadaro",
+          "casa": true
+        },
+        {
+          "nome": "Andrea Fascicolo",
+          "casa": false
+        }
+      ],
+      "mvp": {
+        "nome": "Michele De Mola",
+        "casa": false
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Savio Spadaro",
+          "voto": 8
+        },
+        "ospite": {
+          "nome": "Michele Di Mita",
+          "voto": 10
+        }
+      }
+    },
+    "bp26-a1g4": {
+      "gol": [
+        {
+          "nome": "Ivan Schino",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Cristian De Tullio",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Michele De Tullio",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Giuseppe Petruzzelli",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Vito Agostinacchio",
+          "casa": false,
+          "quanti": 1
+        },
+        {
+          "nome": "Nicola Armenise",
+          "casa": false,
+          "quanti": 1
+        }
+      ],
+      "ammoniti": [
+        {
+          "nome": "Umberto Esposito",
+          "casa": true
+        },
+        {
+          "nome": "Savio Spadaro",
+          "casa": true
+        }
+      ],
+      "mvp": {
+        "nome": "Ivan Schino",
+        "casa": true
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Savio Spadaro",
+          "voto": 8
+        },
+        "ospite": {
+          "nome": "Francesco Tamma",
+          "voto": 8
+        }
+      }
+    },
+    "bp26-a1g5": {
+      "gol": [
+        {
+          "nome": "Ivan De Tullio",
+          "casa": true,
+          "quanti": 3
+        },
+        {
+          "nome": "Gianluca Tesser",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Cristian De Tullio",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Michele De Tullio",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Riccardo Mele",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Ivan Schino",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Daniele Tedesco",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Giorgio Murdaca",
+          "casa": false,
+          "quanti": 1
+        },
+        {
+          "nome": "Fabio Podda",
+          "casa": false,
+          "quanti": 1
+        }
+      ],
+      "mvp": {
+        "nome": "Gianluca Tesser",
+        "casa": true
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Michele De Tullio",
+          "voto": 8
+        },
+        "ospite": {
+          "nome": "Luca Colangiuli",
+          "voto": 7
+        }
+      }
+    },
+    "bp26-r1g1": {
+      "gol": [
+        {
+          "nome": "Michele De Mola",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Gianluca Tesser",
+          "casa": false,
+          "quanti": 2
+        },
+        {
+          "nome": "Antonio Bux",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Alessandro Maiorano",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Fabio Perlavecchia",
+          "casa": true,
+          "quanti": 1
+        }
+      ],
+      "ammoniti": [
+        {
+          "nome": "Cristian De Tullio",
+          "casa": false
+        },
+        {
+          "nome": "Ivan Schino",
+          "casa": false
+        }
+      ],
+      "mvp": {
+        "nome": "Alessandro Maiorano",
+        "casa": true
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Michele Di Mita",
+          "voto": 9
+        },
+        "ospite": {
+          "nome": "Savio Spadaro",
+          "voto": 6
+        }
+      }
+    },
+    "bp26-r1g2": {
+      "gol": [
+        {
+          "nome": "Giuseppe Petruzzelli",
+          "casa": false,
+          "quanti": 3
+        },
+        {
+          "nome": "Ivan Schino",
+          "casa": false,
+          "quanti": 2
+        },
+        {
+          "nome": "Vito Agostinacchio",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Nicola Armenise",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Francesco Lerario",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Giuseppe Ponarosa",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Ivan De Tullio",
+          "casa": false,
+          "quanti": 1
+        },
+        {
+          "nome": "Nicola Marzulli",
+          "casa": false,
+          "quanti": 1
+        }
+      ],
+      "mvp": {
+        "nome": "Ivan Schino",
+        "casa": false
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Francesco Tamma",
+          "voto": 6
+        },
+        "ospite": {
+          "nome": "Savio Spadaro",
+          "voto": 8
+        }
+      }
+    },
+    "bp26-r1g4": {
+      "gol": [
+        {
+          "nome": "Cristian De Tullio",
+          "casa": false,
+          "quanti": 2
+        },
+        {
+          "nome": "Ivan Schino",
+          "casa": false,
+          "quanti": 1
+        },
+        {
+          "nome": "Gianluca Tesser",
+          "casa": false,
+          "quanti": 1
+        }
+      ],
+      "ammoniti": [
+        {
+          "nome": "Giuseppe Selvaggi",
+          "casa": true
+        },
+        {
+          "nome": "Cristian De Tullio",
+          "casa": false
+        }
+      ],
+      "mvp": {
+        "nome": "Cristian De Tullio",
+        "casa": false
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Fabio Carbonara",
+          "voto": 8
+        },
+        "ospite": {
+          "nome": "Savio Spadaro",
+          "voto": 10
+        }
+      }
+    },
+    "bp26-r1g5": {
+      "gol": [
+        {
+          "nome": "Riccardo D'Agostino",
+          "casa": false,
+          "quanti": 4
+        },
+        {
+          "nome": "Gianluca Tesser",
+          "casa": true,
+          "quanti": 3
+        },
+        {
+          "nome": "Cristian De Tullio",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Nicola Marzulli",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Antonio Papapicco",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Ivan De Tullio",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Umberto Esposito",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Savio Spadaro",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Luciano Di Tano",
+          "casa": false,
+          "quanti": 1
+        }
+      ],
+      "ammoniti": [
+        {
+          "nome": "Nicola Marzulli",
+          "casa": true
+        },
+        {
+          "nome": "Gianluca Tesser",
+          "casa": true
+        }
+      ],
+      "mvp": {
+        "nome": "Gianluca Tesser",
+        "casa": true
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Savio Spadaro",
+          "voto": 9
+        },
+        "ospite": {
+          "nome": "Domenico Calabria",
+          "voto": 6
+        }
+      }
+    },
+    "bp26-r1g3": {
+      "gol": [
+        {
+          "nome": "Nicola Marzulli",
+          "casa": true,
+          "quanti": 2
+        },
+        {
+          "nome": "Cristian De Tullio",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Giuseppe Petruzzelli",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Ivan Schino",
+          "casa": true,
+          "quanti": 1
+        },
+        {
+          "nome": "Michael Colonna",
+          "casa": false,
+          "quanti": 1
+        },
+        {
+          "nome": "Nicola Serafini",
+          "casa": false,
+          "quanti": 1
+        }
+      ],
+      "ammoniti": [
+        {
+          "nome": "Nicola Marzulli",
+          "casa": true
+        }
+      ],
+      "mvp": {
+        "nome": "Gianluca Tesser",
+        "casa": true
+      },
+      "portieri": {
+        "casa": {
+          "nome": "Savio Spadaro",
+          "voto": 8
+        },
+        "ospite": {
+          "nome": "Luca Colangiuli",
+          "voto": 8
+        }
+      }
+    }
+  }
+}
