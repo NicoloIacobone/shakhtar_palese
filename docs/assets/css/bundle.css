@@ -1,0 +1,582 @@
+/* Shakhtar Palese · foglio di stile dei componenti.
+   Ordine: 1 token di riserva, 2 base, 3 materia, 4 movimento, 5 struttura, 6 partite, 7 persone, 8 azioni, 9 contenuti, 10 stati.
+   Le classi cominciano tutte per "sp-". L'impaginazione larga parte quando il contenitore .sp-app (sul sito: <body>) e' largo almeno 1024 px.
+   Regole e motivi stanno nel README del sistema e nei README dei componenti. */
+
+/* ---------- 1. Token di riserva ----------
+   Stessi valori di tokens.json. Hanno specificita' zero: se c'e' tokens.css vince lui. Servono a far reggere questo file da solo. */
+:where(html){
+  --fondo:#fdece0;--superficie:#ffffff;--vetro:rgba(255,255,255,.77);--vetro-orlo:rgba(255,255,255,.4);--vetro-filo:rgba(90,60,40,.12);--vetro-luce:rgba(255,255,255,.95);--finestra-filo:rgba(90,60,40,.1);
+  --testo:#111111;--testo-tenue:#5a5a5a;--linea:#e3e3e3;--linea-fondo:rgba(0,0,0,.16);--arancio:#fc5c00;--arancio-testo:#c74600;--nero:#000000;--su-nero:#ffffff;
+  --vittoria:#14602d;--vittoria-tinta:#e2f3e7;--sconfitta:#a1201a;--sconfitta-tinta:#fbe7e5;--pareggio:#444444;--pareggio-tinta:#ebebeb;
+  --segnaposto:#e2e2e2;--segnaposto-testo:#4f4f4f;--griglia:#c9c9c9;
+  --spazio-1:4px;--spazio-2:8px;--spazio-3:12px;--spazio-4:16px;--spazio-5:24px;
+  --raggio-scheda:14px;--raggio-vetro:10px;--raggio-finestra:8px;--raggio-piccolo:6px;--raggio-tondo:999px;
+  --passo-tessuto:768px;--orlo-vetro:4px;--striscia-header:3px;--altezza-header:56px;--altezza-header-largo:79px;
+  --font-display:"Big Shoulders Display","Arial Narrow",sans-serif;--font-testo:Barlow,"Helvetica Neue",Arial,sans-serif;
+}
+/* Valori che il tipo Design System non tiene tra i token: movimento, immagine del tessuto, misure dell'impaginazione. */
+:where(html){
+  --sp-tessuto:url("/_blob/df1e7bb319e2dceb879b143e28d0bd39"); /* sul sito: il percorso di drappo-pesca-azzurro.webp */
+  --sp-curva:cubic-bezier(.2,.8,.2,1);
+  --sp-t-premi:80ms;--sp-t-rilascio:240ms;--sp-t-comparsa:420ms;--sp-t-tenda:500ms;--sp-t-striscia:600ms;--sp-t-esce:120ms;
+  --sp-colonna:600px;      /* la colonna del telefono, tra 376 e 1023 px */
+  --sp-contenuto:1120px;   /* il contenuto su schermo largo */
+  --sp-sx:448fr;--sp-dx:640fr; /* le due colonne su schermo largo */
+}
+
+/* ---------- 2. Base ---------- */
+.sp-app{container:sp / inline-size;position:relative;box-sizing:border-box;color:var(--testo);font-family:var(--font-testo);font-size:15px;line-height:1.35;
+  background-color:var(--fondo);background-image:var(--sp-tessuto);background-size:var(--passo-tessuto) var(--passo-tessuto);
+  -webkit-text-size-adjust:100%;text-size-adjust:100%}
+body.sp-app{margin:0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+body.sp-app > main{flex:1}
+.sp-app *,.sp-app *::before,.sp-app *::after{box-sizing:border-box}
+/* Le regole di base hanno specificita' minima (:where): qualsiasi classe sp- le supera senza. */
+:where(.sp-app) a{color:var(--testo);text-decoration:none;-webkit-tap-highlight-color:transparent}
+:where(.sp-app) img{display:block;max-width:100%}
+:where(.sp-app) button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:where(.sp-app) :where(h1,h2,h3,p,dl,dd,ul,figure){margin:0}
+:where(.sp-app) svg{display:block;flex-shrink:0}
+:where(.sp-app) abbr{text-decoration:none}
+.sp-app :focus-visible{outline:3px solid var(--testo);outline-offset:2px}
+.sp-contenuto{width:100%;max-width:var(--sp-colonna);margin-inline:auto;padding-inline:var(--spazio-4)}
+.sp-display{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em}
+.sp-tenue{color:var(--testo-tenue);font-size:14px}
+.sp-forte{font-weight:700}
+.sp-largo{display:none !important}
+.sp-nascosto{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.sp-sezione{margin-top:var(--spazio-5);display:flex;flex-direction:column;gap:var(--spazio-2);scroll-margin-top:calc(var(--altezza-header) + 12px)}
+.sp-pila{display:flex;flex-direction:column;gap:var(--spazio-2)}
+.sp-sezione--stretta{margin-top:14px}
+/* Fila che scorre in orizzontale su telefono: parte dal margine della colonna ed esce fino al bordo destro dello schermo. */
+.sp-fila{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;
+  margin-right:calc(-1 * var(--spazio-4) - (100cqw - min(100cqw, var(--sp-colonna))) / 2);padding-right:var(--spazio-4);
+  margin-block:-2px;padding-block:2px;margin-left:-2px;padding-left:2px}
+.sp-fila::-webkit-scrollbar{display:none}
+.sp-fila > *{flex-shrink:0;scroll-snap-align:start}
+
+/* ---------- 3. Materia ---------- */
+/* Vetro: due strati. Fuori il 40% di bianco e un filo; dentro, rientrato di 4 px, il 77% con una linea chiara. Insieme danno l'86%: e' il massimo. */
+.sp-vetro{position:relative;z-index:0;background:var(--vetro-orlo);border-radius:var(--raggio-scheda);box-shadow:0 0 0 1px var(--vetro-filo)}
+.sp-vetro::before{content:"";position:absolute;z-index:-1;inset:var(--orlo-vetro);border-radius:var(--raggio-vetro);background:var(--vetro);box-shadow:0 0 0 1px var(--vetro-luce);pointer-events:none}
+.sp-pannello{padding:4px 14px}
+/* Finestra: lo stesso tessuto del fondo. Shakhtar.finestre() calcola --sp-fx e --sp-fy perche' combaci con quello che sta sotto. */
+.sp-finestra,.sp-noi > td:first-child::before{background-color:var(--fondo);background-image:var(--sp-tessuto);background-size:var(--passo-tessuto) var(--passo-tessuto);
+  background-position:var(--sp-fx,0) var(--sp-fy,0);box-shadow:inset 0 0 0 1px var(--finestra-filo)}
+
+/* ---------- 4. Movimento ---------- */
+@keyframes sp-su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes sp-tenda{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes sp-striscia{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes sp-rimbalzo{0%{transform:scale(.8)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes sp-giro{to{transform:translateX(-12.5%)}}
+@keyframes sp-giro-largo{to{transform:translateX(-50%)}}
+/* La comparsa vale solo se lo script e' partito (classe sp-js su <html>): senza JavaScript tutto e' subito visibile.
+   Serve "backwards", non "both": con "both" lo stato finale copre le trasformazioni del tocco. */
+.sp-js .sp-su{animation:sp-su var(--sp-t-comparsa) var(--sp-curva) backwards paused}
+.sp-js .sp-tenda{animation:sp-tenda var(--sp-t-tenda) var(--sp-curva) backwards paused}
+.sp-js .sp-su.sp-ok,.sp-js .sp-tenda.sp-ok{animation-play-state:running}
+.sp-r1{animation-delay:60ms !important}.sp-r2{animation-delay:120ms !important}.sp-r3{animation-delay:180ms !important}.sp-r4{animation-delay:240ms !important}
+.sp-pagina{transition:opacity var(--sp-t-esce) ease-in}
+.sp-pagina.sp-esce{opacity:0}
+@view-transition{navigation:auto}
+.sp-header{view-transition-name:sp-header}
+.sp-barra{view-transition-name:sp-barra}
+::view-transition-old(root){animation:sp-esce var(--sp-t-esce) ease-in both}
+::view-transition-new(root){animation:none}
+@keyframes sp-esce{to{opacity:0}}
+
+/* ---------- 5. Struttura ---------- */
+/* Header: bianco pieno, fermo in alto, chiuso dalla striscia arancione. Stemma al centro tra le due parole. */
+.sp-header{position:sticky;top:0;z-index:5;background:var(--superficie);border-bottom:var(--striscia-header) solid transparent}
+.sp-header::after{content:"";position:absolute;left:0;right:0;bottom:calc(-1 * var(--striscia-header));height:var(--striscia-header);background:var(--arancio);transform-origin:50% 50%}
+.sp-js .sp-header--entra::after{animation:sp-striscia var(--sp-t-striscia) var(--sp-curva) 100ms both}
+.sp-header__in{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;height:calc(var(--altezza-header) - var(--striscia-header));width:100%;max-width:var(--sp-colonna);margin-inline:auto;padding-inline:var(--spazio-4)}
+.sp-header__marchio{grid-column:1 / -1;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:26px;line-height:1}
+.sp-header__marchio > span:first-child{text-align:right}
+.sp-header__marchio img{width:44px;height:49px}
+.sp-header__nav{display:none}
+/* Barra di navigazione: bianca piena, ferma in fondo. Solo su telefono. */
+.sp-barra{position:sticky;bottom:0;z-index:5;background:var(--superficie);border-top:1px solid var(--linea);padding-bottom:env(safe-area-inset-bottom,0)}
+.sp-barra__in{display:flex;width:100%;max-width:var(--sp-colonna);margin-inline:auto}
+.sp-barra__voce{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:60px;font-size:13px;font-weight:600;color:var(--testo-tenue)}
+.sp-barra__voce svg{transition:transform var(--sp-t-rilascio) var(--sp-curva)}
+.sp-barra__voce:active svg{transform:scale(.86);transition-duration:var(--sp-t-premi)}
+.sp-barra__voce[aria-current="page"]{color:var(--testo);font-weight:700}
+.sp-barra__voce[aria-current="page"] svg{stroke:var(--arancio)}
+.sp-js .sp-barra__voce[aria-current="page"] svg{animation:sp-rimbalzo 320ms var(--sp-curva)}
+/* Footer: sul tessuto, senza scheda. */
+.sp-footer{padding-top:var(--spazio-5);padding-bottom:20px;display:flex;flex-direction:column;gap:var(--spazio-4)}
+.sp-footer__su{display:flex;flex-direction:column;gap:var(--spazio-4)}
+.sp-footer__chi{display:flex;align-items:center;gap:var(--spazio-3)}
+.sp-footer__chi img{width:48px;height:53px;flex-shrink:0}
+.sp-footer__nome{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:26px;line-height:1}
+.sp-footer__tagline{margin-top:4px;color:var(--testo-tenue);font-size:14px}
+.sp-footer__social{display:flex;gap:10px}
+.sp-footer__campo{display:flex;align-items:center;gap:var(--spazio-3);min-height:48px}
+.sp-footer__campo svg{color:var(--arancio-testo)}
+.sp-footer__campo > span{display:flex;flex-direction:column}
+.sp-footer__giu{display:flex;align-items:center;justify-content:space-between;gap:var(--spazio-3);border-top:1px solid var(--linea-fondo);padding-top:6px}
+.sp-footer__piccone{width:44px;height:44px;border:0;background:none;color:var(--testo-tenue);display:flex;align-items:center;justify-content:center;padding:0}
+/* Striscia degli sponsor: scheda nera dentro i margini, loghi che scorrono senza fermarsi mai. */
+.sp-striscia{margin-top:28px;background:var(--nero);border-radius:var(--raggio-scheda);overflow:hidden;padding:14px 0}
+.sp-striscia__pista{display:flex;width:max-content;animation:sp-giro 12s linear infinite}
+.sp-striscia__giro{display:flex;align-items:center;flex-shrink:0}
+.sp-striscia__giro img{height:28px;width:auto;max-width:none;margin-right:48px}
+/* Titolo di pagina */
+.sp-titolo-pagina{padding-top:20px}
+.sp-titolo-pagina h1,.sp-h1{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:44px;line-height:1}
+.sp-titolo-pagina__sotto{margin-top:4px;color:var(--testo-tenue);font-size:15px}
+.sp-titolo-pagina__attacco{margin-top:6px;color:var(--testo-tenue);font-size:16px;line-height:1.45;text-wrap:pretty}
+/* Titolo di sezione: titolo a sinistra, link o nota a destra. */
+.sp-titolo-sezione{display:flex;justify-content:space-between;align-items:center;gap:var(--spazio-2);min-height:44px}
+.sp-titolo-sezione h2,.sp-h2{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:28px;line-height:32px}
+.sp-titolo-sezione > .sp-tenue{text-align:right}
+
+/* ---------- 6. Partite ---------- */
+/* Stemma di una squadra: sempre in un riquadro quadrato, scalato per entrarci intero. */
+.sp-stemma{width:var(--sp-lato,24px);height:var(--sp-lato,24px);object-fit:contain;flex-shrink:0}
+.sp-stemma--vuoto{display:flex;align-items:center;justify-content:center;border-radius:var(--raggio-tondo);background:var(--segnaposto);color:var(--segnaposto-testo);font-size:13px;font-weight:700;line-height:1;overflow:hidden}
+.sp-squadra{display:flex;align-items:center;gap:var(--spazio-2);min-width:0}
+/* Scheda partita */
+.sp-partite__dopo{display:contents}
+.sp-partita{width:304px;flex-shrink:0;scroll-snap-align:start;padding:16px;display:flex;flex-direction:column;gap:6px;text-align:center}
+.sp-partita__quando,.sp-partita__fine{display:contents}
+.sp-partita__torneo{order:1;color:var(--testo-tenue);font-size:14px}
+.sp-partita__squadre{order:2;display:flex;align-items:flex-start;margin:6px 0}
+.sp-partita__squadra{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:700;font-size:16px;line-height:1.15;--sp-lato:72px}
+.sp-partita__v{font-weight:700;font-size:16px;padding-top:24px}
+.sp-partita__giorno{order:3;font-weight:700;font-size:16px}
+.sp-partita__campo{order:4;color:var(--testo-tenue);font-size:14px}
+.sp-partita__ora-largo{display:none}
+.sp-conto{order:5;display:flex;gap:10px;margin-top:8px}
+.sp-conto__casella{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60px;border-radius:var(--raggio-piccolo);font-size:13px}
+.sp-conto__casella b{font-family:var(--font-display);font-weight:800;font-size:34px;line-height:1.05;font-variant-numeric:tabular-nums}
+.sp-partita__azioni{order:6;display:flex;gap:8px;margin-top:8px}
+.sp-partita__azioni .sp-bottone{flex:1;min-height:46px}
+.sp-partita__azioni .sp-condividi{min-height:46px}
+/* Riga di calendario */
+.sp-cal__riga{display:grid;grid-template-columns:62px minmax(0,1fr);gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--linea);--sp-lato:22px}
+.sp-cal__riga:first-child{border-top:0}
+.sp-cal__quando b{display:block;font-weight:700;font-size:16px}
+.sp-cal__quando span{color:var(--testo-tenue);font-size:14px}
+.sp-cal__squadre{display:flex;flex-direction:column;gap:4px;min-width:0}
+.sp-cal__giornata{display:none}
+/* Righe e schede oltre il limite: sp-oltre si nasconde solo su telefono, sp-oltre-sempre ovunque. Il bottone sp-mostra mette sp-aperto sul blocco. */
+:not(.sp-aperto) > .sp-oltre-sempre{display:none}
+@container sp (max-width:1023.98px){:not(.sp-aperto) > .sp-oltre{display:none}}
+/* Risultato */
+.sp-risultato{padding:12px 14px;display:flex;flex-direction:column;gap:8px;--sp-lato:44px}
+.sp-risultato__testa{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sp-risultato__punti{display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+.sp-risultato__gol{font-family:var(--font-display);font-weight:800;font-size:40px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sp-risultato__squadre{text-align:center;font-size:14px}
+.sp-fila > .sp-risultato{width:200px;padding:12px;gap:6px}
+.sp-fila > .sp-risultato .sp-risultato__testa{display:contents}
+.sp-fila > .sp-risultato .sp-esito{order:4;align-self:flex-start}
+.sp-fila > .sp-risultato .sp-risultato__punti{padding:0}
+.sp-fila > .sp-risultato .sp-risultato__squadre{text-align:left}
+/* Etichetta dell'esito: il colore accompagna la parola, non la sostituisce. */
+.sp-esito{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:var(--raggio-tondo);font-size:13px;font-weight:700;white-space:nowrap}
+.sp-esito--vittoria{background:var(--vittoria-tinta);color:var(--vittoria)}
+.sp-esito--pareggio{background:var(--pareggio-tinta);color:var(--pareggio)}
+.sp-esito--sconfitta{background:var(--sconfitta-tinta);color:var(--sconfitta)}
+/* Classifica. Il pannello e' un contenitore: la finestra della nostra riga si misura su di lui (100cqw). */
+.sp-classifica{container-type:inline-size;padding:6px 14px}
+.sp-classifica table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;white-space:nowrap;--sp-lato:24px}
+.sp-classifica th{font-weight:600;font-size:13px;color:var(--testo-tenue);padding:0 0 6px;text-align:right;width:44px}
+.sp-classifica td{padding:9px 0;border-top:1px solid var(--linea);text-align:right}
+.sp-classifica th:first-child{width:22px;text-align:left}
+.sp-classifica td:first-child{text-align:left}
+.sp-classifica th:nth-child(2){width:auto;text-align:left;padding-left:8px}
+.sp-classifica td:nth-child(2){text-align:left;padding-left:8px}
+.sp-classifica th.sp-col-g{width:30px}
+.sp-classifica td:nth-child(2) .sp-squadra{overflow:hidden}
+.sp-noi > td{font-weight:700;position:relative;z-index:1;border-top-color:transparent}
+.sp-noi > td:first-child{z-index:0}
+.sp-noi + tr > td{border-top-color:transparent}
+.sp-noi > td:first-child::before{content:"";position:absolute;z-index:-1;top:2px;bottom:2px;left:-4px;width:calc(100cqw + 8px);border-radius:var(--raggio-finestra)}
+.sp-classifica--completa{padding:4px 14px}
+.sp-classifica--completa table{font-size:14px;--sp-lato:22px}
+.sp-classifica--completa th{width:22px}
+.sp-classifica--completa th:first-child{width:18px}
+.sp-classifica--completa th:nth-child(2),.sp-classifica--completa td:nth-child(2){padding-left:6px}
+.sp-classifica--completa .sp-squadra{gap:6px}
+.sp-classifica--completa th.sp-col-g{width:24px}
+.sp-classifica--completa th.sp-col-dr{width:36px}
+.sp-classifica--completa th.sp-col-pt{width:30px}
+/* Scorciatoie della pagina Partite */
+.sp-scorciatoie{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding-top:14px}
+.sp-scorciatoia{display:flex;align-items:center;justify-content:center;gap:10px;height:52px;font-weight:600}
+.sp-scorciatoia__sigla{font-family:var(--font-display);font-weight:800;font-size:24px;line-height:1;letter-spacing:.04em}
+.sp-scorciatoia__nome{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* ---------- 7. Persone ---------- */
+.sp-persona{display:flex;align-items:center;gap:12px;padding:8px 0;min-height:48px;border-top:1px solid var(--linea);transition:opacity var(--sp-t-rilascio) var(--sp-curva)}
+.sp-persona:first-child{border-top:0}
+.sp-persona:active{opacity:.55;transition-duration:var(--sp-t-premi)}
+.sp-persona__foto{width:48px;height:48px;border-radius:var(--raggio-tondo);object-fit:cover;object-position:50% 12%;flex-shrink:0}
+.sp-persona__testo{flex:1;min-width:0;display:flex;flex-direction:column}
+.sp-persona__nome{font-weight:700;font-size:16px}
+.sp-persona__sotto{color:var(--testo-tenue);font-size:14px}
+.sp-persona__numero{font-family:var(--font-display);font-weight:800;font-size:31px;line-height:1;font-variant-numeric:tabular-nums}
+.sp-persona--largo{display:none}
+/* Scheda giocatore: card, nome con condividi, numeri */
+.sp-scheda{display:flex;flex-direction:column;gap:14px;margin-top:4px}
+.sp-scheda-testa{display:flex;flex-direction:column;gap:14px}
+.sp-scheda-testa > .sp-sezione{margin-top:10px}
+.sp-scheda-nome{display:flex;align-items:flex-start;gap:12px}
+.sp-scheda-nome > div{flex:1;min-width:0}
+.sp-scheda-nome__ruolo{margin-top:6px;font-weight:700}
+.sp-scheda-nome__battuta{margin-top:2px;color:var(--testo-tenue);font-size:15px}
+/* Capocannoniere e "I migliori" */
+.sp-migliore{padding:12px;display:flex;align-items:center;gap:14px}
+.sp-migliore .sp-persona__foto{width:84px;height:84px}
+.sp-migliore .sp-persona__nome{font-size:20px}
+.sp-migliore__numero{font-family:var(--font-display);font-weight:800;font-size:60px;line-height:1;color:var(--arancio);font-variant-numeric:tabular-nums}
+.sp-migliore--stretto .sp-persona__foto{width:72px;height:72px}
+.sp-migliore--stretto .sp-migliore__numero{font-size:54px}
+/* Numeri in riquadri */
+.sp-numeri{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.sp-numeri--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sp-numeri > div{padding:10px 4px;display:flex;flex-direction:column;align-items:center}
+.sp-numeri dd{font-family:var(--font-display);font-weight:800;font-size:34px;line-height:36px;font-variant-numeric:tabular-nums}
+.sp-numeri dt{order:2;font-size:13px;color:var(--testo-tenue)}
+/* Grafico delle caratteristiche */
+.sp-radar{padding:10px 14px 14px}
+.sp-radar svg{width:100%;height:auto;font-family:var(--font-testo);font-size:13px}
+.sp-radar__griglia{fill:none;stroke:var(--griglia);stroke-width:1}
+.sp-radar__valori{fill:var(--arancio);fill-opacity:.18;stroke:var(--arancio);stroke-width:2.5;stroke-linejoin:round}
+.sp-radar__punti{fill:var(--testo)}
+.sp-radar text{fill:var(--testo)}
+/* In breve */
+.sp-inbreve{display:block}
+.sp-inbreve__riga{display:grid;grid-template-columns:118px minmax(0,1fr);gap:10px;padding:10px 0;border-top:1px solid var(--linea)}
+.sp-inbreve dl:first-child > .sp-inbreve__riga:first-child{border-top:0}
+.sp-inbreve dt{color:var(--testo-tenue);font-size:14px}
+.sp-inbreve dd{font-weight:600}
+/* Tabella delle statistiche */
+.sp-statistiche table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+.sp-statistiche th{font-weight:600;font-size:13px;color:var(--testo-tenue);padding:8px 0 6px;text-align:right;width:34px}
+.sp-statistiche th:first-child{text-align:left;width:auto}
+.sp-statistiche th button{border:0;background:none;padding:0;min-height:32px;font-weight:600;color:var(--testo-tenue)}
+.sp-statistiche th[aria-sort] button{color:var(--testo);text-decoration:underline;text-decoration-color:var(--arancio);text-decoration-thickness:2px;text-underline-offset:4px}
+.sp-statistiche td{padding:3px 0;border-top:1px solid var(--linea);text-align:right}
+.sp-statistiche td:first-child{text-align:left}
+.sp-statistiche td.sp-ordinata{font-weight:700}
+.sp-statistiche__nome{display:flex;align-items:center;gap:8px;min-height:44px}
+.sp-statistiche__nome img{width:32px;height:32px;border-radius:var(--raggio-tondo);object-fit:cover;object-position:50% 12%;flex-shrink:0}
+
+/* ---------- 8. Azioni ---------- */
+.sp-bottone{display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 16px;border:0;border-radius:var(--raggio-scheda);background:var(--nero);color:var(--su-nero);font-weight:600;text-align:center;
+  transition:transform var(--sp-t-rilascio) var(--sp-curva),box-shadow var(--sp-t-rilascio) var(--sp-curva)}
+.sp-bottone--vetro{min-height:46px;background:var(--vetro-orlo);color:var(--testo);position:relative;z-index:0;box-shadow:0 0 0 1px var(--vetro-filo);
+  text-decoration:underline;text-decoration-color:var(--arancio);text-decoration-thickness:2px;text-underline-offset:4px}
+.sp-bottone--vetro::before{content:"";position:absolute;z-index:-1;inset:var(--orlo-vetro);border-radius:var(--raggio-vetro);background:var(--vetro);box-shadow:0 0 0 1px var(--vetro-luce);pointer-events:none}
+.sp-bottone--liscio{text-decoration:none}
+.sp-bottone:active,.sp-scorciatoia:active,.sp-tondo:active,.sp-condividi:active{transform:scale(.96);transition-duration:var(--sp-t-premi)}
+.sp-scorciatoia,.sp-tondo,.sp-condividi{transition:transform var(--sp-t-rilascio) var(--sp-curva),box-shadow var(--sp-t-rilascio) var(--sp-curva)}
+.sp-link{display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:600;text-decoration:underline;text-decoration-color:var(--arancio);text-decoration-thickness:2px;text-underline-offset:4px}
+.sp-riga-sotto{text-decoration:underline;text-decoration-color:var(--arancio);text-decoration-thickness:2px;text-underline-offset:4px;color:var(--testo)}
+.sp-indietro{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-weight:600}
+.sp-tondo{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:var(--raggio-tondo);background:var(--superficie);color:var(--testo)}
+.sp-condividi{width:48px;min-height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:var(--raggio-scheda);color:var(--testo)}
+@media (hover:hover){
+  .sp-link:hover{color:var(--arancio-testo)}
+  .sp-bottone--vetro:hover,.sp-scorciatoia:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(90,60,40,.26)}
+  .sp-bottone:not(.sp-bottone--vetro):hover,.sp-tondo:hover,.sp-condividi:hover{transform:translateY(-2px)}
+  .sp-bottone:active,.sp-scorciatoia:active,.sp-tondo:active,.sp-condividi:active{transform:scale(.96)}
+  .sp-persona:hover .sp-persona__nome,.sp-migliore:hover .sp-persona__nome,.sp-statistiche__nome:hover{text-decoration:underline;text-decoration-color:var(--arancio);text-decoration-thickness:2px;text-underline-offset:4px}
+  .sp-header__nav a:hover{color:var(--testo)}
+}
+
+/* ---------- 9. Contenuti ---------- */
+/* Riquadro nero che porta un logo sponsor */
+.sp-logo-nero{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:112px;height:60px;border-radius:var(--raggio-piccolo);background:var(--nero)}
+.sp-logo-nero img{max-width:88px;max-height:34px;object-fit:contain}
+/* Scheda sponsor */
+.sp-sponsor{padding:14px;display:flex;flex-direction:column;gap:10px}
+.sp-sponsor__testa{display:flex;align-items:center;gap:12px}
+.sp-sponsor__nome{display:block;font-weight:700;font-size:17px}
+.sp-sponsor__battuta{font-size:16px;line-height:1.45}
+/* Scheda con invito: titolo, due righe, un bottone */
+.sp-invito{padding:14px;display:flex;flex-direction:column;gap:12px}
+.sp-invito h2{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:28px;line-height:30px}
+.sp-invito p{font-size:16px;line-height:1.45}
+/* Riga dello sponsor sulla maglia */
+.sp-maglia-riga{display:flex;align-items:center;gap:12px;min-height:64px;padding:2px 0;border-top:1px solid var(--linea)}
+.sp-maglia-riga:first-child{border-top:0}
+.sp-maglia-riga > span:last-child{display:flex;flex-direction:column}
+/* Riquadri di Altro */
+.sp-altro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sp-altro__voce{padding:16px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:164px;transition:transform var(--sp-t-rilascio) var(--sp-curva)}
+.sp-altro__voce:active{transform:scale(.96);transition-duration:var(--sp-t-premi)}
+.sp-altro__voce svg{color:var(--arancio)}
+.sp-altro__voce > span{display:flex;flex-direction:column;gap:4px}
+.sp-altro__nome{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:30px;line-height:1}
+.sp-altro__voce--grande{grid-column:span 2;flex-direction:row;align-items:center;gap:12px;min-height:132px}
+.sp-altro__voce--grande .sp-altro__nome{font-size:40px}
+.sp-altro__voce--fascia{grid-column:span 2;flex-direction:row;justify-content:flex-start;align-items:center;gap:16px;min-height:92px}
+/* Riquadro contatto */
+.sp-contatti{display:block}
+.sp-contatto{display:flex;align-items:center;gap:12px;min-height:64px;border-top:1px solid var(--linea);transition:opacity var(--sp-t-rilascio) var(--sp-curva)}
+.sp-contatto:first-child{border-top:0}
+.sp-contatto:active{opacity:.55;transition-duration:var(--sp-t-premi)}
+.sp-contatto > svg:first-child{color:var(--arancio)}
+.sp-contatto__testo{flex:1;min-width:0;display:flex;flex-direction:column}
+.sp-contatto__valore{font-weight:700;font-size:17px;overflow-wrap:anywhere}
+/* Carosello */
+.sp-carosello{position:sticky;top:var(--altezza-header);z-index:2;height:340px;overflow:hidden;background:var(--segnaposto);touch-action:pan-y}
+@supports (animation-timeline:scroll()){
+  .sp-carosello{animation:sp-carosello linear both;animation-timeline:scroll(nearest block);animation-range:var(--sp-carosello-da,94px) var(--sp-carosello-a,274px)}
+}
+@supports not (animation-timeline:scroll()){.sp-carosello{height:200px}}
+@keyframes sp-carosello{to{height:200px}}
+.sp-carosello__pista{display:flex;height:100%;transition:transform .5s ease}
+.sp-carosello__foto{flex:0 0 100%;width:100%;height:100%;object-fit:cover}
+.sp-carosello__punti{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:6px;pointer-events:none}
+.sp-carosello__punti span{width:6px;height:6px;border-radius:3px;background:var(--superficie);transition:width var(--sp-t-rilascio) var(--sp-curva)}
+.sp-carosello__punti span.sp-ora{width:18px;background:var(--testo)}
+.sp-carosello__pausa{position:absolute;right:10px;bottom:10px}
+/* Pannello di testo */
+.sp-prosa{padding:18px 16px}
+.sp-prosa p{font-size:17px;line-height:1.6;margin:0 0 1em;text-wrap:pretty}
+.sp-prosa p:last-child{margin-bottom:0}
+/* Voce del regolamento */
+.sp-regola{border-top:1px solid var(--linea)}
+.sp-regola:first-child{border-top:0}
+.sp-regola__titolo{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;border:0;background:none;padding:0;font-weight:600;text-align:left;transition:opacity var(--sp-t-rilascio) var(--sp-curva)}
+.sp-regola__titolo:active{opacity:.55;transition-duration:var(--sp-t-premi)}
+.sp-regola__titolo svg{transition:transform var(--sp-t-rilascio) var(--sp-curva)}
+.sp-regola__titolo[aria-expanded="true"] svg{transform:rotate(90deg)}
+.sp-regola__testo{padding:0 0 14px 18px;font-size:15px;line-height:1.45}
+.sp-regola__testo li{margin-top:6px}
+.sp-regola__testo[hidden]{display:none}
+
+/* ---------- 10. Stati ---------- */
+.sp-in-campo{order:5;display:flex;align-items:center;justify-content:center;min-height:60px;margin-top:8px;border-radius:var(--raggio-piccolo);font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:28px;line-height:1}
+.sp-vuoto{padding:20px 16px;text-align:center;font-weight:600}
+.sp-card-in-arrivo{aspect-ratio:2 / 3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:28px;line-height:1;color:var(--testo-tenue)}
+.sp-card-in-arrivo img{width:96px;height:auto;opacity:1}
+.sp-foto-vuota{display:flex;align-items:center;justify-content:center;background:var(--segnaposto);color:var(--segnaposto-testo);font-weight:700;font-size:15px;line-height:1}
+.sp-avvisi{position:fixed;left:0;right:0;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;justify-content:center;pointer-events:none;padding:0 16px}
+.sp-avviso{display:flex;align-items:center;min-height:44px;padding:0 18px;border-radius:var(--raggio-scheda);background:var(--nero);color:var(--su-nero);font-weight:600;opacity:0;transform:translateY(14px);transition:opacity var(--sp-t-rilascio) var(--sp-curva),transform var(--sp-t-rilascio) var(--sp-curva)}
+.sp-avviso.sp-ok{opacity:1;transform:none}
+/* Card del giocatore, intera */
+.sp-card{display:block;border-radius:var(--raggio-scheda);overflow:hidden}
+.sp-card img{width:100%;aspect-ratio:2 / 3;object-fit:cover}
+.sp-card-piena{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.86);border:0;width:100%;height:100%;max-width:none;max-height:none}
+.sp-card-piena img{max-width:100%;max-height:100%;border-radius:var(--raggio-scheda)}
+.sp-card-piena .sp-tondo{position:absolute;top:16px;right:16px}
+
+/* ---------- Schermo largo: da 1024 px ---------- */
+@container sp (min-width:1024px){
+  .sp-app > *{font-size:16px;line-height:1.4}
+  .sp-tel{display:none !important}
+  .sp-largo{display:revert !important}
+  .sp-contenuto{max-width:calc(var(--sp-contenuto) + 64px);padding-inline:32px}
+  .sp-sezione{margin-top:40px;gap:10px;scroll-margin-top:calc(var(--altezza-header-largo) + 16px)}
+  .sp-sezione--stretta{margin-top:32px}
+  .sp-due{display:grid;grid-template-columns:minmax(0,var(--sp-sx)) minmax(0,var(--sp-dx));gap:32px;align-items:start;margin-top:40px}
+  .sp-due--inverso{grid-template-columns:minmax(0,var(--sp-dx)) minmax(0,var(--sp-sx))}
+  .sp-due--pari{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sp-due > .sp-sezione,.sp-due > * > .sp-sezione:first-child{margin-top:0}
+  .sp-colonna{display:flex;flex-direction:column;gap:32px}
+  .sp-colonna > .sp-sezione{margin-top:0}
+  .sp-fila{display:grid;grid-template-columns:repeat(var(--sp-colonne,3),minmax(0,1fr));gap:16px;overflow:visible;margin:0;padding:0}
+  .sp-pannello{padding:6px 18px}
+  .sp-pila{gap:10px}
+  /* header */
+  .sp-header__in{height:76px;max-width:calc(var(--sp-contenuto) + 64px);padding-inline:32px;gap:32px}
+  .sp-header__marchio{grid-column:2;display:flex;gap:14px;font-size:32px}
+  .sp-header__marchio img{width:54px;height:60px}
+  .sp-header__nav{display:flex;gap:28px;align-self:stretch}
+  .sp-header__nav--dx{justify-content:flex-end}
+  .sp-header__nav a{display:flex;align-items:center;font-weight:600;font-size:16px;color:var(--testo-tenue);border-top:3px solid transparent;border-bottom:3px solid transparent;transition:color var(--sp-t-rilascio) var(--sp-curva),border-color var(--sp-t-rilascio) var(--sp-curva)}
+  .sp-header__nav a[aria-current="page"]{color:var(--testo);font-weight:700;border-bottom-color:var(--testo)}
+  .sp-barra{display:none}
+  /* footer */
+  .sp-footer{padding-top:36px;padding-bottom:16px;gap:0}
+  .sp-footer__su{display:grid;grid-template-columns:1fr auto auto;gap:48px;align-items:center;padding-bottom:20px}
+  .sp-footer__chi{gap:14px}
+  .sp-footer__chi img{width:56px;height:62px}
+  .sp-footer__nome{font-size:30px}
+  .sp-footer__tagline br{display:none}
+  .sp-footer__campo{order:2}
+  .sp-footer__social{order:3}
+  /* striscia sponsor */
+  .sp-striscia{margin-top:48px;padding:18px 0}
+  .sp-striscia__pista{animation:sp-giro-largo 30s linear infinite}
+  .sp-striscia__giro img{height:36px;margin-right:80px}
+  /* titoli */
+  .sp-titolo-pagina{padding-top:40px}
+  .sp-titolo-pagina--riga{display:flex;justify-content:space-between;align-items:flex-end;gap:32px}
+  .sp-titolo-pagina h1,.sp-h1{font-size:56px}
+  .sp-titolo-pagina__sotto{margin-top:6px;font-size:16px}
+  .sp-titolo-pagina__attacco{margin-top:8px;font-size:18px;max-width:720px}
+  .sp-titolo-sezione h2,.sp-h2{font-size:36px;line-height:1}
+  .sp-link{font-size:15px}
+  /* scheda partita */
+  .sp-fila.sp-partite{display:block}
+  .sp-partite__dopo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:16px}
+  .sp-partita{width:auto;padding:20px;--sp-lato:60px}
+  .sp-partita__squadre{margin:8px 0 4px}
+  .sp-partita__squadra{gap:8px;font-size:15px;--sp-lato:60px}
+  .sp-partita__v{padding-top:20px}
+  .sp-partita--prossima{display:grid;grid-template-columns:minmax(0,1fr) auto 352px;gap:40px;align-items:center;padding:24px 28px;text-align:left}
+  .sp-partita--prossima .sp-partita__squadre{order:0;margin:0}
+  .sp-partita--prossima .sp-partita__squadra{font-size:18px;text-align:center;--sp-lato:96px}
+  .sp-partita--prossima .sp-partita__v{padding-top:36px}
+  .sp-partita--prossima .sp-partita__quando{display:flex;flex-direction:column;gap:4px;border-left:1px solid var(--linea);padding-left:40px}
+  .sp-partita--prossima .sp-partita__giorno{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:34px;line-height:1.05}
+  .sp-partita--prossima .sp-partita__campo{color:var(--testo);font-weight:700;font-size:18px}
+  .sp-partita--prossima .sp-partita__ora-tel{display:none}
+  .sp-partita--prossima .sp-partita__ora-largo{display:inline}
+  .sp-partita--prossima .sp-partita__fine{display:block}
+  .sp-partita--prossima .sp-conto,.sp-partita--prossima .sp-in-campo{margin-top:0}
+  .sp-conto__casella{min-height:68px}
+  .sp-conto__casella b{font-size:38px}
+  .sp-in-campo{min-height:68px;font-size:34px}
+  .sp-partita__azioni{margin-top:10px}
+  .sp-partita__azioni .sp-bottone,.sp-partita__azioni .sp-condividi{min-height:48px}
+  /* calendario */
+  .sp-calendario{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--sp-righe,6),auto);grid-auto-flow:column;column-gap:48px;padding:6px 24px}
+  .sp-cal__riga{grid-template-columns:72px minmax(0,1fr) auto;gap:16px;padding:13px 0;--sp-lato:24px}
+  .sp-cal__riga--prima{border-top:0}
+  .sp-cal__squadre{gap:5px}
+  .sp-cal__giornata{display:block;text-align:right;line-height:1.35;color:var(--testo-tenue);font-size:14px}
+  .sp-mostra--tel{display:none !important}
+  /* risultato */
+  .sp-risultato,.sp-fila > .sp-risultato{width:auto;padding:16px;gap:10px;--sp-lato:48px}
+  .sp-fila > .sp-risultato .sp-risultato__testa{display:flex}
+  .sp-fila > .sp-risultato .sp-esito{order:0;align-self:auto}
+  .sp-fila > .sp-risultato .sp-risultato__squadre{text-align:center}
+  .sp-risultato__gol{font-size:44px}
+  .sp-risultato__punti{padding:0 36px}
+  .sp-griglia-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .sp-griglia-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .sp-mostra{margin-top:6px}
+  /* classifica */
+  .sp-classifica,.sp-classifica--completa{padding:6px 18px}
+  .sp-classifica table,.sp-classifica--completa table{font-size:16px;--sp-lato:28px}
+  .sp-classifica th{padding:8px 0 6px;width:52px}
+  .sp-classifica td{padding:12px 0}
+  .sp-classifica th:first-child,.sp-classifica--completa th:first-child{width:28px}
+  .sp-classifica th:nth-child(2),.sp-classifica td:nth-child(2),.sp-classifica--completa th:nth-child(2),.sp-classifica--completa td:nth-child(2){padding-left:8px}
+  .sp-classifica .sp-squadra,.sp-classifica--completa .sp-squadra{gap:10px}
+  .sp-classifica th.sp-col-g{width:36px}
+  .sp-noi > td:first-child::before{left:-8px;width:calc(100cqw + 16px)}
+  .sp-classifica--completa th{width:26px}
+  .sp-classifica--completa th.sp-col-g{width:30px}
+  .sp-classifica--completa th.sp-col-dr{width:42px}
+  .sp-classifica--completa th.sp-col-pt{width:44px}
+  /* scorciatoie */
+  .sp-scorciatoie{display:flex;gap:10px;padding-top:0}
+  .sp-scorciatoia{padding:0 18px 0 16px}
+  .sp-scorciatoia__sigla{font-size:22px}
+  .sp-scorciatoia__nome{position:static;width:auto;height:auto;margin:0;overflow:visible;clip-path:none}
+  /* persone */
+  .sp-persona{gap:12px;padding:10px 0;min-height:56px}
+  .sp-persona__foto{width:52px;height:52px}
+  .sp-persona__numero{font-size:34px}
+  .sp-persone-2{display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
+  .sp-persone-2 > .sp-persona:nth-child(-n+2){border-top:0}
+  .sp-rosa .sp-persona{gap:14px}
+  .sp-rosa .sp-persona__foto{width:56px;height:56px}
+  .sp-rosa .sp-persona__nome{font-size:17px}
+  .sp-migliore,.sp-migliore--stretto{padding:16px 18px;gap:16px}
+  .sp-migliore .sp-persona__foto,.sp-migliore--stretto .sp-persona__foto{width:96px;height:96px}
+  .sp-migliore .sp-persona__nome{font-size:22px}
+  .sp-migliore__numero,.sp-migliore--stretto .sp-migliore__numero{font-size:72px}
+  .sp-numeri{gap:12px}
+  .sp-numeri > div{padding:14px 8px 12px}
+  .sp-numeri dd{font-size:48px;line-height:1}
+  .sp-numeri dt{font-size:14px}
+  .sp-radar{padding:14px 18px 18px}
+  .sp-radar svg{max-width:440px;margin:0 auto}
+  .sp-inbreve{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:48px;align-items:start;padding:6px 24px}
+  .sp-inbreve__riga{grid-template-columns:190px minmax(0,1fr);gap:16px;padding:13px 0}
+  .sp-inbreve dl > .sp-inbreve__riga:first-child{border-top:0}
+  .sp-inbreve dt{font-size:15px}
+  .sp-statistiche table{font-size:16px}
+  .sp-statistiche th{width:72px}
+  .sp-statistiche td{padding:4px 0}
+  .sp-statistiche__nome{gap:12px;min-height:52px}
+  .sp-statistiche__nome img{width:40px;height:40px}
+  .sp-persona--largo{display:flex}
+  /* scheda giocatore */
+  .sp-scheda{display:grid;grid-template-columns:minmax(0,var(--sp-sx)) minmax(0,var(--sp-dx));gap:32px;align-items:start;margin-top:8px}
+  .sp-scheda-testa{gap:24px}
+  .sp-scheda-testa > .sp-sezione{margin-top:0}
+  .sp-scheda-nome{gap:16px}
+  .sp-scheda-nome__ruolo{margin-top:8px;font-size:18px}
+  .sp-scheda-nome__battuta{font-size:16px}
+  /* pagina Partite: a sinistra classifica e regolamento, a destra i risultati */
+  .sp-due--partite{grid-template-rows:auto 1fr;gap:40px 32px}
+  .sp-due--partite > #risultati{grid-column:2;grid-row:1 / span 2}
+  .sp-due--partite > #classifica{grid-column:1;grid-row:1}
+  .sp-due--partite > #regolamento{grid-column:1;grid-row:2}
+  .sp-due--partite > .sp-sezione{margin-top:0}
+  /* azioni */
+  .sp-vetro > .sp-bottone:not(.sp-bottone--vetro),.sp-invito .sp-bottone{display:inline-flex;align-self:flex-start;padding:0 28px}
+  .sp-bottone--vetro{min-height:48px}
+  /* contenuti */
+  .sp-sponsor{padding:18px;gap:14px}
+  .sp-sponsor__testa{flex-direction:column;align-items:stretch;gap:14px}
+  .sp-sponsor .sp-logo-nero{width:auto;height:132px}
+  .sp-sponsor .sp-logo-nero img{max-width:220px;max-height:72px}
+  .sp-sponsor__nome{font-size:18px}
+  .sp-invito{padding:28px 32px;align-items:flex-start}
+  .sp-invito h2{font-size:36px;line-height:1}
+  .sp-invito p{max-width:720px;font-size:16px}
+  .sp-invito--colonna{padding:24px;height:100%}
+  .sp-invito--colonna .sp-bottone{margin-top:auto}
+  .sp-maglia-riga{gap:16px;padding:12px 0}
+  .sp-maglia-riga .sp-logo-nero{width:132px;height:68px}
+  .sp-maglia-riga .sp-logo-nero img{max-width:104px;max-height:40px}
+  .sp-maglia-riga .sp-forte{font-size:17px}
+  .sp-contatti{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:0;background:none;box-shadow:none}
+  .sp-contatti::before{display:none}
+  .sp-contatto{position:relative;z-index:0;gap:14px;padding:18px;min-height:88px;border-top:0;background:var(--vetro-orlo);border-radius:var(--raggio-scheda);box-shadow:0 0 0 1px var(--vetro-filo)}
+  .sp-contatto::before{content:"";position:absolute;z-index:-1;inset:var(--orlo-vetro);border-radius:var(--raggio-vetro);background:var(--vetro);box-shadow:0 0 0 1px var(--vetro-luce)}
+  .sp-carosello{top:calc(var(--altezza-header-largo) + 24px);height:auto;aspect-ratio:4 / 3;border-radius:var(--raggio-scheda);animation:none}
+  .sp-carosello__punti{bottom:14px}
+  .sp-carosello__punti span{width:8px;height:8px;border-radius:4px}
+  .sp-carosello__punti span.sp-ora{width:8px}
+  .sp-carosello__pausa{right:12px;bottom:12px}
+  .sp-prosa{padding:28px 32px}
+  .sp-prosa p{font-size:18px}
+  .sp-regola__titolo{min-height:52px}
+  .sp-avvisi{bottom:32px}
+}
+/* Tra 1024 e 1183 px: i tre ritocchi approvati. */
+@container sp (min-width:1024px) and (max-width:1183.98px){
+  .sp-partita--prossima{gap:28px;padding:20px 24px;grid-template-columns:minmax(0,1fr) auto 288px}
+  .sp-partita--prossima .sp-partita__quando{padding-left:28px}
+  .sp-partita--prossima .sp-partita__squadra{font-size:16px;--sp-lato:80px}
+  .sp-partita--prossima .sp-partita__v{padding-top:28px}
+  .sp-partita--prossima .sp-partita__giorno{font-size:30px}
+  .sp-partita--prossima .sp-partita__campo{font-size:16px}
+  .sp-partite__dopo .sp-partita{padding:16px}
+  .sp-risultato,.sp-fila > .sp-risultato{padding:12px;--sp-lato:40px}
+  .sp-risultato__gol{font-size:36px}
+  .sp-risultato__punti{padding:0 12px}
+  .sp-contatto{padding:16px}
+  .sp-contatto > svg:first-child{width:28px;height:28px}
+  .sp-contatto__valore{font-size:16px}
+}
+
+/* ---------- Meno movimento ---------- */
+@media (prefers-reduced-motion:reduce){
+  .sp-js .sp-su,.sp-js .sp-tenda,.sp-js .sp-header--entra::after,.sp-js .sp-barra__voce[aria-current="page"] svg{animation:none}
+  .sp-app *,.sp-app *::before,.sp-app *::after{transition:none !important}
+  .sp-striscia__pista{animation:none;width:100%;justify-content:center}
+  .sp-striscia__giro + .sp-striscia__giro{display:none}
+  .sp-striscia__giro img:last-child{margin-right:0}
+  .sp-carosello__pista{transition:none}
+  ::view-transition-old(root),::view-transition-new(root){animation:none}
+}
+@supports not (width:1cqw){
+  .sp-noi > td:first-child::before{display:none}
+}

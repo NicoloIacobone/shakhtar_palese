@@ -38,7 +38,7 @@
     },
     {
       "id": "dreambar",
-      "nome": "Dream Café Bar",
+      "nome": "Dream Bar",
       "livello": "main",
       "logo": "assets/sponsor/dreambar.png",
       "sfondo": "scuro",
@@ -48,20 +48,6 @@
       "instagram": "",
       "dal": 2026,
       "attivo": true
-    },
-    {
-      "id": "mj",
-      "nome": "MJ",
-      "livello": "tecnico",
-      "logo": "assets/sponsor/mj.png",
-      "sfondo": "chiaro",
-      "posizione_maglia": "Petto, lato sinistro",
-      "descrizione": "Il marchio che produce la maglia: quando chiudono il negozio, iniziano ad aprire le birre come noi.",
-      "sito": "",
-      "instagram": "",
-      "dal": 2026,
-      "attivo": true,
-      "_placeholder": true
     }
   ],
 
