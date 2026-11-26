@@ -15,12 +15,12 @@
       '<span class="sp-contatto__testo"><span class="sp-tenue">' + etichetta + '</span><span class="sp-contatto__valore">' + SP.esc(valore) + '</span></span>' + AVANTI + '</a>';
   }
 
-  SP.carica(['config', 'sponsor', 'storia']).then(function (d) {
+  SP.pagina([], function (d) {
     var so = (d.config && d.config.social) || {}, c = (d.config && d.config.campo) || {};
     var righe = '';
     if (so.email) { righe += contatto('mailto:' + so.email, false, 'busta', 'Email', so.email); }
     if (so.instagram) { righe += contatto('https://www.instagram.com/' + so.instagram + '/', true, 'macchina', 'Instagram', '@' + so.instagram); }
-    if (so.tiktok) { righe += contatto('https://www.tiktok.com/@' + so.tiktok, true, 'nota', 'TikTok', '@' + so.tiktok); }
+    if (so.tiktok) { righe += contatto('https://www.tiktok.com/@' + so.tiktok, true, 'tiktok', 'TikTok', '@' + so.tiktok); }
     $('contatti').outerHTML = righe ? '<div class="sp-sezione sp-sezione--stretta"><div class="sp-vetro sp-pannello sp-contatti sp-su">' + righe + '</div></div>' : '';
 
     var campo = c.nome ? '<div class="sp-invito sp-invito--colonna sp-vetro sp-su"><h2>Il campo di casa</h2>' +
@@ -32,11 +32,5 @@
       (so.email ? '<a class="sp-bottone" href="mailto:' + SP.esc(so.email) + '">' + SP.simbolo('busta', 22) + 'Scrivici</a>' : '') + '</div>';
     $('sotto').outerHTML = '<div class="sp-due sp-contatti-due">' + campo + amichevole + '</div>';
 
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

@@ -22,7 +22,7 @@
       '<div class="sp-vetro sp-pannello sp-su">' + lista.map(riga).join('') + '</div></section>';
   }
 
-  SP.carica(['config', 'rosa', 'locandine', 'sponsor', 'storia']).then(function (d) {
+  SP.pagina(['rosa', 'locandine'], function (d) {
     var persone = SP.persone(d.rosa, d.locandine, d.config);
     var giocatori = persone.filter(function (x) { return !x.staff; });
     var staff = persone.filter(function (x) { return x.staff; });
@@ -36,11 +36,5 @@
     ].filter(Boolean).join(' e ');
     $('gruppi').outerHTML = '<div class="sp-due sp-due--pari sp-rosa"><div class="sp-colonna">' + blocchi.slice(0, 3).join('') + '</div>' +
       '<div class="sp-colonna">' + blocchi[3] + gruppo('Staff', staff) + '</div></div>';
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

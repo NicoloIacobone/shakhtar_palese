@@ -4,6 +4,32 @@
    scaricare il file aggiornato da mettere al posto di quello vecchio.
    ========================================================================= */
 
+/* Tema chiaro/scuro del pannello (prima stava in assets/js/main.js insieme alle
+   funzioni del sito vecchio; il pannello usava solo questa). Default scuro; se
+   hai gia' scelto, vince la tua scelta (localStorage "sp-tema", solo in locale). */
+(function tema() {
+  const SALVATO = 'sp-tema';
+  const applica = (t) => {
+    document.documentElement.setAttribute('data-tema', t);
+    document.querySelectorAll('[data-azione="tema"]').forEach((b) => {
+      b.setAttribute('aria-label', t === 'chiaro' ? 'Passa al tema scuro' : 'Passa al tema chiaro');
+      // L'icona mostra DOVE si va: col tema scuro attivo si vede il sole.
+      b.querySelector('[data-icona-sole]')?.toggleAttribute('hidden', t === 'chiaro');
+      b.querySelector('[data-icona-luna]')?.toggleAttribute('hidden', t !== 'chiaro');
+    });
+  };
+  let iniziale = 'scuro';
+  try { iniziale = localStorage.getItem(SALVATO) || 'scuro'; } catch (e) { /* private browsing */ }
+  applica(iniziale);
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-azione="tema"]');
+    if (!b) return;
+    const nuovo = document.documentElement.getAttribute('data-tema') === 'chiaro' ? 'scuro' : 'chiaro';
+    applica(nuovo);
+    try { localStorage.setItem(SALVATO, nuovo); } catch (e) { /* ignora */ }
+  });
+})();
+
 (function admin() {
   const elTab      = document.getElementById('tab');
   const elPannello = document.getElementById('pannello');

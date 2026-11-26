@@ -1,6 +1,6 @@
 {
   "_da_rivedere": false,
-  "_nota": "Testo della pagina 'La nostra storia'. Ogni voce di 'paragrafi' e' un capoverso. Se rimetti \"_da_rivedere\": true, sul sito ricompare l'avviso giallo di bozza.",
+  "_nota": "Testo della pagina 'La nostra storia'. Ogni voce di 'paragrafi' e' un capoverso; 'carosello' sono le foto in cima. Con \"_da_rivedere\": true check_data.py ricorda che il testo e' una bozza (sul sito non compare niente).",
   "titolo": "La nostra storia",
   "sottotitolo": "Come una squadra di Palese ha deciso di chiamarsi come una squadra ucraina di minatori.",
   "carosello": [
@@ -22,12 +22,30 @@
     }
   ],
   "targa": {
-    "_nota": "La targa dei fondatori: l'easter egg del sito. E' il piccone in fondo a ogni pagina, accanto alla riga del copyright. I nomi NON si scrivono qui: li legge da data/rosa.json, cosi' restano sempre quelli veri. Con \"solo_presentati\": true la targa mostra solo chi ha gia' la sua locandina pubblicata (utile se stai ancora presentando la squadra una al giorno e non vuoi anticipare i nomi); con false ci sono tutti. Metti \"attivo\": false per togliere il piccone dal footer.",
+    "_nota": "La targa dei fondatori: l'easter egg del sito. E' il piccone in fondo a ogni pagina, accanto alla riga del copyright. I nomi NON si scrivono qui: li legge da data/rosa.json, cosi' restano sempre quelli veri. Con \"solo_presentati\": true la targa mostra solo chi ha gia' la sua locandina pubblicata (utile se stai ancora presentando la squadra una al giorno e non vuoi anticipare i nomi); con false ci sono tutti. Metti \"attivo\": false per togliere il piccone dal footer. \"escludi\": numeri di maglia di chi NON va in targa (resta in rosa e ovunque altrove). \"menzione\": un gruppo in piu' che compare solo nella targa (non in rosa), con titolo e persone {nome, cognome, ruolo}. Nel testo {fondatori} diventa il numero di giocatori e staff in targa, {menzioni} quello della menzione, {persone} il totale: i numeri si contano da soli.",
     "attivo": true,
     "occhiello": "Autunno 2026",
     "titolo": "Quelli che c'erano all'inizio",
-    "testo": "Una squadra amatoriale non ha un atto costitutivo: ha 19 persone che un giorno hanno detto di sì. Questi sono i nomi, scritti qui perché fra dieci anni nessuno se li ricorderà tutti.",
-    "solo_presentati": false
+    "testo": "Una squadra amatoriale non ha un atto costitutivo: ha {fondatori} persone che un giorno hanno detto di sì, e {menzioni} che ci hanno messo l'occhio. Questi sono i nomi, scritti qui perché fra dieci anni nessuno se li ricorderà tutti.",
+    "solo_presentati": false,
+    "escludi": [
+      4
+    ],
+    "menzione": {
+      "titolo": "Menzione d'onore",
+      "persone": [
+        {
+          "nome": "Paolo",
+          "cognome": "Panegirico",
+          "ruolo": "Direzione artistica"
+        },
+        {
+          "nome": "Davide",
+          "cognome": "Carannante",
+          "ruolo": "Direzione artistica"
+        }
+      ]
+    }
   },
   "paragrafi": [
     "Shakhtar Palese nasce nell'autunno del 2026, in un bar di Palese, nel modo in cui nascono quasi tutte le squadre amatoriali: qualcuno dice «facciamo una squadra» e per una volta nessuno cambia discorso.",

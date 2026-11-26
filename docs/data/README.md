@@ -148,6 +148,17 @@ vengono riscritti.
 `gol`, `ammonizioni`, `espulsioni`, `mvp` sono tutti numeri interi, mai
 negativi, mai fra virgolette: `"gol": 4` va bene, `"gol": "4"` no.
 
+**Il voto del portiere.** Chi ha giocato almeno una partita in porta ha anche
+`"voti_portiere": {"somma": 73, "partite": 9}`: la somma dei voti presi da
+portiere e in quante partite (dal dettaglio di ogni partita, controllati con la
+classifica "portieri" del torneo). Il portiere per regolamento non può essere
+MVP, quindi per chi in `rosa.json` ha `"ruolo": "Portiere"` il sito mostra il
+**voto medio** al posto degli MVP: nella sua scheda ("voto", es. 8,1) e nella
+colonna MVP della tabella Statistiche (dove per l'ordine conta come 0 MVP).
+Il voto ha un decimale e la virgola. Chi ha giocato in porta una volta sola
+senza essere il portiere (es. Michele De Tullio il 12 ottobre 2026) ha il campo,
+ma il sito non lo mostra.
+
 Se aggiungi un giocatore alla rosa, aggiungi anche la sua riga qui (all'inizio
 tutta a zero): `check_data.py` te lo ricorda.
 
@@ -174,7 +185,8 @@ tramite un'API pubblica. Lo script `tools/sync_torneo.py` li scarica e riscrive:
 | file | cosa | cosa resta tuo |
 |---|---|---|
 | `tornei.json` | `classifica` intera, `calendario` (date, avversari, risultati), `stato` da `in_programma` a `in_corso` | `campo` e `note` di ogni partita, `regolamento`, tutto il resto |
-| `statistiche.json` | `gol`, `ammonizioni`, `espulsioni`, `mvp` | tutti gli altri campi |
+| `statistiche.json` | `gol`, `ammonizioni`, `espulsioni`, `mvp`, `voti_portiere` | tutti gli altri campi |
+| `dettagli.json` | gol, ammoniti, espulsi, miglior giocatore e voto dei portieri di ogni nostra partita giocata | niente: è tutto suo |
 
 Il collegamento si fa con il campo **`quick_tournament_id`** del torneo: è il
 codice lungo nell'indirizzo della pagina pubblica
@@ -294,6 +306,49 @@ sul sito restano i link di prima e il resto del workflow va avanti.
 `drive.google.com` (altrimenti non si pubblica) e avvisa se un `id` non è nel
 calendario.
 
+## `dettagli.json` — marcatori, cartellini, MVP e portieri di ogni partita
+
+⚠️ **Questo file lo scrive `tools/sync_torneo.py`.** Non modificarlo a mano: al
+giro dopo verrebbe riscritto.
+
+Per ogni nostra partita giocata (l'`id` del calendario) lo script legge il
+dettaglio della partita sul sito del torneo (una richiesta per partita, con
+mezzo secondo di pausa tra l'una e l'altra) e ne copia:
+
+```json
+"bp26-a1g1": {
+  "gol": [{"nome": "Gianluca Tesser", "casa": false, "quanti": 3}],
+  "ammoniti": [{"nome": "Umberto Esposito", "casa": false}],
+  "espulsi": [{"nome": "…", "casa": true, "doppio_giallo": true}],
+  "mvp": {"nome": "Gianluca Tesser", "casa": false},
+  "portieri": {"casa": {"nome": "Fabio Carbonara", "voto": 7},
+               "ospite": {"nome": "Savio Spadaro", "voto": 7}}
+}
+```
+
+- `casa`: `true` se la persona gioca nella squadra di casa (sul sito sta nella
+  colonna di sinistra, come il punteggio).
+- **I nomi:** i nostri come in `rosa.json` ("Gianluca Tesser"), riconosciuti per
+  nome e cognome e poi per numero di maglia (ci sono tre De Tullio); gli
+  avversari "Nome Cognome", con le iniziali maiuscole se il torneo li scrive
+  tutti maiuscoli. Chi viene dalla panchina ha `"staff": true`.
+- **Le espulsioni:** il codice del sito del torneo dice rosso diretto = tipo 3,
+  doppio giallo = tipo 4 (`"doppio_giallo": true`). Al 26 novembre 2026 nel
+  torneo non ce n'è ancora stata nessuna, quindi non è mai stato visto con dati
+  veri. Un tipo di evento sconosciuto viene saltato con un AVVISO.
+- **Una voce senza dati non c'è** (niente ammoniti = niente `ammoniti`), e sul
+  sito la sua sezione non compare; una partita senza nessun dato non ha il
+  pulsante "Dettagli".
+
+Sul sito: nella pagina Partite il pulsante **Dettagli** sotto ogni risultato
+allunga la scheda; in home apre una finestra con la scheda e i dettagli.
+
+Se il dettaglio di una partita non risponde, classifica, calendario e numeri si
+aggiornano lo stesso, mentre `dettagli.json` e i `voti_portiere` restano quelli
+di prima (lo script lo dice con un AVVISO): niente dati a metà.
+`check_data.py` controlla la forma del file e avvisa se un `id` non è nel
+calendario.
+
 ## `locandine.json` — le card di presentazione
 
 ⚠️ **Questo file lo genera `sync.command`.** Non riscriverlo a mano da capo:
@@ -379,29 +434,26 @@ script: se la modifichi, viene ricalcolata.
 
 ## `storia.json` — la pagina "La nostra storia"
 
-`titolo`, `sottotitolo`, `foto_squadra` e `paragrafi` (una lista: ogni voce è un
-capoverso).
+`titolo`, `sottotitolo`, `paragrafi` (una lista: ogni voce è un capoverso) e
+`carosello`, le foto che scorrono in cima alla pagina: una lista di
+`{"file": "assets/img/storia/storia-1.jpg", "alt": "…"}`, con il percorso
+relativo alla radice del sito e una descrizione di cosa mostra la foto.
 
-### La foto di squadra
+### La targa dei fondatori
 
-In cima alla pagina c'è la foto di gruppo. Finché non ce l'hai, al suo posto il
-sito mostra un **segnaposto tratteggiato** con le stesse proporzioni (16:9), così
-la pagina è già impaginata come sarà.
-
-Per metterci la foto vera:
-
-1. salva l'immagine in `assets/img/` (es. `assets/img/squadra-2026.jpg`);
-2. scrivi il suo percorso nel campo `file`.
+È il piccone in fondo a ogni pagina, accanto alla riga del copyright: apre la
+targa con i nomi. Sta sotto `"targa"`:
 
 | campo | note |
 |---|---|
-| `file` | il percorso dell'immagine, **relativo alla radice del sito**: `assets/img/squadra-2026.jpg`. Vuoto = si vede il segnaposto |
-| `alt` | la descrizione per chi non vede l'immagine (screen reader, immagine rotta) |
-| `didascalia` | facoltativa, la riga di testo sotto la foto. Vuota = non compare |
+| `attivo` | `false` toglie il piccone |
+| `occhiello`, `titolo`, `testo` | i testi in cima. Nel `testo` **`{fondatori}`** diventa quante persone della rosa (giocatori e staff) sono in targa, **`{menzioni}`** quante nella menzione d'onore, **`{persone}`** il totale: i numeri si contano da soli |
+| `solo_presentati` | `true` = solo chi ha già la locandina pubblicata |
+| `escludi` | numeri di maglia di chi **non** va in targa, es. `[4]`. Resta in rosa e ovunque altrove |
+| `menzione` | un gruppo in più, solo nella targa (non in rosa): `{"titolo": "Menzione d'onore", "persone": [{"nome", "cognome", "ruolo"}]}`. Il `ruolo` è la riga sotto il nome |
 
-Il segnaposto sparisce da solo nel momento in cui `file` non è più vuoto: non
-c'è niente da toccare né nell'HTML né nel CSS.
+I nomi della rosa la targa li legge da `rosa.json`: non si scrivono qui.
 
-Il campo **`"_da_rivedere": true` fa comparire sul sito l'avviso "bozza da
-rivedere"**. Il testo che c'è adesso l'ha scritto Claude come traccia e contiene
-dettagli inventati: quando lo riscrivi tu, metti `false` e l'avviso sparisce.
+Il campo **`"_da_rivedere": true`** segna il testo come bozza: il sito non
+mostra niente, ma `check_data.py` lo ricorda tra i dati segnaposto finché non
+metti `false`.

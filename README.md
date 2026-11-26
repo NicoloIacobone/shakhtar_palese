@@ -78,7 +78,7 @@ servito a chi naviga.
 
 Non dovrebbe più succedere, ma vale la pena sapere perché. GitHub Pages dice al
 browser di tenersi i file per 10 minuti (`max-age=600`), quindi dopo un push il
-browser può continuare a usare la **copia vecchia** di `style.css` o di uno
+browser può continuare a usare la **copia vecchia** di `sito.css` o di uno
 script — mentre i dati in `docs/data/*.json`, che vengono chiesti con `no-cache`,
 sono già quelli nuovi. Il risultato è una pagina a metà: dati aggiornati
 disegnati alla maniera vecchia. Sembra un bug del sito e non lo è.
@@ -87,7 +87,7 @@ Per questo `sync.command` fa passare `tools/versiona_asset.py`, che scrive nelle
 pagine l'impronta del contenuto di ogni file:
 
 ```html
-<script src="docs/assets/js/tornei.js?v=1058253e"></script>
+<script src="assets/js/pagina-partite.js?v=1058253e"></script>
 ```
 
 Cambi lo script, cambia l'impronta, cambia l'indirizzo, e il browser è costretto
@@ -96,7 +96,12 @@ a riscaricarlo. Se modifichi un CSS o un JS a mano e fai push senza passare da
 
 ### 2. Aggiornare risultati, classifica e statistiche
 
-Due modi, scegli quello che ti va:
+**Di solito non serve far niente:** classifica, calendario, risultati, numeri dei
+giocatori e dettagli delle partite li copia da solo dal sito del torneo il
+workflow di GitHub (`tools/sync_torneo.py`), e i link a highlights e foto li
+legge dal Drive (`tools/sync_media.py`). Vedi `docs/data/README.md`.
+
+Per tutto il resto, due modi, scegli quello che ti va:
 
 - **A mano**: apri il file in `docs/data/` e modificalo. La guida a ogni singolo
   campo è in **[`docs/data/README.md`](docs/data/README.md)**.
@@ -142,21 +147,26 @@ shakhtar_palese/
 ├── tools/
 │   ├── config.json           ← dove sta la cartella sorgente, dimensioni thumb…
 │   ├── sync_locandine.py     ← copia immagini + miniature + JSON
-│   ├── sync_torneo.py        ← scarica classifica e calendario (lo lancia GitHub)
+│   ├── sync_torneo.py        ← scarica classifica, calendario, numeri e dettagli (lo lancia GitHub)
+│   ├── sync_media.py         ← legge dal Drive i link a highlights e foto (lo lancia GitHub)
 │   ├── check_data.py         ← valida tutti i JSON
 │   ├── versiona_asset.py     ← aggiorna i ?v=... di CSS e JS nelle pagine
 │   └── make_icons.py         ← rigenera logo e icone dallo stemma ufficiale
 ├── foto_presentazione/       ← le card generate con l'IA (non versionata)
 └── docs/                     ← IL SITO: è l'unica cartella che GitHub Pages pubblica
-    ├── index.html  rosa.html  statistiche.html
-    ├── tornei.html  storia.html  contatti.html  404.html
-    ├── maglia.html  sponsor.html  privacy.html
+    ├── index.html  tornei.html (Partite)  rosa.html  giocatore.html
+    ├── statistiche.html  altro.html  maglia.html  sponsor.html
+    ├── storia.html  contatti.html  privacy.html  404.html
     ├── CNAME  manifest.json  robots.txt  sitemap.xml  .nojekyll
     ├── assets/
-    │   ├── css/style.css     ← TUTTA la grafica, palette compresa
-    │   ├── js/               ← uno script per pagina + main.js condiviso
-    │   ├── img/              ← stemma, icone, copertina social, placeholder,
-    │   │                        e qui va anche la foto di squadra
+    │   ├── css/bundle.css    ← il design system, copiato identico: NON si tocca
+    │   ├── css/sito.css      ← le aggiunte del sito al sistema, numerate e spiegate
+    │   ├── css/style.css     ← la grafica vecchia: la usa solo il pannello admin
+    │   ├── js/bundle.js      ← i comportamenti del design system: NON si tocca
+    │   ├── js/sito.js        ← le funzioni comuni (dati, schede, footer, targa…)
+    │   ├── js/pagina-*.js    ← uno script per pagina
+    │   ├── img/              ← stemma, icone, copertina social, tessuto, foto della Storia
+    │   ├── stemmi/           ← gli stemmi delle avversarie (<nome>.png)
     │   ├── sponsor/          ← i loghi degli sponsor per il sito
     │   ├── maglia/           ← il simulatore 3D + le texture della maglia
     │   ├── fonts/            ← i font del simulatore, serviti da qui e non da Google
@@ -168,9 +178,8 @@ shakhtar_palese/
 ### Cambiare uno sponsor
 
 Tutto sta in **`docs/data/sponsor.json`**: i loghi sul sito non sono scritti in
-nessuna pagina, ci sono solo dei contenitori vuoti che si riempiono da soli.
-Tocchi quel file e cambiano insieme la home, il footer di ogni pagina, la Rosa,
-i Tornei, le Statistiche e la pagina Sponsor.
+nessuna pagina. Tocchi quel file e cambiano insieme la striscia nera in fondo a
+ogni pagina (solo gli sponsor `main`) e la pagina Sponsor.
 
 Per aggiungerne uno:
 
@@ -183,14 +192,11 @@ I campi che contano:
 
 | campo | cosa fa |
 |---|---|
-| `livello` | `main` = esce dappertutto · `partner` = solo pagina sponsor e footer · `tecnico` = chi produce la maglia, sezione sua |
-| `sfondo` | su che colore appoggiare il logo: **`scuro`** per i loghi chiari, **`chiaro`** per quelli neri |
+| `livello` | `main` = anche nella striscia in fondo a ogni pagina · gli altri solo nella pagina Sponsor |
 | `attivo` | `false` lo toglie dal sito senza cancellarlo, come il `pubblicato` delle locandine |
-| `sito`, `instagram` | se ci sono, il logo diventa cliccabile. `instagram` senza la `@` |
 
-Il campo **`sfondo` è quello che si sbaglia più spesso**: un logo nero messo su
-`scuro` non è rotto, semplicemente non si vede. Guarda sempre la pagina in tutti
-e due i temi prima di pubblicare.
+I loghi stanno sempre su nero (regola del design system): servono loghi chiari.
+`sfondo`, `sito` e `instagram` restano nel file ma il sito nuovo non li usa.
 
 L'ordine della lista è l'ordine in cui compaiono. L'invito a diventare sponsor
 in fondo alla pagina si spegne con `"diventa_sponsor": { "attivo": false }`.
@@ -252,27 +258,20 @@ naviga a Google a ogni visita, e allora servirebbe il banner del consenso.
 
 ### La targa dei fondatori
 
-In fondo a ogni pagina, dopo la riga del copyright, c'è un piccone quasi
-invisibile (⚒ — Shakhtar in ucraino vuol dire "minatore"). Cliccandolo si apre
-la targa con tutti e diciassette i nomi.
+In fondo a ogni pagina, dopo la riga del copyright, c'è un piccone (Shakhtar in
+ucraino vuol dire "minatore"). Toccandolo si apre la targa con i nomi.
 
-Non c'è nessun nome scritto lì dentro: li legge da `docs/data/rosa.json`, quindi
-resta aggiornata da sola. Testo e interruttore stanno in `docs/data/storia.json`,
-sotto `"targa"`:
-
-- `"attivo": false` toglie il piccone da tutte le pagine;
-- `"solo_presentati": true` fa comparire solo chi ha già la sua locandina
-  pubblicata — utile se stai ancora presentando la squadra una al giorno e non
-  vuoi che la targa anticipi i nomi.
+I nomi della rosa li legge da `docs/data/rosa.json`, quindi resta aggiornata da
+sola. Testo, interruttore, chi escludere e la menzione d'onore stanno in
+`docs/data/storia.json`, sotto `"targa"`: la guida campo per campo è in
+`docs/data/README.md`.
 
 ### Cambiare i colori
 
-Apri `docs/assets/css/style.css`: le prime venti righe sono il blocco `:root` con
-tutte le variabili (`--arancio`, `--nero`, `--superficie`…). Cambia lì e cambia
-tutto il sito. Sotto c'è il blocco `[data-tema="chiaro"]` per il tema chiaro.
-
-Il tema scuro è il default; il pulsante in alto a destra fa passare al chiaro e
-la scelta resta salvata nel browser.
+Colori, font, spazi e componenti vengono dal design system: stanno in
+`docs/assets/css/bundle.css`, che è la copia identica di quello del sistema e
+**non si modifica a mano**. Per cambiarli si cambia il sistema e si ricopia il
+file; le aggiunte del sito stanno in `sito.css`. Il sito ha un solo tema, chiaro.
 
 ### Cambiare lo stemma
 
@@ -284,8 +283,9 @@ Tutto il marchio del sito nasce da **un solo file**:
 ./.venv/bin/python tools/make_icons.py
 ```
 
-Rigenera da solo il logo di header e hero, la favicon, l'icona per iPhone, le
-icone dell'app installabile e la copertina che si vede quando incolli il link.
+Rigenera da solo i loghi `logo.png` (pannello admin) e `logo-grande.png`, la
+favicon, l'icona per iPhone, le icone dell'app installabile e la copertina che si
+vede quando incolli il link. Lo stemma dentro le pagine è `stemma-colori-512.png`.
 
 ---
 
@@ -309,45 +309,24 @@ le modifiche, è la cache del browser: ricarica con `Cmd+Shift+R`.
 
 ---
 
-## Prima di far girare il link
+## Cose ancora da sistemare
 
-Statistiche, risultati e classifica sono **a zero**: non c'è più niente di
-inventato lì dentro. I nomi, i numeri e i ruoli delle 16 persone sono veri, e le
-5 avversarie sono segnate `TBA` finché non le ufficializzano.
+Tutte visibili sul sito, e `check_data.py` le ricorda a ogni giro:
 
-Restano un paio di cose da sistemare, tutte visibili sul sito:
+- [ ] **I campi personali in `docs/data/rosa.json`** — `classe`,
+      `posizione_preferita`, `frase_preferita`, `superstizione`,
+      `rito_post_allenamento`, `skill_fuori_campo` li ha scritti Claude: falli
+      confermare ai diretti interessati, oppure svuotali (**un campo vuoto non
+      compare**). Poi togli `"_placeholder": true`.
 
-- [ ] **I campi personali in `docs/data/rosa.json`** — sono l'unica cosa scritta da
-      Claude che parla di persone vere: `classe`, `posizione_preferita`,
-      `frase_preferita`, `superstizione`,
-      `rito_post_allenamento`, `skill_fuori_campo` sono **inventati**, per tutte
-      e 16 le persone. Sul sito adesso se ne vedono due (Spadaro ed Esposito),
-      ma ogni nuova locandina ne pubblica altri. Falli confermare dai diretti
-      interessati, oppure svuotali: **un campo vuoto semplicemente non compare**,
-      la scheda si accorcia e basta. Poi togli `"_placeholder": true`.
+- [ ] **Le descrizioni degli sponsor in `docs/data/sponsor.json`** — scritte da
+      Claude: falle leggere agli interessati oppure svuotale, poi togli
+      `"_placeholder": true`.
 
-- [ ] **La foto di squadra in cima alla pagina Storia** — al suo posto adesso
-      c'è un segnaposto. Quando avete la foto di gruppo: mettila in
-      `docs/assets/img/` e scrivi il suo percorso in `docs/data/storia.json`, campo
-      `foto_squadra.file`. Il segnaposto sparisce da solo.
-
-- [ ] **Le descrizioni degli sponsor in `docs/data/sponsor.json`** — le ha scritte
-      Claude a partire da quello che c'era già sul sito, non te le ha dette
-      nessuno. Falle leggere agli interessati oppure svuotale (un campo vuoto
-      non compare), poi togli `"_placeholder": true`. Se hai il sito o
-      l'Instagram degli sponsor, riempi anche quelli: il logo diventa cliccabile.
-
-- [ ] **`privacy.html`** — dice che il titolare del trattamento è "lo Shakhtar
-      Palese, squadra di calcio amatoriale di Palese (Bari)" e come contatto usa
-      la mail della squadra. Se un domani diventate un'associazione con una sede
-      e un codice fiscale, quel paragrafo va aggiornato.
-
-E quando escono le informazioni ufficiali:
-
-- [ ] Le 5 squadre `TBA` in `docs/data/tornei.json`, l'handle `instagram` del torneo,
-      e il calendario (`calendario: []`, per ora vuoto). Appena aggiungi la prima
-      partita con `"stato": "da_giocare"`, in home tornano la prossima partita e
-      il conto alla rovescia, da soli.
+- [ ] **`privacy.html`** — il titolare del trattamento è "lo Shakhtar Palese,
+      squadra di calcio amatoriale di Palese (Bari)" con la mail della squadra.
+      Se un domani diventate un'associazione con sede e codice fiscale, quel
+      paragrafo va aggiornato.
 
 ## Comandi utili
 
@@ -364,7 +343,7 @@ E quando escono le informazioni ufficiali:
 # controlla tutti i JSON
 ./.venv/bin/python tools/check_data.py
 
-# riscrive style.css?v=... e *.js?v=... nelle pagine (lo fa gia' sync.command)
+# riscrive *.css?v=... e *.js?v=... nelle pagine (lo fa gia' sync.command)
 ./.venv/bin/python tools/versiona_asset.py
 
 # rigenera favicon, icone e copertina social dal logo
@@ -394,9 +373,11 @@ per non far chiamare Google al browser di chi naviga. È un sito statico e deve
 restare tale: la sola cosa che deve funzionare per sempre è che il link,
 incollato in una storia Instagram, apra qualcosa di decente.
 
-Niente banner dei cookie, perché non c'è niente da far accettare: le uniche due
-cose salvate (il tema scelto e la disposizione dei loghi sulla maglia 3D) stanno
-nella memoria locale del browser, sono tecniche e non richiedono consenso.
+Niente banner dei cookie, perché non c'è niente da far accettare: l'unica cosa
+salvata sul sito pubblico è un segno nella memoria di sessione (`sp-striscia`,
+per disegnare la striscia dell'header solo al primo arrivo), tecnico e senza
+consenso. Il tema del pannello e le prove sulla maglia restano nel browser solo
+in locale.
 `privacy.html` lo spiega per esteso — è l'informativa vera e propria, linkata
 dal footer di ogni pagina.
 

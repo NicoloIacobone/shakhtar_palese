@@ -1,6 +1,6 @@
 {
   "stagione": "2026",
-  "_nota": "Gol, ammonizioni, espulsioni e mvp per giocatore, collegati alla rosa dal numero di maglia. Li aggiorna da solo tools/sync_torneo.py dopo ogni partita.",
+  "_nota": "Gol, ammonizioni, espulsioni e mvp per giocatore, collegati alla rosa dal numero di maglia; per chi ha giocato in porta anche voti_portiere (somma dei voti e partite in porta: il sito mostra la media al posto degli MVP per chi in rosa.json ha ruolo Portiere). Li aggiorna da solo tools/sync_torneo.py dopo ogni partita.",
   "giocatori": [
     {
       "numero": 77,
@@ -14,7 +14,11 @@
       "gol": 1,
       "ammonizioni": 2,
       "espulsioni": 0,
-      "mvp": 0
+      "mvp": 0,
+      "voti_portiere": {
+        "somma": 73,
+        "partite": 9
+      }
     },
     {
       "numero": 29,
@@ -70,7 +74,11 @@
       "gol": 2,
       "ammonizioni": 1,
       "espulsioni": 0,
-      "mvp": 0
+      "mvp": 0,
+      "voti_portiere": {
+        "somma": 8,
+        "partite": 1
+      }
     },
     {
       "numero": 20,

@@ -1,5 +1,5 @@
-# Copia classifica, calendario e numeri dal sito del torneo nei JSON del sito
-# (tools/sync_torneo.py), legge i link di highlights e foto dal Drive
+# Copia classifica, calendario, numeri e dettagli delle partite dal sito del
+# torneo nei JSON del sito (tools/sync_torneo.py), legge i link di highlights e foto dal Drive
 # (tools/sync_media.py) e, se e' cambiato qualcosa, fa commit e push: GitHub
 # Pages ripubblica da solo.
 #
@@ -46,7 +46,7 @@ jobs:
         run: |
           git config user.name "sync-torneo[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/data/tornei.json docs/data/statistiche.json docs/data/media.json
+          git add docs/data/tornei.json docs/data/statistiche.json docs/data/dettagli.json docs/data/media.json
           if git diff --cached --quiet; then
             echo "Niente di nuovo."
             exit 0

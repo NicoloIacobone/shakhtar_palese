@@ -1,4 +1,4 @@
-/* Home: prossime partite, classifica a tre righe, ultimi risultati, marcatori, la rosa, striscia degli sponsor.
+/* Home: prossime partite, ultimi risultati, classifica a tre righe, marcatori, la rosa, striscia degli sponsor.
    Montaggio come la pagina di esempio PaginaHome del design system. */
 (function () {
   'use strict';
@@ -16,22 +16,24 @@
     var quando = '<div class="sp-partita__quando"><p class="sp-partita__torneo">' + SP.esc(torneo.nome) + '</p>' +
       '<p class="sp-partita__giorno">' + giorno + '</p>' +
       '<p class="sp-partita__campo">' + (m.data && m.ora ? '<span class="sp-partita__ora-largo">Ore ' + SP.ora(m.ora) + ', </span>' : '') + SP.esc(m.campo) + '</p></div>';
-    var fine = '';
-    if (prossima) {
-      var stato = '';
-      if (m.inizio && m.inizio.ms <= Date.now()) {
-        stato = '<p class="sp-in-campo sp-finestra">In campo adesso.</p>';
-      } else if (m.inizio) {
-        stato = '<div class="sp-conto" data-inizio="' + m.inizio.iso + '">' +
-          ['giorni', 'ore', 'minuti'].map(function (n) { return '<div class="sp-conto__casella sp-finestra"><b>0</b><span>' + n + '</span></div>'; }).join('') + '</div>';
-      }
-      var titolo = m.casa + ' v ' + m.ospite;
-      var testo = [m.data ? SP.dataLunga(m.data) + (m.ora ? ', ' + SP.ora(m.ora) : '') : '', m.campo].filter(Boolean).join(', ');
-      fine = '<div class="sp-partita__fine">' + stato + '<div class="sp-partita__azioni">' +
-        (campoMaps ? '<a class="sp-bottone" href="' + SP.esc(campoMaps) + '">Dove giochiamo</a>' : '') +
-        '<button type="button" class="sp-condividi sp-finestra" data-condividi data-titolo="' + SP.esc(titolo) + '" data-testo="' + SP.esc(testo) +
-        '" aria-label="Condividi la partita ' + SP.esc(m.casa + ' contro ' + m.ospite) + '">' + SP.simbolo('condividi') + '</button></div></div>';
+    /* Conto alla rovescia, "Dove giochiamo" e condividi: su telefono in tutte le schede (richiesta di Nicolo' del
+       26 novembre 2026), su schermo largo solo nella prossima (sito.css 14 nasconde gli altri). Senza ora: al posto
+       del conto "Orario da definire", solo su telefono. */
+    var stato = '';
+    if (m.inizio && m.inizio.ms <= Date.now()) {
+      stato = '<p class="sp-in-campo sp-finestra">In campo adesso.</p>';
+    } else if (m.inizio) {
+      stato = '<div class="sp-conto" data-inizio="' + m.inizio.iso + '">' +
+        ['giorni', 'ore', 'minuti'].map(function (n) { return '<div class="sp-conto__casella sp-finestra"><b>0</b><span>' + n + '</span></div>'; }).join('') + '</div>';
+    } else {
+      stato = '<p class="sp-in-campo sp-finestra sp-solo-tel">Orario da definire</p>';
     }
+    var titolo = m.casa + ' v ' + m.ospite;
+    var testo = [m.data ? SP.dataLunga(m.data) + (m.ora ? ', ' + SP.ora(m.ora) : '') : '', m.campo].filter(Boolean).join(', ');
+    var fine = '<div class="sp-partita__fine">' + stato + '<div class="sp-partita__azioni">' +
+      (campoMaps ? '<a class="sp-bottone" href="' + SP.esc(campoMaps) + '">Dove giochiamo</a>' : '') +
+      '<button type="button" class="sp-condividi sp-finestra" data-condividi data-titolo="' + SP.esc(titolo) + '" data-testo="' + SP.esc(testo) +
+      '" aria-label="Condividi la partita ' + SP.esc(m.casa + ' contro ' + m.ospite) + '">' + SP.simbolo('condividi') + '</button></div></div>';
     return '<article class="sp-partita sp-vetro sp-su' + (prossima ? ' sp-partita--prossima' : '') + '">' + squadre + quando + fine + '</article>';
   }
 
@@ -47,7 +49,7 @@
     }
     var maps = config.campo && config.campo.maps_url;
     el.outerHTML = '<div class="sp-fila sp-partite">' + scheda(lista[0], torneo, true, maps) +
-      '<div class="sp-partite__dopo">' + lista.slice(1, 5).map(function (m) { return scheda(m, torneo, false); }).join('') + '</div></div>';
+      '<div class="sp-partite__dopo">' + lista.slice(1, 5).map(function (m) { return scheda(m, torneo, false, maps); }).join('') + '</div></div>';
   }
 
   function classifica(el, torneo) {
@@ -65,10 +67,14 @@
 
   function risultati(el, torneo) {
     var giocate = (torneo.calendario || []).filter(function (m) { return m.stato === 'giocata'; }).sort(SP.ordinaPerData).reverse();
-    el.outerHTML = giocate.length ? '<div class="sp-fila">' + giocate.slice(0, 3).map(function (m) { return SP.risultato(m); }).join('') + '</div>' :
+    /* "Dettagli" apre una finestra con i dettagli della partita (scelta di Nicolo' del 26 novembre 2026) */
+    giocate.forEach(function (m) { SP.partite[m.id] = m; });
+    el.outerHTML = giocate.length ? '<div class="sp-fila">' + giocate.slice(0, 3).map(function (m) { return SP.risultato(m, '', 'finestra'); }).join('') + '</div>' :
       '<div class="sp-vetro sp-vuoto sp-su"><p>Ancora nessuna partita giocata.</p></div>';
   }
 
+  /* il portiere non puo' essere MVP: per la parita' conta 0, come nella pagina Statistiche */
+  var mvp = function (x) { return SP.portiere(x.p) ? 0 : x.s.mvp; };
   function marcatori(el, persone, statistiche) {
     var numeri = {};
     ((statistiche && statistiche.giocatori) || []).forEach(function (s) { numeri[s.numero] = s; });
@@ -76,7 +82,7 @@
     var lista = persone.filter(function (x) { return !x.staff && numeri[x.p.numero] && numeri[x.p.numero].gol > 0; }).map(function (x) {
       x.s = numeri[x.p.numero];
       return x;
-    }).sort(function (a, b) { return b.s.gol - a.s.gol || b.s.mvp - a.s.mvp || a.nome.localeCompare(b.nome, 'it'); });
+    }).sort(function (a, b) { return b.s.gol - a.s.gol || mvp(b) - mvp(a) || a.nome.localeCompare(b.nome, 'it'); });
     if (!lista.length) {
       el.outerHTML = '<div class="sp-vetro sp-vuoto sp-su"><p>Ancora nessuna partita giocata.</p></div>';
       return;
@@ -103,9 +109,7 @@
     }).join('') + '</div>';
   }
 
-  Promise.all([SP.carica(['config', 'tornei', 'rosa', 'locandine', 'statistiche', 'sponsor', 'storia']), SP.facoltativo('media')]).then(function (r) {
-    var d = r[0];
-    SP.media = (r[1] && r[1].partite) || {};
+  SP.pagina(['tornei', 'rosa', 'locandine', 'statistiche', '?media', '?dettagli'], function (d) {
     var torneo = SP.torneo(d.tornei);
     if (torneo && torneo.nostra_squadra) { SP.nostraSquadra = torneo.nostra_squadra; }
     var persone = SP.persone(d.rosa, d.locandine, d.config);
@@ -116,12 +120,5 @@
     }
     marcatori($('marcatori'), persone, d.statistiche);
     rosa($('rosa'), $('rosa-tutti'), persone);
-    $('striscia').outerHTML = SP.striscia(d.sponsor);
-    SP.footer($('sp-footer'), d.config, d.storia);
-    SP.stemmiMancanti();
-  }).catch(function (e) {
-    if (window.console) { console.error(e); }
-  }).then(function () {
-    window.Shakhtar.avvia();
   });
 })();

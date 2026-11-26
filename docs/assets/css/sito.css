@@ -124,13 +124,95 @@ html:has(dialog.sp-targa[open]){overflow:hidden}
    Variante A scelta da Nicolo' il 25 novembre 2026: due LinkSottolineato (sp-link, alti 44 px, testo nero con la riga
    arancione), in una nuova scheda. Il sistema non li prevede: stanno sotto le due squadre, separati da un filo (linea,
    come tra le righe dei pannelli), centrati come le squadre. Nella fila stretta della home su telefono (200 px) il
-   bundle porta l'esito in fondo a sinistra con order:4: qui i link vengono dopo l'esito e stanno a sinistra come le
-   squadre. Il margine sotto di -6 px toglie parte dello spazio vuoto sotto la parola: il tocco resta di 44 px.
+   bundle portava l'esito in fondo a sinistra con order:4 (tolto in 15): qui i link stanno a sinistra come le
+   squadre (dal 26 nov 2026 l'esito sta in alto a destra anche li': vedi 15). Il margine sotto di -6 px toglie parte
+   dello spazio vuoto sotto la parola: il tocco resta di 44 px.
    Icone del 26 nov 2026 (play e macchina fotografica, 16 px, colore del testo) a 6 px dalla parola: la riga
    arancione resta solo sotto la parola. */
 .sp-risultato__media{display:flex;justify-content:center;gap:24px;border-top:1px solid var(--linea);margin-bottom:-6px}
 .sp-risultato__media svg{flex:none;margin-right:6px}
-.sp-fila > .sp-risultato .sp-risultato__media{order:5;justify-content:flex-start;gap:20px}
+.sp-fila > .sp-risultato .sp-risultato__media{justify-content:flex-start;gap:20px}
 @container sp (min-width:1024px){
   .sp-fila > .sp-risultato .sp-risultato__media{justify-content:center;gap:24px}
 }
+
+/* 14. Home, prossime partite. Su telefono (sotto i 1024 px) tutte le schede sono uguali: conto alla rovescia,
+   "Dove giochiamo" e condividi anche dopo la prima. Richiesta di Nicolo' del 26 novembre 2026, diversa dal sistema
+   (SchedaPartita, "non mettere conto e bottoni nelle schede successive"). Su schermo largo non cambia niente: le
+   quattro schede sotto la prossima restano senza (si nasconde il contenitore, non il conto, che a zero diventa
+   "In campo adesso."). Senza ora, al posto del conto "Orario da definire", nella casella di "In campo adesso.",
+   solo su telefono. */
+@container sp (min-width:1024px){
+  .sp-partite__dopo .sp-partita__fine,.sp-solo-tel{display:none}
+}
+
+/* 15. Home su telefono, ultimi risultati: l'esito sta in alto a destra accanto alla data, come su schermo largo e nella
+   pagina Partite. Richiesta di Nicolo' del 26 novembre 2026, diversa dal sistema (Risultato: "in home l'esito scende
+   in basso a sinistra", order:4 nel bundle). Sono gli stessi valori che il bundle usa da 1024 px, quindi su schermo
+   largo non cambia niente. Se la data e' lunga va a capo lei: l'etichetta non si stringe e non si sovrappone. */
+.sp-fila > .sp-risultato .sp-risultato__testa{display:flex}
+.sp-fila > .sp-risultato .sp-esito{order:0;align-self:auto;flex:none}
+
+/* 16. Home, ordine delle sezioni (richiesta di Nicolo' del 26 novembre 2026, diversa dall'ordine del sistema):
+   prossime partite, ultimi risultati, classifica, marcatori, rosa, su telefono e su schermo largo. Su schermo largo
+   le due righe usano sp-due--inverso (640:448, gia' nel bundle): i tre risultati restano nella colonna larga e le
+   colonne delle due righe restano allineate. La rosa finisce nella colonna da 448 px, dove le due colonne di
+   persone mandano i nomi a capo: li' resta una colonna sola con le prime quattro, come su telefono. */
+@container sp (min-width:1024px){
+  .sp-home-rosa .sp-persone-2{display:block}
+  .sp-home-rosa .sp-persone-2 > .sp-persona:nth-child(2){border-top:1px solid var(--linea)}
+  .sp-home-rosa .sp-persona--largo{display:none}
+}
+
+/* 17. Dettagli di una partita giocata (gol, ammoniti, espulsi, miglior giocatore, voto dei portieri), da dettagli.json.
+   Il sistema non li prevede. Il pulsante e' fatto come la voce del regolamento (VoceRegolamento): testo nero in
+   Barlow 600, freccia che gira di 90 gradi quando e' aperto, alto 44 px, a tutta larghezza sotto un filo (linea).
+   La parola sta esattamente al centro della scheda, come le squadre; la freccia resta appesa alla sua destra (con
+   la freccia nel conto la parola finiva 10 px a sinistra: lo ha notato Nicolo' il 26 novembre 2026).
+   Pagina Partite: la scheda si allunga verso il basso (grid-template-rows da 0fr a 1fr, 240 ms, curva del sistema) e
+   il contenuto sfuma. E' l'unico movimento del sito che cambia l'impaginazione: il sistema (Movimento) muove solo
+   opacity, transform e clip-path, ma qui Nicolo' ha chiesto proprio la scheda che si allunga. Chiuso, il pannello e'
+   nascosto anche ai lettori di schermo (visibility). Con le animazioni ridotte si apre e chiude di colpo.
+   Su schermo largo i risultati stanno in una griglia: mentre una scheda e' aperta le altre della sua riga non si
+   allungano con lei. Dentro: un titoletto per voce (come le etichette dei numeri) e due colonne, casa a sinistra e
+   ospite a destra come il punteggio. */
+.sp-risultato__dettagli{border-top:1px solid var(--linea);margin-bottom:-6px}
+.sp-risultato__media + .sp-risultato__dettagli{margin-top:-2px}
+.sp-dettagli__bottone{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:44px;border:0;background:none;padding:0;
+  color:var(--testo);font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:opacity var(--sp-t-rilascio) var(--sp-curva)}
+.sp-dettagli__bottone:active{opacity:.55;transition-duration:var(--sp-t-premi)}
+.sp-dettagli__bottone > span:first-child{position:relative}
+.sp-dettagli__bottone svg{position:absolute;left:calc(100% + 10px);top:50%;margin-top:-8px;transform:rotate(90deg);transition:transform var(--sp-t-rilascio) var(--sp-curva)}
+.sp-dettagli__bottone[aria-expanded="true"] svg{transform:rotate(-90deg)}
+.sp-dettagli{display:grid;grid-template-rows:0fr;visibility:hidden;
+  transition:grid-template-rows var(--sp-t-rilascio) var(--sp-curva),visibility 0s linear var(--sp-t-rilascio)}
+.sp-dettagli__in{min-height:0;overflow:hidden;opacity:0;transition:opacity var(--sp-t-rilascio) var(--sp-curva)}
+.sp-dettagli-aperti .sp-dettagli{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows var(--sp-t-rilascio) var(--sp-curva)}
+.sp-dettagli-aperti .sp-dettagli__in{opacity:1}
+.sp-dettagli__voce{padding:10px 0;border-top:1px solid var(--linea)}
+.sp-dettagli__voce:first-child{border-top:0;padding-top:4px}
+.sp-dettagli__voce:last-child{padding-bottom:16px}
+.sp-dettagli__titolo{margin-bottom:4px;text-align:center;color:var(--testo-tenue);font-size:13px}
+.sp-dettagli__due{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;font-size:14px;line-height:1.35}
+.sp-dettagli__due ul{list-style:none;margin:0;padding:0}
+.sp-dettagli__due ul + ul{text-align:right}
+.sp-dettagli__due li + li{margin-top:2px}
+.sp-dettagli__due b{font-variant-numeric:tabular-nums}
+@container sp (min-width:1024px){.sp-griglia-2:has(.sp-dettagli-aperti){align-items:start}}
+@media (prefers-reduced-motion:reduce){
+  .sp-dettagli,.sp-dettagli__in,.sp-dettagli-aperti .sp-dettagli,.sp-dettagli__bottone svg{transition:none}
+}
+/* Home: "Dettagli" apre una finestra (dialog) con la scheda del risultato e i dettagli, sul tessuto come la targa,
+   larga al massimo 440 px. Nelle schede strette del telefono il pulsante sta a sinistra come squadre e link (13). Scelta di Nicolo' del 26 novembre 2026 tra link alla pagina Partite e finestra. */
+@container sp (width < 1024px){.sp-fila > .sp-risultato .sp-dettagli__bottone{justify-content:flex-start}}
+dialog.sp-dettagli-finestra{width:min(100% - 32px,440px);max-height:calc(100% - 32px);margin:auto;padding:12px;border:0;border-radius:var(--raggio-scheda);overflow-y:auto;
+  color:var(--testo);background-color:var(--fondo);background-image:var(--sp-tessuto);background-size:var(--passo-tessuto) var(--passo-tessuto)}
+dialog.sp-dettagli-finestra::backdrop{background:rgba(17,17,17,.45)}
+.sp-dettagli-finestra__chiudi{display:flex;justify-content:flex-end;margin-bottom:8px}
+.sp-dettagli-finestra .sp-dettagli{border-top:1px solid var(--linea);padding-top:6px}
+
+/* 18. Il voto del portiere nella colonna MVP della tabella Statistiche (il portiere non puo' essere MVP): il numero
+   con sotto la parola "voto", piccola e in testo tenue (a 375 px "voto 8,1" su una riga non entra nella colonna).
+   Nel codice la parola viene prima del numero, cosi' l'ordinamento del bundle legge la cella come 0 MVP. */
+.sp-voto{display:inline-flex;flex-direction:column-reverse;align-items:flex-end;line-height:1.1;vertical-align:middle}
+.sp-voto > span{font-size:11px;font-weight:400;color:var(--testo-tenue)}
