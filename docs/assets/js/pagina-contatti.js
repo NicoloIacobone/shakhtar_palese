@@ -20,7 +20,7 @@
     var righe = '';
     if (so.email) { righe += contatto('mailto:' + so.email, false, 'busta', 'Email', so.email); }
     if (so.instagram) { righe += contatto('https://www.instagram.com/' + so.instagram + '/', true, 'macchina', 'Instagram', '@' + so.instagram); }
-    if (so.tiktok) { righe += contatto('https://www.tiktok.com/@' + so.tiktok, true, 'nota', 'TikTok', '@' + so.tiktok); }
+    if (so.tiktok) { righe += contatto('https://www.tiktok.com/@' + so.tiktok, true, 'tiktok', 'TikTok', '@' + so.tiktok); }
     $('contatti').outerHTML = righe ? '<div class="sp-sezione sp-sezione--stretta"><div class="sp-vetro sp-pannello sp-contatti sp-su">' + righe + '</div></div>' : '';
 
     var campo = c.nome ? '<div class="sp-invito sp-invito--colonna sp-vetro sp-su"><h2>Il campo di casa</h2>' +
