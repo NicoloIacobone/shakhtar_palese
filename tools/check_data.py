@@ -606,6 +606,50 @@ def controlla_maglia():
     print(f"{GRIGIO}  ·{FINE} maglia: {len(elementi)} loghi stampati su {len(noti)} disponibili")
 
 
+# ----------------------------------------------------------------- media ---
+DRIVE_CARTELLA = re.compile(r"https://drive\.google\.com/drive/folders/[\w-]+")
+
+
+def controlla_media():
+    """
+    data/media.json: highlights e foto di ogni partita, cartelle del Google Drive.
+    Lo scrive tools/sync_media.py. Controllo leggero:
+      · il file puo' mancare (il sito mostra le schede senza link): avviso;
+      · ogni id deve esistere nel calendario di tornei.json: altrimenti avviso,
+        perche' un id cambiato in tornei.json non deve bloccare la pubblicazione
+        dei risultati (il link semplicemente non compare);
+      · ogni indirizzo deve essere una cartella di drive.google.com: errore,
+        perche' il sito porterebbe chi clicca da un'altra parte.
+    """
+    if not (DATA / "media.json").exists():
+        avviso("media.json", "il file non c'e': le schede risultato restano senza Highlights e Foto "
+                             "(lo crea tools/sync_media.py)")
+        return
+    d = carica("media.json")
+    if d is None:
+        return
+    partite = d.get("partite")
+    if not isinstance(partite, dict):
+        errore("media.json", "manca l'elenco 'partite' (un oggetto: id partita -> link)")
+        return
+    tornei = carica("tornei.json") or {}
+    ids = {m.get("id") for t in tornei.get("tornei") or [] for m in t.get("calendario") or []}
+    link = 0
+    for id_partita, v in partite.items():
+        if id_partita not in ids:
+            avviso("media.json", f"'{id_partita}' non e' nel calendario di tornei.json: il suo link non compare")
+        if not isinstance(v, dict):
+            errore("media.json", f"'{id_partita}': mi aspettavo un oggetto con 'highlights' e/o 'foto'")
+            continue
+        for chiave in ("highlights", "foto"):
+            if chiave in v:
+                if not isinstance(v[chiave], str) or not DRIVE_CARTELLA.fullmatch(v[chiave]):
+                    errore("media.json", f"'{id_partita}' → '{chiave}' non e' una cartella di drive.google.com: {v[chiave]!r}")
+                else:
+                    link += 1
+    print(f"{GRIGIO}  ·{FINE} media: {len(partite)} partite con link al Drive, {link} link")
+
+
 # ----------------------------------------------------- file del sito ------
 def controlla_file_sito():
     """Le pagine e le immagini fisse che il sito da' per scontate."""
@@ -614,7 +658,15 @@ def controlla_file_sito():
         "tornei.html", "storia.html", "contatti.html", "404.html",
         "sponsor.html", "maglia.html", "privacy.html",
         ".nojekyll", "manifest.json", "robots.txt", "sitemap.xml",
-        "assets/css/style.css", "assets/js/main.js", "assets/js/sponsor.js",
+        "giocatore.html", "altro.html",
+        # il sito: foglio di stile e comportamenti del design system (identici al sistema), aggiunte del sito,
+        # funzioni comuni, stemma e tessuto del fondo
+        "assets/css/bundle.css", "assets/css/sito.css",
+        "assets/js/bundle.js", "assets/js/sito.js",
+        "assets/img/stemma-colori-512.png", "assets/img/drappo-pesca-azzurro.webp",
+        "assets/fonts/big-shoulders-display-latin.woff2",
+        # il pannello locale (admin/) usa ancora il foglio di stile e lo script del sito di prima
+        "assets/css/style.css", "assets/js/main.js",
         # il simulatore 3D della maglia e le sue texture
         "assets/maglia/simulatore.html", "assets/maglia/crest.png",
         "assets/maglia/mj.png",
@@ -677,6 +729,7 @@ def main():
     controlla_storia()
     controlla_sponsor()
     controlla_maglia()
+    controlla_media()
     controlla_file_sito()
     controlla_versioni_asset()
 

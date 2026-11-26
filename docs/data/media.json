@@ -1,0 +1,55 @@
+{
+  "_nota": "Scritto da tools/sync_media.py leggendo il Google Drive della squadra: non modificarlo a mano, al prossimo giro verrebbe riscritto. Per ogni partita (id di tornei.json) gli indirizzi delle sottocartelle HIGHLIGHTS e FOTO_BELLE; un link manca se la cartella non c'e' o e' vuota.",
+  "partite": {
+    "bp26-a1g1": {
+      "cartella": "1_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/1bNdOlMpxp5-8AIrWwc8C-i1oz0LBj_vi",
+      "foto": "https://drive.google.com/drive/folders/1P5_REQSuMwA_vlnso36pzMcTT4sVGRV6"
+    },
+    "bp26-a1g2": {
+      "cartella": "2_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/1e2fUf7TMmxWoK9_-3Hy8fuO6m5Qu8tQL",
+      "foto": "https://drive.google.com/drive/folders/1-8fFpjK1EoIOpkyA9_4aujizDMrWnURr"
+    },
+    "bp26-a1g3": {
+      "cartella": "3_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/1s6w2GeV7xEBmXhhl_HLPlnhloj0DoXOC",
+      "foto": "https://drive.google.com/drive/folders/1DcQ6o3OSz-EdF4zj__qN0wzrzR5Xn4iM"
+    },
+    "bp26-a1g4": {
+      "cartella": "4_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/1AgHsP40i0yg7K6kCZA6-_e4UOhv2FlaZ",
+      "foto": "https://drive.google.com/drive/folders/1bb8QpXwQGd458GOsoXJhwEm2xP9VmL3t"
+    },
+    "bp26-a1g5": {
+      "cartella": "5_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/1ZYjHW8g9PBPBL7Z2dFM2jEyynGxsZ30-",
+      "foto": "https://drive.google.com/drive/folders/19gvsXkeNgM-fILF5iTOxiS4CT67_GHi1"
+    },
+    "bp26-r1g1": {
+      "cartella": "6_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/1r4vmG9vo9AzQ3-bX4CIQW3Y3c5ouvyLm",
+      "foto": "https://drive.google.com/drive/folders/1ll71YtlmJ2j9DoT17kslYVHjylLJBNYj"
+    },
+    "bp26-r1g2": {
+      "cartella": "7_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/14nlD3rVhutR-v1Q2DZc4FlVV5nJvuUxW",
+      "foto": "https://drive.google.com/drive/folders/1eG4IGQTXTV2HigxT3Ivx_eptJGKII0ze"
+    },
+    "bp26-r1g3": {
+      "cartella": "8_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/15zkaAB077UKhn5Pq8JdIRwOwoJP05uvU",
+      "foto": "https://drive.google.com/drive/folders/1XAe3uNgHKtP21hhB3OrNRVBA4lWr3ZMM"
+    },
+    "bp26-r1g4": {
+      "cartella": "9_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/1uEU_4FdqzzKtIkl5shFcEsiX-XbYIeUb",
+      "foto": "https://drive.google.com/drive/folders/1P0H5670BnhyG9jLhA4N5kWf_7mO8AUOh"
+    },
+    "bp26-r1g5": {
+      "cartella": "10_BIRRA_PERONI",
+      "highlights": "https://drive.google.com/drive/folders/1N-CXyUJPqnWmKqTUA8QKtWgcDhHi_F8F",
+      "foto": "https://drive.google.com/drive/folders/1u6TKn9bpNcA-j9iGzA9H-0HIfmkWQe0U"
+    }
+  }
+}

@@ -1,0 +1,136 @@
+/* Shakhtar Palese · aggiunte del sito al design system.
+   bundle.css e bundle.js sono copiati identici dal sistema e non si toccano: tutto quello che serve in piu' sta qui.
+   1. I quattro font del sistema, ospitati sul sito (nessun CDN).
+   2. Il percorso del tessuto: il sistema lo lascia da impostare (--sp-tessuto). Percorso dalla radice del sito,
+      cosi' vale uguale da ogni pagina, compresa la 404 servita a qualsiasi profondita'.
+   3. html con il colore del fondo, come chiede il README del sistema (regole di montaggio, punto 3). */
+
+@font-face{font-family:"Big Shoulders Display";src:url("../fonts/big-shoulders-display-latin.woff2") format("woff2");font-weight:700 900;font-style:normal;font-display:swap}
+@font-face{font-family:Barlow;src:url("../fonts/barlow-400-latin.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:Barlow;src:url("../fonts/barlow-600-latin.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:Barlow;src:url("../fonts/barlow-700-latin.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+
+:root{--sp-tessuto:url("/assets/img/drappo-pesca-azzurro.webp")}
+html{background-color:var(--fondo)}
+
+/* 4. La targa dei fondatori: il sistema non la disegna, proposta approvata da Nicolo' il 23 novembre 2026.
+   Un foglio a tutto schermo con il tessuto del sito; dentro solo pezzi del sistema
+   (titolo di pagina, titoli di sezione, pannelli di vetro, riga del giocatore senza foto, bottone tondo e bottone bianco). */
+dialog.sp-targa{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0 0 40px;border:0;overflow-y:auto;overscroll-behavior:contain;
+  color:var(--testo);background-color:var(--fondo);background-image:var(--sp-tessuto);background-size:var(--passo-tessuto) var(--passo-tessuto)}
+dialog.sp-targa::backdrop{background:var(--fondo)}
+html:has(dialog.sp-targa[open]){overflow:hidden}
+.sp-targa__chiudi{position:sticky;top:0;z-index:1;display:flex;justify-content:flex-end;padding-top:12px}
+.sp-targa__occhiello{color:var(--testo-tenue);font-size:15px;margin-bottom:4px}
+.sp-targa__firma{margin-top:var(--spazio-5);margin-bottom:var(--spazio-3);color:var(--testo-tenue);font-size:14px}
+/* le righe della targa non sono link: niente sottolineatura al passaggio e niente pressione */
+.sp-targa .sp-persona:hover .sp-persona__nome{text-decoration:none}
+.sp-targa .sp-persona:active{opacity:1}
+
+/* 5. La card intera nella scheda giocatore. bundle.css le da' width:100% e aspect-ratio 2:3, ma l'attributo height
+   dell'immagine (1400) vince sul rapporto e la card esce alta 1400 px e tagliata ai lati: e' cosi' anche nella pagina
+   di esempio del sistema. La regola del sistema e' "intera, in 2:3, mai ritagliata": con height:auto vale il 2:3. */
+.sp-card img{height:auto}
+
+/* 6. Intestazioni della tabella Statistiche: bottoni alti 44 px, come ogni cosa che si tocca (README del sistema, Forma e spazio).
+   Nel bundle sono alti 32 px e larghi quanto la parola (18-31 px). Approvato da Nicolo' il 23 novembre 2026.
+   Il bottone occupa tutta la cella; il padding della cella scende da 8+6 a 2+0 px, cosi' la riga resta alta uguale
+   e la parola resta allo stesso posto. */
+.sp-statistiche th{padding-top:2px;padding-bottom:0}
+.sp-statistiche th button{display:block;width:100%;min-height:44px;text-align:inherit}
+
+/* 7. Pagina Altro su schermo largo: il sistema la prevede solo su telefono. Scelta di Nicolo' il 23 novembre 2026:
+   la pagina resta anche da 1024 px, con i riquadri larghi quanto la colonna del telefono (600 px), allineati a sinistra. */
+@container sp (min-width:1024px){.sp-altro{max-width:var(--sp-colonna)}}
+
+/* 8. Maglia: la cornice del simulatore 3D e i quattro comandi sotto. Il sistema dice "da incorniciare in una scheda con
+   il fondo superficie" e mostra i comandi in una griglia di quattro (anteprima di BottoneBianco, scritta li' come stile
+   in linea), senza dare classi. Scelte di Nicolo' del 23 novembre 2026: cornice alta 412 px su telefono e su schermo
+   largo (dentro il simulatore il palco resta alto 380 px piu' 16 px di bordo: a 560 px restava una fascia grigia vuota).
+   12 px tra cornice e comandi (spazio-3), approvati da Nicolo' il 23 novembre 2026.
+   Il comando premuto (aria-pressed, copiato dal simulatore): il sistema non lo disegna. Scelta di Nicolo' del 23 novembre 2026:
+   grassetto e un trattino arancione di 3 px sotto la parola, come il segno della voce attiva. */
+.sp-simulatore{background:var(--superficie);border-radius:var(--raggio-scheda);overflow:hidden}
+.sp-simulatore iframe{display:block;width:100%;height:412px;border:0}
+.sp-simulatore__comandi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:var(--spazio-3)}
+.sp-simulatore__comandi[hidden]{display:none}
+.sp-simulatore__comandi [aria-pressed="true"]{font-weight:700}
+.sp-simulatore__comandi [aria-pressed="true"]::after{content:"";position:absolute;left:50%;bottom:8px;width:24px;height:3px;margin-left:-12px;border-radius:2px;background:var(--arancio)}
+
+/* 9. Storia su telefono (sotto i 1024 px). Il sistema monta il carosello fuori dalla colonna su telefono e dentro le due
+   colonne su schermo largo; qui il codice e' uno solo (sp-due con carosello e pannello), quindi su telefono il carosello
+   esce dal margine laterale per stare a tutta larghezza. 16 px tra titolo e carosello e tra carosello e testo,
+   come nell'anteprima del Carosello. Scelta di Nicolo' del 23 novembre 2026: tra 376 e 1023 px largo quanto la colonna
+   (600 px), non quanto lo schermo. Su schermo largo restano i 24 px del bundle tra header e carosello (approvati). */
+@container sp (width < 1024px){
+  .sp-storia{margin-top:16px}
+  .sp-storia > .sp-carosello{margin-inline:calc(-1 * var(--spazio-4))}
+  .sp-storia > .sp-prosa{margin-top:16px}
+}
+
+/* 10. Contatti su telefono: le due schede (campo di casa, amichevole) stanno in sp-due, che sotto i 1024 px nel bundle
+   non ha regole. 24 px prima e tra le due schede, come tra due sezioni (spazio-5). Su schermo largo vale il bundle:
+   due colonne 448:640, schede alte uguali (sp-invito--colonna). Scelte di Nicolo' del 24 novembre 2026. */
+@container sp (width < 1024px){
+  .sp-contatti-due{margin-top:var(--spazio-5)}
+  .sp-contatti-due > * + *{margin-top:var(--spazio-5)}
+}
+
+/* 11. La 404: il sistema la descrive (README, "Schermi larghi" e "Pagine di Altro e 404") ma il bundle non ha classi.
+   Scheda di vetro con "404" in arancione (display, cifre grandi: sul vetro ammesso da 24 px), titolo, testo e i due bottoni.
+   Schermo largo, dal sistema: scheda centrata larga 640 px, "404" a 200 px, titolo a 56, bottoni affiancati larghi quanto
+   il testo (28 px ai lati). Telefono, scelta di Nicolo' del 24 novembre 2026: testo a sinistra, "404" a 120 px, titolo a 44
+   come il titolo di pagina, bottoni uno sotto l'altro a tutta larghezza (BottoneNero). Spazi proposti da Claude:
+   24 px sopra la scheda e 24 x 20 dentro su telefono, 40 px sopra e 40 x 48 dentro su schermo largo. */
+.sp-404{margin-top:var(--spazio-5);padding:24px 20px;display:flex;flex-direction:column;gap:12px}
+.sp-404__codice{font-family:var(--font-display);font-weight:800;color:var(--arancio);font-size:120px;line-height:.9}
+.sp-404 h1{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:44px;line-height:1}
+.sp-404 p:not(.sp-404__codice){font-size:16px;line-height:1.45;text-wrap:pretty}
+.sp-404 .sp-pila{margin-top:8px}
+@container sp (min-width:1024px){
+  .sp-404{width:100%;max-width:640px;margin:40px auto 0;padding:40px 48px}
+  .sp-404__codice{font-size:200px}
+  .sp-404 h1{font-size:56px}
+  .sp-404 .sp-pila{flex-direction:row;gap:12px}
+  .sp-404 .sp-pila .sp-bottone{padding:0 28px}
+}
+
+/* 12. Privacy e cookie: il sistema non ha una pagina d'esempio. Scelta di Nicolo' del 24 novembre 2026: l'indice dei
+   capitoli in un pannello di link sottolineati (LinkSottolineato, una riga per voce con il filetto linea), poi tutto il
+   testo in un solo pannello di testo (PannelloTesto). Il pannello del sistema non prevede titoli: qui i capitoli hanno
+   un titolo in Barlow 700 a 20 px (22 su schermo largo), non in display. La tabella della memoria del browser usa le
+   righe di InBreve. Su schermo largo due colonne 448:640, con l'indice fermo a sinistra mentre il testo scorre. */
+.sp-privacy{margin-top:14px}
+.sp-privacy__testo{margin-top:var(--spazio-5)}
+.sp-indice ul{list-style:none;margin:0;padding:4px 0}
+.sp-indice li + li{border-top:1px solid var(--linea)}
+.sp-indice .sp-link{display:flex;width:100%}
+.sp-legale h2{font-weight:700;font-size:20px;line-height:26px;margin:1.6em 0 .5em;scroll-margin-top:calc(var(--altezza-header) + 12px)}
+.sp-legale h2:first-child{margin-top:0}
+.sp-legale ul{list-style:disc;padding-left:1.2em;margin:0 0 1em}
+.sp-legale li{font-size:17px;line-height:1.6;margin-bottom:.3em}
+.sp-legale code{font-family:ui-monospace,Menlo,monospace;font-size:.9em}
+.sp-legale .sp-memoria{display:block;padding:0;margin:0 0 1em;border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)}
+.sp-legale .sp-memoria dd{font-weight:400}
+@container sp (min-width:1024px){
+  .sp-privacy{margin-top:32px;display:grid;grid-template-columns:minmax(0,var(--sp-sx)) minmax(0,var(--sp-dx));gap:32px;align-items:start}
+  .sp-privacy__indice{position:sticky;top:calc(var(--altezza-header-largo) + 16px)}
+  .sp-privacy__testo{margin-top:0}
+  .sp-legale h2{font-size:22px;line-height:28px;scroll-margin-top:calc(var(--altezza-header-largo) + 16px)}
+  .sp-legale li{font-size:18px}
+}
+
+/* 13. Highlights e foto sotto la scheda risultato (Risultato), solo per le partite giocate che hanno la cartella sul Drive.
+   Variante A scelta da Nicolo' il 25 novembre 2026: due LinkSottolineato (sp-link, alti 44 px, testo nero con la riga
+   arancione), in una nuova scheda. Il sistema non li prevede: stanno sotto le due squadre, separati da un filo (linea,
+   come tra le righe dei pannelli), centrati come le squadre. Nella fila stretta della home su telefono (200 px) il
+   bundle porta l'esito in fondo a sinistra con order:4: qui i link vengono dopo l'esito e stanno a sinistra come le
+   squadre. Il margine sotto di -6 px toglie parte dello spazio vuoto sotto la parola: il tocco resta di 44 px.
+   Icone del 26 nov 2026 (play e macchina fotografica, 16 px, colore del testo) a 6 px dalla parola: la riga
+   arancione resta solo sotto la parola. */
+.sp-risultato__media{display:flex;justify-content:center;gap:24px;border-top:1px solid var(--linea);margin-bottom:-6px}
+.sp-risultato__media svg{flex:none;margin-right:6px}
+.sp-fila > .sp-risultato .sp-risultato__media{order:5;justify-content:flex-start;gap:20px}
+@container sp (min-width:1024px){
+  .sp-fila > .sp-risultato .sp-risultato__media{justify-content:center;gap:24px}
+}

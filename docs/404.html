@@ -1,58 +1,51 @@
 <!DOCTYPE html>
-<html lang="it" data-tema="scuro">
+<html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- GitHub Pages serve questa pagina a qualsiasi profondita' (/a/b/c): tutti i percorsi partono dalla radice del sito. -->
+<base href="/">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fuorigioco — Shakhtar Palese</title>
 <meta name="description" content="Pagina non trovata sul sito dello Shakhtar Palese.">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#0b0b0d">
-<!-- Pagina autonoma: stili in linea, cosi' funziona anche se GitHub Pages
-     la serve da un percorso profondo dove i path relativi non tornerebbero. -->
-<style>
-  :root { --arancio:#ff7a1a; --nero:#0b0b0d; --testo:#f2f2f4; --tenue:#a3a3ad; --bordo:#2b2b33; }
-  * { box-sizing:border-box; }
-  body { margin:0; min-height:100dvh; display:grid; place-items:center; text-align:center;
-         background:var(--nero); color:var(--testo); padding:2rem 1rem;
-         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; }
-  .codice { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-weight:900; line-height:1;
-            font-size:clamp(4rem,22vw,9rem); color:var(--arancio); }
-  h1 { font-size:clamp(1.5rem,6vw,2.4rem); margin:.4rem 0; letter-spacing:-.02em; }
-  p { color:var(--tenue); max-width:44ch; margin:0 auto 1.4rem; line-height:1.6; }
-  .gruppo { display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center; }
-  a.btn { display:inline-block; padding:.72rem 1.1rem; border-radius:999px; font-weight:700;
-          text-decoration:none; border:1px solid transparent; }
-  .pri { background:var(--arancio); color:#14100b; }
-  .sec { border-color:var(--bordo); color:var(--testo); }
-  a.btn:hover { filter:brightness(1.1); }
-  img.stemma { width:96px; height:96px; margin:0 auto 1rem; display:block; }
-</style>
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/img/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preload" href="assets/fonts/big-shoulders-display-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/bundle.css?v=7ae45986">
+<link rel="stylesheet" href="assets/css/sito.css?v=966d1323">
 </head>
-<body>
-  <main>
-    <img class="stemma" src="assets/img/logo-grande.png" alt="Stemma Shakhtar Palese"
-         width="96" height="96" data-home="assets/img/logo-grande.png">
-    <div class="codice">404</div>
+<body class="sp-app">
+<header class="sp-header"><div class="sp-header__in">
+  <nav class="sp-header__nav" aria-label="Sezioni"><a href="index.html">Home</a><a href="tornei.html">Partite</a><a href="rosa.html">Rosa</a><a href="statistiche.html">Statistiche</a></nav>
+  <a class="sp-header__marchio" href="index.html" aria-label="Shakhtar Palese, vai alla home"><span>Shakhtar</span><img src="assets/img/stemma-colori-512.png" alt="" width="44" height="49"><span>Palese</span></a>
+  <nav class="sp-header__nav sp-header__nav--dx" aria-label="Altre sezioni"><a href="maglia.html">Maglia</a><a href="sponsor.html">Sponsor</a><a href="storia.html">Storia</a><a href="contatti.html">Contatti</a></nav>
+</div></header>
+
+<main class="sp-pagina"><div class="sp-contenuto">
+  <div class="sp-404 sp-vetro sp-su">
+    <p class="sp-404__codice">404</p>
     <h1>Fuorigioco.</h1>
-    <p>Questa pagina è partita in anticipo e l'arbitro ha alzato la bandierina.
-       Capita anche ai migliori, ma soprattutto al nostro numero 7.</p>
-    <div class="gruppo">
-      <a class="btn pri" href="index.html" data-home="index.html">Torna in campo &rarr;</a>
-      <a class="btn sec" href="rosa.html" data-home="rosa.html">Vai alla rosa</a>
-    </div>
-  </main>
-<script>
-  // Questa pagina viene servita per QUALSIASI indirizzo inesistente, anche
-  // profondo (/a/b/c): con i link relativi finirebbero su /a/b/index.html.
-  // Il sito sta alla radice del dominio, quindi li riscrivo assoluti da "/".
-  // Se un domani tornasse in una sottocartella, basta cambiare questa riga.
-  (function () {
-    var base = '/';
-    document.querySelectorAll('[data-home]').forEach(function (el) {
-      if (el.tagName === 'IMG') el.src = base + el.dataset.home;
-      else el.href = base + el.dataset.home;
-    });
-  })();
-</script>
+    <p>Questa pagina è partita in anticipo e l'arbitro ha alzato la bandierina. Capita anche ai migliori, ma soprattutto al nostro numero 45.</p>
+    <div class="sp-pila"><a class="sp-bottone" href="index.html">Torna in campo</a><a class="sp-bottone sp-bottone--vetro" href="rosa.html">Vai alla rosa</a></div>
+  </div>
+  <div id="striscia"></div>
+</div></main>
+
+<footer class="sp-footer sp-contenuto" id="sp-footer"></footer>
+
+<nav class="sp-barra" aria-label="Sezioni"><div class="sp-barra__in">
+  <a class="sp-barra__voce" href="index.html"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8z"/></svg>Home</a>
+  <a class="sp-barra__voce" href="tornei.html"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M12 5v14"/><circle cx="12" cy="12" r="2.6"/></svg>Partite</a>
+  <a class="sp-barra__voce" href="rosa.html"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c0-3.2 2.7-5.5 6-5.5s6 2.3 6 5.5M15.5 5a3.2 3.2 0 010 6M17.5 14.4c2 .7 3.5 2.6 3.5 5.1"/></svg>Rosa</a>
+  <a class="sp-barra__voce" href="statistiche.html"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11M12 20V4M19 20v-7"/></svg>Statistiche</a>
+  <a class="sp-barra__voce" href="altro.html"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg>Altro</a>
+</div></nav>
+
+<script src="assets/js/bundle.js?v=33b357d1"></script>
+<script src="assets/js/sito.js?v=d10c1954"></script>
+<script src="assets/js/pagina-404.js?v=ae509192"></script>
 </body>
 </html>

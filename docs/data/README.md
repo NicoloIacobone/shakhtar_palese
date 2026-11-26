@@ -245,6 +245,55 @@ partita `da_giocare` in ordine di data e ora. Il countdown si calcola da lì.
 I risultati li scrive lo script: a mano servirebbe solo per un torneo senza
 `quick_tournament_id` (gol nei due campi e `stato` a `giocata`).
 
+## `media.json` — highlights e foto delle partite
+
+⚠️ **Questo file lo scrive `tools/sync_media.py`.** Non modificarlo a mano: al
+giro dopo verrebbe riscritto.
+
+Sotto ogni risultato giocato (pagina Partite e home) compaiono due link,
+**Highlights** e **Foto**, che aprono in una nuova scheda le cartelle del
+Google Drive della squadra
+(<https://drive.google.com/drive/folders/1pXU0WKECCFAbYGPn5olYiSYhgh5YjsBY>).
+Sono link normali: finché nessuno li tocca, il sito non chiede niente a Google.
+
+**Come va organizzato il Drive** (è l'unica cosa che fai tu):
+
+- una cartella per partita, che si chiama `N_BIRRA_PERONI`, dove **N è la
+  giornata del torneo**, non l'ordine in cui le partite sono state giocate:
+  1–5 = 1º girone di andata, 6–10 = 1º di ritorno, 11–15 = 2º di andata,
+  16–20 = 2º di ritorno (la 8, per esempio, è `bp26-r1g3`). Lo script ricava
+  la regola dagli `id` di `tornei.json`;
+- dentro, le sottocartelle **`HIGHLIGHTS`** (video) e **`FOTO_BELLE`** (foto),
+  scritte esattamente così. Le altre cartelle e i file sciolti vengono ignorati.
+
+Un link compare solo se la sua sottocartella esiste e non è vuota; se mancano
+tutte e due, la scheda resta com'era. Le partite non ancora giocate non
+mostrano link anche se la cartella c'è già.
+
+Il file contiene, per ogni partita (l'`id` del calendario), il nome della
+cartella e i due indirizzi:
+
+```json
+"bp26-a1g1": {
+  "cartella": "1_BIRRA_PERONI",
+  "highlights": "https://drive.google.com/drive/folders/…",
+  "foto": "https://drive.google.com/drive/folders/…"
+}
+```
+
+**Gira da solo** nel workflow serale, subito dopo `sync_torneo.py`: le foto
+caricate compaiono sul sito al primo giro dopo: ogni ora la sera
+(dalle 18 a mezzanotte d'inverno, dalle 19 all'una d'estate) e due volte di
+giorno (alle 8 e alle 14 d'inverno, un'ora dopo d'estate). Per farlo subito:
+GitHub → *Actions* → *Sync torneo* → *Run workflow*, oppure
+`python3 tools/sync_media.py` (con `--check` dice solo cosa cambierebbe).
+Legge il Drive da una pagina di Google non documentata: se un giorno smette di
+rispondere o cambia forma, lo script avvisa e **lascia il file com'è**, quindi
+sul sito restano i link di prima e il resto del workflow va avanti.
+`check_data.py` controlla che gli indirizzi siano cartelle di
+`drive.google.com` (altrimenti non si pubblica) e avvisa se un `id` non è nel
+calendario.
+
 ## `locandine.json` — le card di presentazione
 
 ⚠️ **Questo file lo genera `sync.command`.** Non riscriverlo a mano da capo:
