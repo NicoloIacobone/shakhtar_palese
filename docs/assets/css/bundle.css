@@ -166,6 +166,7 @@ body.sp-app > main{flex:1}
 /* Righe e schede oltre il limite: sp-oltre si nasconde solo su telefono, sp-oltre-sempre ovunque. Il bottone sp-mostra mette sp-aperto sul blocco. */
 :not(.sp-aperto) > .sp-oltre-sempre{display:none}
 @container sp (max-width:1023.98px){:not(.sp-aperto) > .sp-oltre{display:none}}
+.sp-mostra[hidden]{display:none !important}
 /* Risultato */
 .sp-risultato{padding:12px 14px;display:flex;flex-direction:column;gap:8px;--sp-lato:44px}
 .sp-risultato__testa{display:flex;justify-content:space-between;align-items:center;gap:8px}
